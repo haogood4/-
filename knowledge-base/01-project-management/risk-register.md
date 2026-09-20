@@ -4,11 +4,11 @@ doc_id: pm/risk-register
 type: risk
 domain: project-management
 locale: zh-CN
-version: v1.0.0
-status: draft
+version: v1.1.0
+status: active
 effective_from: 2025-01-01
 owner: 项目经理
-last_updated: 2025-01-01
+last_updated: 2026-09-20
 ---
 
 # 风险登记册 · Risk Register
@@ -40,6 +40,9 @@ last_updated: 2025-01-01
 | R-012 | 数据隐私合规（PIPL / GDPR） | 2 | 5 | 10 | 橙 | 不收集不必要数据；GA4 匿名化 | 关闭分析、发布隐私更新 | PO |
 | R-013 | 广告过度投放损害信任 | 3 | 3 | 9 | 黄 | 结果上方不投放广告；侧栏下方 | 调整广告位 | PM |
 | R-014 | Sentry / GA4 误报导致疲劳 | 3 | 2 | 6 | 黄 | 设置合理阈值；周度复盘 | 调整告警 | QA |
+| R-015 | Astro 7 构建将页面脚本内联，违反 CSP 致脚本不执行 | 2 | 4 | 8 | 黄 | esbuild 预打包管线（build-public-scripts.mjs）+ smoke CSP 断言硬校验 | astro 升级后跑 astro:probe 回归 | FE |
+| R-016 | 法务审核未闭环期间 legal 页带草稿水印上线 | 3 | 4 | 12 | 橙 | legal 页统一 noindex 且不入 sitemap | 审核未通过则继续保持 noindex，不对外露出 | PO |
+| R-017 | 47/50 计算器缺单页详细需求文档 | 3 | 3 | 9 | 黄 | calculator-list-v2 清单级规格 + 统一页面模板兜底 | YMYL 类计算器优先补齐规格 | PO |
 
 ## 已关闭风险
 

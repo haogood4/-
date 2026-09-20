@@ -4,20 +4,20 @@ doc_id: tech/coding-standards
 type: sop
 domain: tech
 locale: zh-CN
-version: v1.0.0
-status: draft
-effective_from: 2025-01-01
+version: v1.1.0
+status: active
+effective_from: 2026-09-20
 owner: 技术负责人
-last_updated: 2025-01-01
+last_updated: 2026-09-20
 ---
 
 # 编码规范
 
 ## TypeScript
 
-- `strict: true`；禁止 `any`（除非明确注释说明）。
+- `strict: true`；禁止 `any`（ESLint `no-explicit-any = error`）。
 - 公共函数必须有显式返回类型。
-- 货币、利率、长度等关键字段使用 `decimal.js` 或 `bigint` 显式声明。
+- 数值输入一律经 `src/lib/calculators/_shared.ts` 校验（上限 1e12 / 最多 6 位小数）；如出现浮点精度不足的场景再评估 decimal.js / bigint。
 
 ## 命名
 
@@ -40,7 +40,7 @@ last_updated: 2025-01-01
 feat(mortgage): 增加 LPR 利率实时显示
 fix(bmi): 修复身高 ≤ 0 时的 NaN 输出
 docs(readme): 更新部署步骤
-chore(deps): 升级 next 至 14.2.x
+chore(deps): 升级 astro 至 7.3.x
 ```
 
 ## 分支
@@ -54,7 +54,7 @@ chore(deps): 升级 next 至 14.2.x
 ## PR 规则
 
 - 必须有 1 个 reviewer 通过
-- 必须通过 CI：lint、typecheck、unit、e2e
+- 必须通过 CI：typecheck、lint、unit（Vitest）、format:check、bundle:check、build + smoke-dist 断言
 - 涉及 `lib/calculators/**` 或 `knowledge-base/03-formulas/**` 必须额外 1 名领域审核人通过
 
 ---

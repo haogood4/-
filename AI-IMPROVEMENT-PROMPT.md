@@ -36,7 +36,7 @@
 4. **性能基建**：零 JS 框架水合、SW 三级缓存（HTML network-first / 哈希资产 cache-first / 其余 SWR）、`prefers-reduced-motion` 全局降级
 5. **安全基建**：CSP `script-src 'self'`（无内联脚本）、`public/_headers` 全套安全响应头
 6. **内容合规**：政策类文章 10 维度核对 SOP + 双签流程 + 过期自动降级（`isArticleExpired`）
-7. **质量门禁**：`pnpm verify` = typecheck（strict）+ eslint（0 error 门禁，`no-explicit-any`=error）+ vitest 271 用例 + prettier + mcp:check + bundle:check（JS gzip ≤100KB / CSS gzip ≤30KB）；`pnpm verify:dist` 追加 build 后 10 组冒烟断言
+7. **质量门禁**：`pnpm verify` = typecheck（strict）+ eslint（0 error 门禁，`no-explicit-any`=error）+ vitest 272 用例 + prettier + mcp:check + bundle:check（JS gzip ≤100KB / CSS gzip ≤30KB）；`pnpm verify:dist` 追加 build 后 10 组冒烟断言
 
 ### 2.3 北极星
 
@@ -96,7 +96,7 @@ AI 的每轮交付必须逐项通过以下可验证标准。这些是**硬门槛
 ### 3.7 测试
 
 - [x] 每个新纯函数引擎配套 vitest：正常值 + 空值 + 非法字符 + 边界 + 负数 + 小数精度 ≥6 类用例｜✅ 52/52 引擎配套；本轮新增 tool-store 13 用例（含损坏数据/上限/去重类）
-- [x] 全部测试通过（当前 271，只增不减）｜✅ 2026-09-20 verify 271/271
+- [x] 全部测试通过（当前 272，只增不减）｜✅ 2026-09-20 verify 272/272
 - [x] 修复 bug 必须先写「复现失败」的测试再修复｜✅ 流程性约定（P1-6 IRR 恒空即先例）
 
 ---

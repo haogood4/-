@@ -4,15 +4,17 @@ doc_id: docs/reports/a11y-report-redesign
 type: report
 domain: accessibility
 locale: zh-CN
-version: v1.0.0
+version: v1.1.0
 status: final
-last_updated: 2026-09-19
+last_updated: 2026-09-20
 owner: QA
 ---
 
 # 可访问性评估报告 —— 前端 UI/UX 重设计（redesign-frontend-uiux）
 
 **日期**：2026-09-19 · **标准**：WCAG 2.1 AA · **测试环境**：Chromium（浏览器代理）+ `astro preview` @ 127.0.0.1:4321。
+
+> **2026-09-20 回填**：a11y 巡检专项已将本报告核心检查项（单 h1、main 锚点、skip-link、img alt、表单 label、可访问命名、9 组颜色 token 对比度 ≥4.5:1）固化为 `scripts/smoke-dist.mjs` 第 11 组**硬失败**断言，75/75 页全过。后续回归由 smoke 门禁自动守卫，无需人工重跑本报告全流程。
 
 ## 1. axe-core 自动扫描（axe-core 4.10.2）
 

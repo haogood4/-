@@ -11,6 +11,8 @@ owner: 产品经理
 last_updated: 2025-01-01
 ---
 
+> ⚠️ 本清单（v1）已废弃，当前需求基线为 [calculator-list-v2.md](./calculator-list-v2.md)（50 工具，37 approved / 10 merged / 1 deferred / 3 rejected）。保留仅作历史参考。
+
 # MVP 计算器清单（15 个）
 
 > 评估口径：搜索需求 × 用户痛点 × 开发难度 × SEO 潜力 × YMYL 风险。

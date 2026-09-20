@@ -4,18 +4,18 @@ doc_id: pm/change-log
 type: change
 domain: project-management
 locale: zh-CN
-version: v1.0.0
-status: draft
+version: v1.1.0
+status: active
 effective_from: 2025-01-01
 owner: 项目经理
-last_updated: 2025-01-01
+last_updated: 2026-09-20
 ---
 
 # 变更记录 · Change Log
 
 | 日期 | 变更编号 | 变更描述 | 影响范围 | 决策人 |
 |---|---|---|---|---|
-| （暂无已确认的变更记录，新增请按变更控制流程追加） | | | | |
+| 2026-09-20 | CHG-20260920-001 | 2026-09-20 开发批次（main @ ef65004）：52 个计算器全量上线、搜索页、收藏/最近使用、RSS、暗色模式一期、a11y 巡检、法务资料包 DS-202609-08 提交、文档体系审计与修复 | 全站功能 / SEO / 合规 / 文档体系 | PO + PM + 技术负责人 |
 
 ---
 

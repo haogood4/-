@@ -26,6 +26,8 @@
 - 结构化数据深化：51 计算器页与 11 文章页新增 BreadcrumbList JSON-LD；新建通用 `BreadcrumbJsonLd` 组件并补齐 5 hub 详情 + hub 索引 + 文章列表（全站 114→183 块、69 个面包屑，noindex 页外全覆盖），smoke 断言 10 双守卫升级 ≥182/≥69，组件测试 +1（272 用例）
 - Git 仓库本地初始化（main 分支、初始提交 556 文件、.gitignore 生效），为 CI 首跑与版本管理铺路
 - a11y 巡检专项：smoke 新增第 11 组硬失败守卫（单 h1 / main 锚点 / skip-link / img alt / 表单 label / 按钮与链接可访问命名 / 颜色 token 9 组对比度 ≥4.5:1），基线 75/75 全过、零代码改动
+- 文档体系审计与修复（`docs/documentation-audit-report.md`）：技术文档 9 份重写对齐 Astro 实况（architecture/deployment/repo-structure/tech-stack/performance-budget 等），ADR-0001/0002 标记 Superseded 并新建 ADR-0004（Astro 7 + Cloudflare Pages）；PM 六册首次真实回填（issue-register 8 条已解决问题、risk-register 追加 R-015~017、decision-log 6 条决策、milestone 进度、change-log 批次）；calculator-list v1 加废弃横幅；测试数口径 271→272 校准
+- 新增需人工干预事项统一登记册（`docs/manual-pending-items.md`，8 项：法务闭环 / 域名 / CF Pages / GitHub 推送 / 统计决策 / 暗色二期批复等）与项目进度报告（`docs/progress-report-20260920.md`：14 阶段中 1–8 完成、处于阶段 11 灰度前置）
 
 ## [0.1.0] - 2026-09-20
 

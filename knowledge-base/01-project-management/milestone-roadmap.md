@@ -4,11 +4,11 @@ doc_id: pm/milestone-roadmap
 type: plan
 domain: project-management
 locale: zh-CN
-version: v1.0.0
-status: draft
+version: v1.1.0
+status: active
 effective_from: 2025-01-01
 owner: 项目经理
-last_updated: 2025-01-01
+last_updated: 2026-09-20
 ---
 
 # 14 阶段里程碑与排期
@@ -55,3 +55,12 @@ last_updated: 2025-01-01
 | T-015 | 数据分析周报 | SEO | 每周 2h | — | P1
 
 ---
+
+## 当前进度（2026-09-20）
+
+> 基线：main 分支 ef65004。
+
+- **阶段 1–8 已完成**：市场调研、产品定位、需求分析、信息架构、UI/UX、技术选型、核心功能开发，计算器实现 52 个。
+- **阶段 9（内容与 SEO）基本完成**：11 篇文章、JSON-LD 结构化数据 183 块、RSS、内链巡检。
+- **阶段 10（测试）已完成**：272 个用例 + 11 组 smoke 断言，CI 就绪待推送。
+- **当前处于阶段 11（灰度上线）前置阶段**：待办事项为域名就绪、法务审核闭环、GitHub 推送。

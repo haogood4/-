@@ -1,8 +1,10 @@
 # ADR-0001 · 前端框架选型
 
-- 状态：已采纳
+- 状态：Superseded —— 已被 ADR-0004（Astro 7 静态架构 + Cloudflare Pages）取代
 - 日期：2025-01-01
 - 决策者：技术负责人
+
+> 说明：本 ADR 决策（Next.js 14 App Router）已废弃，仅作历史记录保留；现行决策见 `0004-astro7-cloudflare-pages.md`。
 
 ## 背景
 
