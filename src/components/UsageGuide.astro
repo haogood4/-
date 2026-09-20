@@ -1,21 +1,17 @@
 ---
 // 使用说明区块：插入在每工具页 h1（收藏按钮注入点）之后。
+// 步骤文案按当前 URL 从 src/data/usage-guides.ts 查表逐工具定制，未收录时回退通用文案。
 // 静态 HTML + CSS，无 JS（兼容 CSP）；标题「使用说明」四字做高亮徽章样式，确保醒目。
+import { stepsFor } from "../data/usage-guides";
 interface Props {
   steps?: string[];
 }
-const {
-  steps = [
-    "在下方表单中按要求填写输入项（留空或格式错误会即时提示）。",
-    "点击「计算 / 生成 / 检测」按钮，结果在下方结果区展示。",
-    "修改输入后结果会提示「已变更」，请重新点击按钮获取最新结果。",
-    "可用「复制结果 / 分享」按钮带走结果；点击右上角「收藏本工具」可加入首页「我的收藏」。",
-  ],
-} = Astro.props;
+const { steps } = Astro.props;
+const items = steps ?? stepsFor(Astro.url.pathname);
 ---
 <section class="usage-guide" aria-label="使用说明">
   <h2 class="usage-title"><span class="usage-badge">使用说明</span></h2>
   <ol class="usage-steps">
-    {steps.map((s) => <li>{s}</li>)}
+    {items.map((s) => <li>{s}</li>)}
   </ol>
 </section>

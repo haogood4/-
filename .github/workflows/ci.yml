@@ -39,7 +39,7 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Smoke test dist (10 assertion groups)
+      - name: Smoke test dist (12 assertion groups)
         run: node scripts/smoke-dist.mjs
 
       - name: Assert sitemap and robots present
