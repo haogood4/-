@@ -62,8 +62,8 @@
   与 dual-sign-todo.csv（双镜像）。
 
 六、联系人
-  项目负责人：[姓名]    邮箱：[邮箱]    飞书：[账号]
-  AI Agent 提交编号：TraeCode AI Agent / commit 2b82884
+  项目负责人：**[[姓名-必填]]**    邮箱：**[[邮箱-必填]]**    飞书：**[[账号-必填]]**
+  AI Agent 提交编号：TraeCode AI Agent / commit **[[git-hash-必填]]**（转发前 `git log --oneline -1` 取最新）
 
 期待您的反馈。
 
