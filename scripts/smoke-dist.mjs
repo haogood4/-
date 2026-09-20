@@ -43,11 +43,11 @@ function urlToPath(href) {
 
 console.log("冒烟断言（12 组）：");
 
-// ── 1. 页面总数 = 89（84 + 敏感词/关键词密度/正则测试/标题字数/代码对比 五文本工具） ──
+// ── 1. 页面总数 = 92（89 + 图片压缩/繁简转换/服装尺码 P1 三工具） ──
 {
   const n = htmlFiles.length;
-  if (n === 89) pass(`1. 页面总数 = 89（实际 ${n}）`);
-  else fail("1. 页面总数应为 89", `实际 ${n}`);
+  if (n === 92) pass(`1. 页面总数 = 92（实际 ${n}）`);
+  else fail("1. 页面总数应为 92", `实际 ${n}`);
 }
 
 // ── 2. 关键路由存在 ──────────────────────────────────────────
@@ -78,6 +78,9 @@ console.log("冒烟断言（12 组）：");
     "/dev/regex-tester/",
     "/efficiency/title-length-cn/",
     "/dev/code-diff/",
+    "/efficiency/image-compress-cn/",
+    "/efficiency/chinese-convert-cn/",
+    "/daily/clothing-size-cn/",
   ];
   const missing = routes.filter((r) =>
     r === "/404" ? !existsSync(join(DIST, "404.html")) : !urlToPath(r),
@@ -336,7 +339,7 @@ console.log("冒烟断言（12 组）：");
       const bad = docs.filter(
         (d) => !d.t || !d.u || !urlToPath(d.u.replace(/^\//, "")),
       );
-      idxOk = docs.length >= 72 && bad.length === 0;
+      idxOk = docs.length >= 75 && bad.length === 0;
       if (!idxOk) idxWhy = `docs=${docs.length} bad=${bad.length}`;
     } catch (e) {
       idxWhy = `parse: ${e.message}`;
@@ -384,15 +387,15 @@ console.log("冒烟断言（12 组）：");
   }
   if (bad.length > 0) {
     fail("10. JSON-LD 解析失败", bad.slice(0, 3).join(" | "));
-  } else if (total < 197) {
+  } else if (total < 206) {
     fail(
       "10. JSON-LD 覆盖不足",
-      `块数 ${total}（56 计算器页×3 + 文章×2 + hub/列表面包屑应 ≥197）`,
+      `块数 ${total}（68 计算器页×3 + 文章×2 + hub/列表面包屑应 ≥206）`,
     );
-  } else if (breadcrumbs < 74) {
+  } else if (breadcrumbs < 77) {
     fail(
       "10. BreadcrumbList 覆盖不足",
-      `块数 ${breadcrumbs}（56 计算器 + 11 文章 + 7 hub/列表应 ≥74）`,
+      `块数 ${breadcrumbs}（68 计算器 + 11 文章 + 7 hub/列表应 ≥77）`,
     );
   } else {
     pass(
@@ -524,7 +527,7 @@ console.log("冒烟断言（12 组）：");
     fail("11. a11y", issues.join(" | "));
   } else {
     pass(
-      `11. a11y（89 页 h1=1、main/skip-link/label/alt/btn/anc 全齐，对比度 9 组 ≥4.5:1）`,
+      `11. a11y（92 页 h1=1、main/skip-link/label/alt/btn/anc 全齐，对比度 9 组 ≥4.5:1）`,
     );
   }
 }

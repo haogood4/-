@@ -1,0 +1,200 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const description =
+  "免费在线图片压缩工具：拖拽或选择 PNG/JPEG/WebP 图片（单张不超过 10MB），可调压缩质量（0.1–1.0）与最大边长，浏览器本地 Canvas 压缩后直接下载，图片绝不上传服务器。";
+
+const faqItems = [
+  {
+    q: "图片会上传到服务器吗？",
+    a: "不会。压缩全程在您的浏览器内用 Canvas 本地完成，图片数据不经过任何服务器，也不会被保存，敏感图片也可放心使用。",
+  },
+  {
+    q: "支持哪些格式和多大的图片？",
+    a: "支持 PNG、JPEG、WebP 三种格式，单张不超过 10MB；输出为 JPEG 或 WebP。GIF、BMP、TIFF 等格式暂不支持。",
+  },
+  {
+    q: "压缩质量怎么选？",
+    a: "质量取值 0.1–1.0，默认 0.8。数值越大画质越好、体积越大；网页配图一般 0.7–0.85 即可兼顾清晰度与体积。",
+  },
+  {
+    q: "为什么 PNG 图片压缩后变成了 JPEG？",
+    a: "PNG 无损格式经有损压缩后需转为 JPEG 或 WebP。若图片含透明背景，请选择 WebP 输出（保留透明通道）；选 JPEG 时透明区域会垫白底。",
+  },
+  {
+    q: "压缩后体积反而变大了怎么办？",
+    a: "本身已高度压缩的小图或含大量文字/线条的截图，有损压缩收益有限甚至增大。可尝试降低质量、勾选缩小最大边长，或改用 WebP 输出。",
+  },
+  {
+    q: "压缩结果准确吗？",
+    a: "压缩效果取决于图片内容与所选参数，展示的节省比例仅供参考；建议压缩后预览确认画质再用于正式场景。",
+  },
+];
+---
+
+<BaseLayout
+  title="在线图片压缩工具 — PNG/JPEG/WebP 免费压缩（本地处理不上传）"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb items={[{ label: "首页", href: "/" }, { label: "效率工具" }, { label: "在线图片压缩" }]} />
+    <h1>在线图片压缩工具</h1>
+    <UsageGuide />
+    <p class="lead">PNG / JPEG / WebP 图片本地压缩 · 可调质量与尺寸 · 绝不上传</p>
+
+    <form id="calc-form" class="card" novalidate aria-label="图片压缩表单">
+      <div class="field">
+        <label for="file-input">选择图片</label>
+        <label class="dropzone" id="dropzone" for="file-input">
+          <span class="dropzone__title">把图片拖到这里，或点击选择文件</span>
+          <span class="dropzone__hint">支持 PNG / JPEG / WebP，单张不超过 10MB</span>
+          <input type="file" id="file-input" class="dropzone__input" accept="image/png,image/jpeg,image/webp" />
+        </label>
+        <p class="field-hint" id="file-info" hidden></p>
+        <p class="field-error" id="field-error-file" hidden></p>
+      </div>
+      <div class="field">
+        <label for="quality-range">压缩质量（0.1 – 1.0，默认 0.8）</label>
+        <div class="quality-row">
+          <input type="range" id="quality-range" min="0.1" max="1" step="0.05" value="0.8" aria-label="压缩质量滑块" />
+          <input type="number" id="quality-num" class="field-input quality-num" min="0.1" max="1" step="0.05" value="0.8" aria-label="压缩质量数值" />
+        </div>
+        <p class="field-error" id="field-error-quality" hidden></p>
+      </div>
+      <div class="field">
+        <label for="max-edge">最大边长</label>
+        <select id="max-edge" class="field-select">
+          <option value="0" selected>不缩放</option>
+          <option value="1920">最长边不超过 1920px</option>
+          <option value="1600">最长边不超过 1600px</option>
+          <option value="1280">最长边不超过 1280px</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="output-format">输出格式</label>
+        <select id="output-format" class="field-select">
+          <option value="image/jpeg" selected>JPEG（体积小，透明区域垫白底）</option>
+          <option value="image/webp">WebP（保留透明通道）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">开始压缩</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">重置</button>
+      </div>
+    </form>
+
+    <div class="card" id="preview-card">
+      <div class="preview-grid">
+        <figure class="preview-item">
+          <img id="preview-original" alt="原图预览" width="320" height="240" />
+          <figcaption id="preview-original-caption">原图预览</figcaption>
+        </figure>
+        <figure class="preview-item">
+          <img id="preview-compressed" alt="压缩后预览" width="320" height="240" />
+          <figcaption id="preview-compressed-caption">压缩后预览</figcaption>
+        </figure>
+      </div>
+      <p class="field-hint">压缩在浏览器本地完成，图片不会上传；压缩效果与节省比例仅供参考。</p>
+    </div>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">选择图片并点击「开始压缩」查看结果</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">压缩结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>参数或图片已变更，请重新压缩</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button>
+          <button type="button" id="download-btn" class="btn btn-primary" disabled>下载图片</button>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+      <li><a href="/efficiency/qr-code-cn/">二维码生成器</a></li>
+      <li><a href="/efficiency/color-converter-cn/">颜色转换计算器</a></li>
+      <li><a href="/dev/base64/">Base64 编码解码计算器</a></li>
+    </ul></section>
+
+    <CalcJsonLd name="在线图片压缩工具" description={description} faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/image-compress-cn-page.js"></script>
+</BaseLayout>
+
+<style>
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    padding: 28px 16px;
+    border: 2px dashed var(--border-color, #cbd5e1);
+    border-radius: 12px;
+    background: var(--surface-2, rgba(148, 163, 184, 0.08));
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .dropzone:hover,
+  .dropzone--active {
+    border-color: var(--accent, #0f766e);
+    background: var(--accent-soft, rgba(15, 118, 110, 0.08));
+  }
+  .dropzone__title {
+    font-weight: 600;
+  }
+  .dropzone__hint {
+    font-size: 0.85em;
+    opacity: 0.75;
+  }
+  .dropzone__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .quality-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .quality-row input[type="range"] {
+    flex: 1;
+    min-width: 0;
+  }
+  .quality-num {
+    width: 96px;
+    flex: none;
+  }
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .preview-item {
+    margin: 0;
+    text-align: center;
+  }
+  .preview-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background: var(--surface-2, rgba(148, 163, 184, 0.12));
+  }
+  .preview-item figcaption {
+    margin-top: 8px;
+    font-size: 0.85em;
+    overflow-wrap: anywhere;
+    opacity: 0.8;
+  }
+</style>

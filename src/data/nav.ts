@@ -104,6 +104,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "关键词密度分析", href: "/efficiency/keyword-density-cn/" },
       { label: "标题字数检测", href: "/efficiency/title-length-cn/" },
       { label: "正则表达式测试", href: "/dev/regex-tester/" },
+      { label: "图片压缩工具", href: "/efficiency/image-compress-cn/" },
+      { label: "繁体简体转换", href: "/efficiency/chinese-convert-cn/" },
     ],
   },
   {
@@ -113,6 +115,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "年龄计算器", href: "/daily/age/" },
       { label: "日期差计算器", href: "/daily/date-diff/" },
       { label: "手机号归属地查询", href: "/efficiency/phone-region-cn/" },
+      { label: "服装尺码对照表", href: "/daily/clothing-size-cn/" },
     ],
   },
 ];

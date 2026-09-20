@@ -1,4 +1,4 @@
-# 计算器大全 — 全部工具清单（65 个）
+# 计算器大全 — 全部工具清单（68 个）
 
 按 6 大分类整理，每行复制即用（站点路径相对于部署根域名）。
 
@@ -46,7 +46,7 @@
 - ROAS 计算器 — /investment/roas-cn/
 - 转化率 — /investment/conversion-rate-cn/
 
-## 效率工具（26）
+## 效率工具（28）
 - 四则运算计算器 — /daily/basic/
 - 百分比计算器 — /math/percentage/
 - 折扣计算器 — /math/discount/
@@ -73,11 +73,14 @@
 - 敏感词检测 — /efficiency/sensitive-word-cn/
 - 关键词密度分析 — /efficiency/keyword-density-cn/
 - 标题字数检测 — /efficiency/title-length-cn/
+- 图片压缩工具 — /efficiency/image-compress-cn/
+- 繁体简体转换 — /efficiency/chinese-convert-cn/
 
-## 日常工具（3）
+## 日常工具（4）
 - 年龄计算器 — /daily/age/
 - 日期差计算器 — /daily/date-diff/
 - 手机号归属地查询 — /efficiency/phone-region-cn/
+- 服装尺码对照表 — /daily/clothing-size-cn/
 
 ## 信息页（4）
 - 知识库 — /articles/
@@ -88,20 +91,20 @@
 - 用户协议 — /legal/terms/
 - 免责声明 — /legal/disclaimer/
 
-合计 65 个计算工具 + 7 个信息页。
+合计 68 个计算工具 + 7 个信息页。
 
 ## 打包复制格式（如需 JSON）
 
 ```json
 {
-  "total": 65,
+  "total": 68,
   "categories": [
     {"key": "finance", "name": "金融理财", "count": 16, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
     {"key": "health", "name": "健康生活", "count": 5, "tools": [...]},
     {"key": "renovation", "name": "装修家居", "count": 5, "tools": [...]},
     {"key": "investment", "name": "投资专业", "count": 10, "tools": [...]},
-    {"key": "efficiency", "name": "效率工具", "count": 26, "tools": [...]},
-    {"key": "daily", "name": "日常工具", "count": 3, "tools": [...]}
+    {"key": "efficiency", "name": "效率工具", "count": 28, "tools": [...]},
+    {"key": "daily", "name": "日常工具", "count": 4, "tools": [...]}
   ]
 }
 ```
