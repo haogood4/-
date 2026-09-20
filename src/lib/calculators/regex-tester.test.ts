@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { matchRegex, MAX_MATCHES } from "./regex-tester-cn";
+import { matchRegex, MAX_MATCHES } from "./regex-tester";
 
-describe("regex-tester-cn", () => {
+describe("regex-tester", () => {
   it("全局匹配数字：返回全部匹配及 index/长度", () => {
     const r = matchRegex("\\d+", "g", "a1b22c333");
     expect(r.ok).toBe(true);

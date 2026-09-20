@@ -69,7 +69,7 @@
 - URL 编码解码 — /dev/url-encode/
 - 汉字转拼音 — /efficiency/pinyin-cn/
 - 代码对比 — /dev/code-diff/
-- 正则表达式测试 — /dev/regex-tester-cn/
+- 正则表达式测试 — /dev/regex-tester/
 - 敏感词检测 — /efficiency/sensitive-word-cn/
 - 关键词密度分析 — /efficiency/keyword-density-cn/
 - 标题字数检测 — /efficiency/title-length-cn/

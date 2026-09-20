@@ -4,7 +4,7 @@ import {
   MAX_MATCHES,
   type RegexMatchItem,
   type RegexMatchValue,
-} from "../lib/calculators/regex-tester-cn";
+} from "../lib/calculators/regex-tester";
 import {
   requireEl,
   setFieldError,

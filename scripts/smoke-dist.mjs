@@ -75,7 +75,7 @@ console.log("冒烟断言（12 组）：");
     "/efficiency/phone-region-cn/",
     "/efficiency/sensitive-word-cn/",
     "/efficiency/keyword-density-cn/",
-    "/dev/regex-tester-cn/",
+    "/dev/regex-tester/",
     "/efficiency/title-length-cn/",
     "/dev/code-diff/",
   ];
