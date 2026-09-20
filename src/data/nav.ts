@@ -91,6 +91,9 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "时间戳转换", href: "/dev/timestamp/" },
       { label: "IP 子网计算", href: "/efficiency/ip-subnet-cn/" },
       { label: "字数统计", href: "/efficiency/word-count-cn/" },
+      { label: "随机密码生成器", href: "/efficiency/password-generator-cn/" },
+      { label: "HEX RGB 颜色转换", href: "/efficiency/color-converter-cn/" },
+      { label: "文本处理工具", href: "/efficiency/text-transform-cn/" },
     ],
   },
   {

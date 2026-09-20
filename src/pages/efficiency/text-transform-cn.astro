@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "支持哪些转换？", a: "支持 5 种：转大写、转小写、去除所有空格（含换行）、去除换行折叠为单行、首尾去空白（含全角空格）。" },
+  { q: "会修改原文吗？", a: "不会。原文与结果分离显示，您可以单独复制结果而不影响原文。" },
+  { q: "支持繁简转换吗？", a: "当前版本不支持。繁简互转需额外字典或 opencc 库（约 50KB），为保持站点 JS 体积预算暂未纳入。" },
+  { q: "Unicode 字符数怎么算？", a: "按 Unicode 码点计数（如 emoji 与中文各算 1 个字符），与 Excel 的 LEN-1 函数一致。" },
+  { q: "数据会上传吗？", a: "所有转换在浏览器本地完成，文本内容不会离开您的设备。" },
+];
+---
+<BaseLayout title="在线文本处理工具 — 大小写转换/去除空行/繁简清洗" description="免费在线文本处理：转大写、转小写、去除所有空格、去除换行、首尾去空白（含全角空格），支持 Unicode 字符计数，本地处理数据不上传。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"文本处理工具"}]} />
+    <h1>在线文本处理工具</h1>
+    <p class="lead">大小写转换 / 去空行 / 首尾去空白 · 本地处理</p>
+
+    <form id="calc-form" class="card" novalidate>
+      <div class="field">
+        <label for="text">原文</label>
+        <textarea id="text" class="field-input" rows="4" placeholder="把文本粘贴到这里…"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" data-mode="upper">转大写</button>
+        <button type="button" class="btn btn-secondary" data-mode="lower">转小写</button>
+        <button type="button" class="btn btn-secondary" data-mode="nospace">去除所有空格</button>
+        <button type="button" class="btn btn-secondary" data-mode="noline">去除换行</button>
+        <button type="button" class="btn btn-secondary" data-mode="trim">首尾去空白</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">清空</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">点击上方任一转换按钮查看结果</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">处理结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>原文已变更，请重新转换</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+      <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+      <li><a href="/efficiency/password-generator-cn/">随机密码生成器</a></li>
+    </ul></section>
+
+    <CalcJsonLd name="在线文本处理工具" description="免费在线文本处理：转大写、转小写、去除所有空格、去除换行、首尾去空白（含全角空格），支持 Unicode 字符计数，本地处理数据不上传。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/text-transform-cn-page.js"></script>
+</BaseLayout>

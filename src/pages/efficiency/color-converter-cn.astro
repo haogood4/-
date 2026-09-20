@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "HEX 颜色是什么？", a: "十六进制颜色码，由 # 加 6 位十六进制字符表示（如 #2563eb），是 CSS/HTML 中最常用的颜色格式。前两位表示红、中间两位绿、最后两位蓝。" },
+  { q: "RGB 颜色是什么？", a: "由红(R)、绿(G)、蓝(B)三原色按 0~255 强度组合而成（如 rgb(37, 99, 235)），是显示器/图像软件的基础颜色模型。" },
+  { q: "支持 3 位简写 HEX 吗？", a: "支持。如 #abc 会被自动展开为 #aabbcc。" },
+  { q: "颜色预览块的颜色对吗？", a: "实时反映您输入的合法值；非法输入时显示为透明并提示错误。" },
+  { q: "能转 HSL 或 CMYK 吗？", a: "本工具专注 HEX↔RGB。HSL/CMYK 涉及浮点与不同色域模型，建议使用专业设计工具。" },
+];
+---
+<BaseLayout title="HEX 与 RGB 颜色转换器 — 在线颜色码互转（含预览）" description="免费在线颜色转换：HEX 与 RGB 双向实时互转，支持 3 位简写 HEX (#abc) 自动展开为 6 位 (#aabbcc)，含颜色预览块；适用于 CSS、HTML、设计师配色。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"颜色转换器"}]} />
+    <h1>HEX 与 RGB 颜色转换器</h1>
+    <p class="lead">双向实时互转 · 3 位简写自动展开 · 含颜色预览</p>
+
+    <form id="calc-form" class="card" novalidate>
+      <div class="row">
+        <div class="field">
+          <label for="hex-input">HEX（如 #2563eb）</label>
+          <input type="text" id="hex-input" class="field-input" placeholder="#2563eb" maxlength="7" />
+          <p class="field-error" id="field-error-hex" hidden></p>
+        </div>
+        <div class="field">
+          <label for="rgb-input">RGB（如 37, 99, 235）</label>
+          <input type="text" id="rgb-input" class="field-input" placeholder="37, 99, 235" />
+          <p class="field-error" id="field-error-rgb" hidden></p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">转换</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">重置</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">输入 HEX 或 RGB 后显示颜色预览</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">颜色预览</p>
+        <p id="result-main" class="result-main">
+          <span id="color-block" aria-hidden="true"></span>
+          <span id="color-text"></span>
+        </p>
+        <p id="result-detail" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新转换</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制 HEX</button>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+      <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+      <li><a href="/efficiency/scientific-cn/">科学计算器</a></li>
+    </ul></section>
+
+    <CalcJsonLd name="HEX 与 RGB 颜色转换器" description="免费在线颜色转换：HEX 与 RGB 双向实时互转，支持 3 位简写 HEX (#abc) 自动展开为 6 位 (#aabbcc)，含颜色预览块；适用于 CSS、HTML、设计师配色。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/color-converter-cn-page.js"></script>
+</BaseLayout>

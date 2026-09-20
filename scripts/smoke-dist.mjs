@@ -43,11 +43,11 @@ function urlToPath(href) {
 
 console.log("冒烟断言（12 组）：");
 
-// ── 1. 页面总数 = 75（71 + legal 三页骨架 + 搜索页） ─────────
+// ── 1. 页面总数 = 78（75 + 密码/颜色/文本 三新工具） ─────────
 {
   const n = htmlFiles.length;
-  if (n === 75) pass(`1. 页面总数 = 75（实际 ${n}）`);
-  else fail("1. 页面总数应为 75", `实际 ${n}`);
+  if (n === 78) pass(`1. 页面总数 = 78（实际 ${n}）`);
+  else fail("1. 页面总数应为 78", `实际 ${n}`);
 }
 
 // ── 2. 关键路由存在 ──────────────────────────────────────────
@@ -501,7 +501,7 @@ console.log("冒烟断言（12 组）：");
     fail("11. a11y", issues.join(" | "));
   } else {
     pass(
-      `11. a11y（75 页 h1=1、main/skip-link/label/alt/btn/anc 全齐，对比度 9 组 ≥4.5:1）`,
+      `11. a11y（78 页 h1=1、main/skip-link/label/alt/btn/anc 全齐，对比度 9 组 ≥4.5:1）`,
     );
   }
 }
