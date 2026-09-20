@@ -1,0 +1,86 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "中文分词准确吗？", a: "本工具采用「滑动窗口 + 频次聚合」的轻量级近似分词策略，会把所有相邻 2~6 字的中文组合都纳入统计；它不是 jieba 等字典分词器，但在 SEO 场景下足以粗筛高频关键词。如需精确分词请使用专业 NLP 工具。" },
+  { q: "关键词密度最佳范围是多少？", a: "主流 SEO 经验值为 1% - 3%。低于 1% 可能主题信号不足；高于 3% 易被判为关键词堆砌。建议关注核心关键词密度在 1.5% - 2.5%，同时配合长尾关键词自然分布。" },
+  { q: "为什么需要停用词过滤？", a: "「的、了、在、是」等虚词出现频率极高但无 SEO 价值，过滤后 TOP N 才能反映真正有意义的关键词。本工具内置 30 个常用中文停用词，开箱即用。" },
+  { q: "如何根据密度报告优化 SEO 内容？", a: "1) 确认核心关键词出现在标题、首段、结尾；2) 围绕密度较高的长尾关键词扩展相关小节；3) 检查同义词/近义词覆盖；4) 避免刻意堆砌，保持自然可读。" },
+  { q: "长文本性能如何？", a: "算法复杂度 O(N × maxLen)，1 万字中文约 10ms 内完成；10 万字级别仍秒级响应。建议超过 50 万字时分批分析以保持 UI 流畅。" },
+];
+---
+<BaseLayout title="关键字密度分析 — SEO 内容关键词频率检测" description="免费在线关键词密度分析，支持中文/英文/数字，停用词可定制，TOP10 词频与密度百分比，本地处理不上传。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"关键字密度分析"}]} />
+    <h1>关键字密度分析</h1>
+    <p class="lead">SEO 内容关键词频率检测 · TOP N 词频与密度百分比</p>
+
+    <form id="calc-form" class="card" novalidate>
+      <div class="field">
+        <label for="text">文本</label>
+        <textarea id="text" class="field-input" rows="8" placeholder="把要分析的文本粘贴到这里…"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field-row">
+        <div class="field-inline">
+          <label for="top-n">TOP N</label>
+          <input id="top-n" class="field-input field-input-num" type="number" min="1" max="20" step="1" value="10" />
+        </div>
+        <div class="field-inline">
+          <label for="min-len">最低词长</label>
+          <input id="min-len" class="field-input field-input-num" type="number" min="1" max="4" step="1" value="2" />
+        </div>
+        <div class="field-inline">
+          <label class="checkbox-label" for="use-stopwords">
+            <input id="use-stopwords" type="checkbox" checked />
+            启用停用词过滤
+          </label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">分析</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">清空</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">填写上方文本后点击「分析」查看结果</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">关键字密度分析结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新分析</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button>
+        </div>
+        <div class="density-table-wrap">
+          <table class="density-table" id="density-table" aria-label="关键词密度表">
+            <thead>
+              <tr>
+                <th scope="col">词</th>
+                <th scope="col">次数</th>
+                <th scope="col">密度 %</th>
+                <th scope="col" class="density-bar-col">分布</th>
+              </tr>
+            </thead>
+            <tbody id="density-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+      <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      <li><a href="/efficiency/text-transform-cn/">文本处理工具</a></li>
+      <li><a href="/efficiency/pinyin-cn/">汉字转拼音</a></li>
+    </ul></section>
+
+    <CalcJsonLd name="关键字密度分析" description="免费在线关键词密度分析，支持中文/英文/数字，停用词可定制，TOP10 词频与密度百分比，本地处理不上传。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/keyword-density-cn-page.js"></script>
+</BaseLayout>

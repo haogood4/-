@@ -57,7 +57,7 @@ AI 的每轮交付必须逐项通过以下可验证标准。这些是**硬门槛
 
 ### 3.2 性能指标
 
-- [x] **CSS ≤ 30KB**、**JS ≤ 100KB**（`pnpm bundle:check` 通过；当前 6.68KB / **64.88KB**，65KB 软红线内 ✅。**口径修正（2026-09-20）**：门禁由 gzip 切为 **brotli**（生产 Cloudflare Pages 默认下发 brotli，gzip 高估约 15~18%，同文件 gzip 74.41KB vs brotli 64.88KB），gzip 值仍随报告输出作参考；历史 gzip 数值不再可比。去重专项三阶段完成：①9 页样板提取至 `src/scripts/_page-kit.ts`；②42 页 codemod 全量迁移 kit + 统一外置管线（dist 无 Astro 打包 JS）；③basic-page 收尾去重（requireEl/copyText/flashButton 三副本→kit import，附带获得收藏/最近使用注入）+ 6 新工具经 metafile 审计无新增可去重空间（大头为 61 独立引擎真实代码）；**新增代码不得再使 JS 增长，若确需增长（如 P1-7② theme.js +0.5KB）须在此登记并核 brotli 总量**）
+- [x] **CSS ≤ 30KB**、**JS ≤ 100KB**（`pnpm bundle:check` 通过；当前 7.26KB / **74.42KB**，超出 65KB 软红线 9.42KB ⚠️ 增量登记（2026-09-20）：P0 五文本工具（正则测试/关键词密度/敏感词/标题字数/代码对比）新增 5 引擎 + 5 页面脚本，均为不可去重业务逻辑，样板已最大化复用 `_page-kit`；距 100KB 硬限余量 25.6KB ✅。**口径修正（2026-09-20）**：门禁由 gzip 切为 **brotli**（生产 Cloudflare Pages 默认下发 brotli，gzip 高估约 15~18%，同文件 gzip 74.41KB vs brotli 64.88KB），gzip 值仍随报告输出作参考；历史 gzip 数值不再可比。去重专项三阶段完成：①9 页样板提取至 `src/scripts/_page-kit.ts`；②42 页 codemod 全量迁移 kit + 统一外置管线（dist 无 Astro 打包 JS）；③basic-page 收尾去重（requireEl/copyText/flashButton 三副本→kit import，附带获得收藏/最近使用注入）+ 6 新工具经 metafile 审计无新增可去重空间（大头为 61 独立引擎真实代码）；**新增代码不得再使 JS 增长，若确需增长（如 P1-7② theme.js +0.5KB）须在此登记并核 brotli 总量**）
 - [x] 75 页构建时间 ≤ 30s（当前 ~2.4s；P2-9 搜索页 +1）｜✅ 2026-09-20 审计
 - [x] 动画只允许 transform/opacity/box-shadow/color，禁止 width/height/top/left 过渡｜✅ 2026-09-20 grep 审计 0 违规
 - [x] 每页 JS 依赖数不增加（当前依赖：marked 仅构建期）｜✅ 运行时零第三方依赖（kit 为自有代码）

@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "这个标题字数检测工具能做什么？", a: "输入网站标题或社交媒体文案标题，即时统计 Unicode 字符数、UTF-8 字节数与显示宽度，并对照百度、谷歌、微博、知乎四个平台的标题长度建议给出 OK/WARN/OVER 评级与优化建议。" },
+  { q: "字符数、字节数、显示宽度有什么区别？", a: "字符数按 Unicode 码点计（一个汉字或一个 emoji 都算 1）；字节数是 UTF-8 编码占用空间（汉字通常 3 字节、emoji 4 字节）；显示宽度按 CJK/全角字符占 2 格、其余占 1 格估算，更接近屏幕上的实际视觉长度。" },
+  { q: "各平台的建议阈值从哪里来？", a: "参考各平台公开的 SEO 指南与列表页展示惯例：百度中文标题约 30 字内完整显示，谷歌 title 建议 50-60 字符，微博信息流标题 18-22 字效果最佳，知乎标题建议 30-50 字。" },
+  { q: "为什么中文和英文标题的字节数差异很大？", a: "UTF-8 对 ASCII 字符用 1 字节，对汉字用 3 字节，对多数 emoji 用 4 字节。部分平台（如推特类）按字节计费长度，跨语言标题需同时关注两项指标。" },
+  { q: "检测结果准确吗？数据会上传吗？", a: "统计口径为本地精确计算；各平台截断策略会随版本调整，检测结果仅供参考。所有计算在浏览器本地完成，标题内容不会上传服务器。" },
+];
+---
+<BaseLayout title="在线标题字数检测工具 — 百度谷歌微博知乎标题长度优化" description="免费标题字数检测：统计标题 Unicode 字符数、UTF-8 字节数与显示宽度，对照百度、谷歌、微博、知乎四大平台标题长度建议给出 OK/WARN/OVER 评级与 SEO 优化建议，本地计算不上传。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"标题字数检测"}]} />
+    <h1>在线标题字数检测工具</h1>
+    <p class="lead">字符 / 字节 / 显示宽度统计 · 百度/谷歌/微博/知乎标题长度建议</p>
+
+    <form id="calc-form" class="card" novalidate>
+      <div class="field">
+        <label for="title">待检测标题</label>
+        <textarea id="title" class="field-input" rows="3" maxlength="200" placeholder="把网站标题或社交媒体文案粘贴到这里…"></textarea>
+        <p class="field-error" id="field-error-title" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">检测标题</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">重置</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">填写上方标题后点击「检测标题」</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption"></p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail" class="result-process"></p>
+        <div id="suggestions"></div>
+        <p id="result-stale-hint" class="result-hint" hidden>标题已变更，请重新检测</p>
+        <p class="result-hint">各平台截断策略可能随版本调整，检测结果仅供参考。</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制检测摘要</button>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+      <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      <li><a href="/efficiency/keyword-density-cn/">关键词密度计算器</a></li>
+      <li><a href="/efficiency/sensitive-word-cn/">敏感词检测</a></li>
+    </ul></section>
+
+    <CalcJsonLd name="在线标题字数检测工具" description="免费标题字数检测：统计标题 Unicode 字符数、UTF-8 字节数与显示宽度，对照百度、谷歌、微博、知乎四大平台标题长度建议给出 OK/WARN/OVER 评级与 SEO 优化建议，本地计算不上传。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/title-length-cn-page.js"></script>
+</BaseLayout>

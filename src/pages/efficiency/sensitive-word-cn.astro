@@ -1,0 +1,83 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "敏感词会上传到服务器吗？", a: "不会。所有检测均在浏览器本地完成，文本不会离开您的设备。" },
+  { q: "覆盖哪些类型？", a: "内置 4 大类：政治（占位示例）、暴力、色情、广告引流；同时附带可疑链接、手机号/座机、二维码等规避写法识别。" },
+  { q: "会误报吗？", a: "词库采用常见违规词覆盖，正常文本不会被误报；如有边缘命中请结合上下文人工复核。" },
+  { q: "能自定义词库吗？", a: "当前版本为固定词库演示，可在分类勾选处按需关闭某一类以降低误报。" },
+  { q: "「*」遮罩长度代表什么？", a: "单个片段最多 8 个 *，用于避免原始敏感词被还原；具体长度可在 maskText 实现中调整。" },
+  { q: "适合哪些场景？", a: "自媒体/UGC 内容自检、运营文案预审、客服话术合规初筛、教学演示等。" },
+];
+---
+<BaseLayout title="敏感词检测工具 — 在线检测违规文本（本地处理不上传）" description="免费在线敏感词检测：覆盖政治/暴力/色情/广告引流 4 大类共 80+ 常见违规词，附带可疑链接、联系方式、二维码等规避写法识别，一键生成脱敏遮罩文本。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"敏感词检测工具"}]} />
+    <h1>敏感词检测工具</h1>
+    <p class="lead">政治 / 暴力 / 色情 / 广告引流 4 大类 · 规避写法识别 · 脱敏遮罩 · 本地处理</p>
+
+    <form id="calc-form" class="card" novalidate>
+      <div class="field">
+        <label for="text">待检测文本（≤ 20000 字）</label>
+        <textarea id="text" class="field-input" rows="6" placeholder="把需要检测的文本粘贴到这里…"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+
+      <div class="field checkline">
+        <span class="field-label">检测范围（默认全选）</span>
+        <label for="cat-politics"><input type="checkbox" id="cat-politics" data-cat="politics" checked /> 政治敏感</label>
+        <label for="cat-violence"><input type="checkbox" id="cat-violence" data-cat="violence" checked /> 暴力相关</label>
+        <label for="cat-porn"><input type="checkbox" id="cat-porn" data-cat="porn" checked /> 色情低俗</label>
+        <label for="cat-ad"><input type="checkbox" id="cat-ad" data-cat="ad" checked /> 广告引流</label>
+      </div>
+
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">开始检测</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">重置</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">粘贴文本后点击「开始检测」</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">检测摘要</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail" class="result-process"></p>
+        <div class="sensitive-sections">
+          <section class="sensitive-section">
+            <h3>分类命中</h3>
+            <ul id="result-categories" class="category-list"></ul>
+          </section>
+          <section class="sensitive-section">
+            <h3>命中详情</h3>
+            <ol id="result-hits" class="hit-list"></ol>
+          </section>
+          <section class="sensitive-section">
+            <h3>脱敏后文本</h3>
+            <pre id="result-masked" class="masked-text mono"></pre>
+            <div class="result-actions">
+              <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制脱敏文本</button>
+            </div>
+          </section>
+        </div>
+        <p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新检测</p>
+      </div>
+    </div>
+
+    <p class="disclaimer">⚠️ 本工具为本地词库演示，<strong>仅用于内容自检与教学演示</strong>，不替代平台合规审核或法律意见。</p>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+      <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      <li><a href="/efficiency/text-transform-cn/">文本处理工具</a></li>
+      <li><a href="/efficiency/password-generator-cn/">随机密码生成器</a></li>
+    </ul></section>
+
+    <CalcJsonLd name="敏感词检测工具" description="免费在线敏感词检测：覆盖政治/暴力/色情/广告引流 4 大类共 80+ 常见违规词，附带可疑链接、联系方式、二维码等规避写法识别，一键生成脱敏遮罩文本。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/sensitive-word-cn-page.js"></script>
+</BaseLayout>

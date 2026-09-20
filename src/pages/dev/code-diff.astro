@@ -1,0 +1,201 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const pageTitle = "在线代码对比工具 — 文本 Diff 逐行比较与差异报告";
+const pageDescription =
+  "免费在线代码/文本对比工具：粘贴两段文本即可逐行比较差异，高亮新增、删除与相同行并统计行数，支持 CRLF 换行，一键复制 unified 格式差异报告，本地处理数据不上传，结果仅供参考。";
+
+const faqItems = [
+  {
+    q: "这个工具能做什么？",
+    a: "对比两段文本（代码、配置、文章均可）的逐行差异：新增行、删除行与相同行分色展示，并统计各自行数，还能复制 unified 格式（+/- 前缀）的差异报告。",
+  },
+  {
+    q: "数据会上传吗？",
+    a: "不会。差异计算全部在您的浏览器本地完成，文本内容不会离开您的设备，可放心对比敏感代码。",
+  },
+  {
+    q: "支持多大的文本？",
+    a: "单侧最多 5000 行，且两侧行数乘积不超过 100 万；超限时会提示缩减后再对比。",
+  },
+  {
+    q: "Windows 的 CRLF 换行会有影响吗？",
+    a: "没有影响。对比时同时识别 LF 与 CRLF 换行符，内容相同的两种文件不会误报差异。",
+  },
+  {
+    q: "对比结果准确吗？",
+    a: "采用经典 LCS（最长公共子序列）逐行算法，结果与常见 diff 工具一致；本工具为轻量在线版，结果仅供参考，重要变更请结合版本控制工具复核。",
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  keywords={[
+    "代码对比",
+    "文本对比",
+    "在线Diff工具",
+    "逐行比较",
+    "差异报告",
+    "开发者工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "开发者工具" },
+        { label: "在线代码对比工具" },
+      ]}
+    />
+    <h1>在线代码对比工具</h1>
+    <p class="lead">
+      粘贴原文与新文本，逐行比较差异 · 本地处理不上传
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="代码对比表单">
+      <div class="field">
+        <label for="left">原文（左侧）</label>
+        <textarea
+          id="left"
+          class="field-input"
+          rows="10"
+          spellcheck="false"
+          placeholder="把原始文本粘贴到这里…"
+          aria-describedby="field-error-left"></textarea>
+        <p class="field-error" id="field-error-left" hidden></p>
+      </div>
+      <div class="field">
+        <label for="right">新文本（右侧）</label>
+        <textarea
+          id="right"
+          class="field-input"
+          rows="10"
+          spellcheck="false"
+          placeholder="把修改后的文本粘贴到这里…"
+          aria-describedby="field-error-right"></textarea>
+        <p class="field-error" id="field-error-right" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="compare-btn" type="button" class="btn btn-primary">
+          开始对比
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          清空
+        </button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        粘贴两段文本后点击「开始对比」查看逐行差异
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">对比结果</p>
+        <div id="result-main" class="result-main"></div>
+        <p id="result-detail" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          文本已变更，请重新对比
+        </p>
+        <div class="result-actions">
+          <button
+            type="button"
+            id="copy-btn"
+            class="btn btn-secondary"
+            disabled>复制差异报告</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>将原始文本粘贴到「原文」输入框，修改后的文本粘贴到「新文本」。</li>
+        <li>点击「开始对比」，结果区统计新增/删除/相同行数并逐行展示差异。</li>
+        <li>
+          行内以颜色区分类型：新增行、删除行与相同行分别高亮，左侧两列数字为原文与新文本行号。
+        </li>
+        <li>点击「复制差异报告」可获取 unified 格式（+/-/空格前缀）文本。</li>
+        <li>
+          对比在浏览器本地完成，结果仅供参考，重要代码变更请结合版本控制工具复核。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="rule-heading">
+      <h2 id="rule-heading">对比规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>按行拆分（兼容 LF 与 CRLF），使用 LCS
+            最长公共子序列算法计算最小逐行差异。</p>
+        </li>
+        <li class="formula-item">
+          <p>空字符串视为空文件；单侧上限 5000
+            行，两侧行数乘积不超过 100 万。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/dev/url-encode/">URL 编码解码</a></li>
+        <li><a href="/efficiency/text-transform-cn/">文本处理工具</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="在线代码对比工具"
+      description={pageDescription}
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/code-diff-page.js"></script>
+</BaseLayout>
+
+<style>
+  :global(.result-main) {
+    max-height: 30rem;
+    overflow: auto;
+  }
+  :global(.diff-line) {
+    display: flex;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  :global(.diff-no) {
+    flex: 0 0 3ch;
+    text-align: right;
+    padding: 0 0.75ch;
+    margin-right: 0.75ch;
+    opacity: 0.6;
+    user-select: none;
+  }
+  :global(.diff-text) {
+    flex: 1 1 auto;
+  }
+  :global(.diff-add) {
+    background: rgba(46, 160, 67, 0.16);
+  }
+  :global(.diff-del) {
+    background: rgba(248, 81, 73, 0.16);
+  }
+  :global(.diff-eq) {
+    background: transparent;
+  }
+</style>

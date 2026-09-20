@@ -98,7 +98,12 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "JSON 格式化", href: "/dev/json-formatter/" },
       { label: "Base64 编码解码", href: "/dev/base64/" },
       { label: "URL 编码解码", href: "/dev/url-encode/" },
+      { label: "代码对比", href: "/dev/code-diff/" },
       { label: "汉字转拼音", href: "/efficiency/pinyin-cn/" },
+      { label: "敏感词检测", href: "/efficiency/sensitive-word-cn/" },
+      { label: "关键词密度分析", href: "/efficiency/keyword-density-cn/" },
+      { label: "标题字数检测", href: "/efficiency/title-length-cn/" },
+      { label: "正则表达式测试", href: "/dev/regex-tester-cn/" },
     ],
   },
   {

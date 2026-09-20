@@ -1,0 +1,210 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "在线正则表达式测试工具" },
+];
+
+const faqItems = [
+  {
+    q: "各标志位（flags）是什么意思？",
+    a: "g 全局搜索所有匹配；i 忽略大小写；m 多行模式，使 ^ 与 $ 匹配每行的开头与结尾；s 让 . 匹配换行符；u 启用 Unicode 模式；v 启用 Unicode 集合模式；y 粘性匹配，只从 lastIndex 处开始。",
+  },
+  {
+    q: "为什么不勾选 g 就只出现一条结果？",
+    a: "这是 JavaScript 正则的原生行为：不带 g 标志时一次只返回首个匹配。需要全部匹配请勾选 g。",
+  },
+  {
+    q: "为什么最多只显示 500 条匹配？",
+    a: "为避免超大文本产生海量匹配拖慢页面，结果上限为 500 条，超出部分会被截断并明确提示，可缩小匹配范围后重试。",
+  },
+  {
+    q: "支持先行断言、命名分组吗？",
+    a: "支持。本工具使用浏览器原生 JavaScript（ECMAScript）正则引擎，先行/后行断言、命名分组、可选链量词等均按 ECMAScript 规范执行；与 Python/PCRE 的正则方言存在少量差异。",
+  },
+  {
+    q: "什么是零宽匹配？会卡死吗？",
+    a: "如 a* 匹配 bbb 时会在每个位置产生长度为 0 的匹配。工具已内置防死循环处理，可正常展示全部零宽匹配结果。",
+  },
+  {
+    q: "输入的内容会上传吗？",
+    a: "不会。正则编译与匹配全部在您的浏览器本地完成，测试文本不会离开您的设备。",
+  },
+];
+---
+
+<BaseLayout
+  title="在线正则表达式测试工具 — Regex 匹配/捕获组/标志位调试"
+  description="免费在线正则表达式测试工具：输入正则与测试文本即可查看全部匹配位置、长度与捕获组，支持 g i m s u v y 标志位与零宽匹配，本地处理数据不上传。"
+  keywords={[
+    "正则表达式测试",
+    "在线Regex工具",
+    "正则匹配",
+    "捕获组",
+    "正则标志位",
+    "开发者工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>在线正则表达式测试工具</h1>
+    <p class="lead">正则匹配 / 捕获组展示 / 标志位调试 · 本地处理不上传</p>
+
+    <form
+      id="calc-form"
+      class="card"
+      novalidate
+      aria-label="正则表达式测试表单"
+    >
+      <div class="field">
+        <label for="pattern">正则表达式</label>
+        <input
+          id="pattern"
+          class="field-input mono-input"
+          type="text"
+          spellcheck="false"
+          autocomplete="off"
+          placeholder="例如 \d+ 或 (\w+)@(\w+)"
+          aria-describedby="field-error-pattern"
+        />
+        <p class="field-error" id="field-error-pattern" hidden></p>
+      </div>
+
+      <fieldset class="field flags-field">
+        <legend>标志位（flags）</legend>
+        <div class="flags-group">
+          <label class="flag-label" for="flag-g"><input type="checkbox" id="flag-g" name="regex-flags" value="g" checked /> g 全局</label>
+          <label class="flag-label" for="flag-i"><input type="checkbox" id="flag-i" name="regex-flags" value="i" /> i 忽略大小写</label>
+          <label class="flag-label" for="flag-m"><input type="checkbox" id="flag-m" name="regex-flags" value="m" /> m 多行</label>
+          <label class="flag-label" for="flag-s"><input type="checkbox" id="flag-s" name="regex-flags" value="s" /> s 单行(.匹配换行)</label>
+          <label class="flag-label" for="flag-u"><input type="checkbox" id="flag-u" name="regex-flags" value="u" /> u Unicode</label>
+          <label class="flag-label" for="flag-v"><input type="checkbox" id="flag-v" name="regex-flags" value="v" /> v Unicode 集合</label>
+          <label class="flag-label" for="flag-y"><input type="checkbox" id="flag-y" name="regex-flags" value="y" /> y 粘性</label>
+        </div>
+        <p class="field-error" id="field-error-flags" hidden></p>
+      </fieldset>
+
+      <div class="field">
+        <label for="text">测试文本</label>
+        <textarea
+          id="text"
+          class="field-input"
+          rows="6"
+          spellcheck="false"
+          placeholder="把要测试的文本粘贴到这里…"
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">执行匹配</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">清空</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">输入正则表达式与测试文本后点击「执行匹配」</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">匹配结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail" class="result-process"></p>
+        <ul id="match-list" class="match-list"></ul>
+        <p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新执行匹配</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制匹配摘要</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="disclaimer">
+      说明：本工具基于浏览器原生 ECMAScript 正则引擎执行匹配，与 Python、PCRE
+      等方言存在细微差异，结果仅供参考。
+    </p>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/dev/url-encode/">URL 编码解码</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="在线正则表达式测试工具"
+      description="免费在线正则表达式测试工具：输入正则与测试文本即可查看全部匹配位置、长度与捕获组，支持 g i m s u v y 标志位与零宽匹配，本地处理数据不上传。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/regex-tester-cn-page.js"></script>
+</BaseLayout>
+
+<style>
+  .mono-input {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+  .flags-field {
+    border: 0;
+    padding: 0;
+    margin: 0 0 1rem;
+  }
+  .flags-field legend {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .flags-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  .flag-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.95rem;
+  }
+  .match-list {
+    list-style: none;
+    margin: 0.75rem 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 28rem;
+    overflow-y: auto;
+  }
+  .match-item {
+    border: 1px solid rgba(128, 128, 128, 0.25);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .match-head {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+  .match-text {
+    margin: 0.25rem 0 0;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .match-groups {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+  }
+  .disclaimer {
+    font-size: 0.85rem;
+    opacity: 0.75;
+    margin-top: 1rem;
+  }
+</style>
