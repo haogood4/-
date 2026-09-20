@@ -1,0 +1,222 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+import { ASCII_TABLE } from "../../lib/calculators/ascii-table";
+
+const hex2 = (n: number) => n.toString(16).toUpperCase().padStart(2, "0");
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "字符编码查询" },
+];
+
+const faqItems = [
+  {
+    q: "ASCII 与 Unicode 是什么关系？",
+    a: "ASCII 是最早的 7 位字符集，只收录 0-127 共 128 个字符（英文字母、数字与常用符号）。Unicode 是覆盖全球文字的统一字符集，为每个字符分配唯一码点（如「中」为 U+4E2D）；U+0000 到 U+007F 这前 128 个码点与 ASCII 完全一致，因此所有 Unicode 编码形式都天然兼容 ASCII。",
+  },
+  {
+    q: "UTF-8 字节数有什么规律？",
+    a: "UTF-8 按码点大小编码为 1~4 字节：U+0000-U+007F（ASCII）占 1 字节；U+0080-U+07FF 占 2 字节（如 é → C3 A9）；U+0800-U+FFFF 占 3 字节（常用汉字均在此区间，如 中 → E4 B8 AD）；U+10000 以上占 4 字节。码点越大，字节数越多。",
+  },
+  {
+    q: "emoji 为什么占 4 个字节？",
+    a: "常见 emoji（如 😀 U+1F600）的码点位于辅助平面（U+10000 以上），超出 3 字节可表达的范围，UTF-8 需用 4 字节编码（😀 → F0 9F 98 80）。在 UTF-16 语言环境中它们还会被拆成一对代理字符（两个 code unit），所以用 length 统计字符串长度时 emoji 常被误算为 2 个字符。",
+  },
+  {
+    q: "码点和内码、字节数有什么区别？",
+    a: "码点是字符在 Unicode 中的唯一编号（抽象的整数，如 0x4E2D）；内码是码点在具体编码方案下的字节表示（UTF-8 中「中」为 E4 B8 AD，UTF-16 中为 4E 2D）。同一字符在不同编码方案下字节序列不同，但码点始终不变。",
+  },
+];
+---
+
+<BaseLayout
+  title="字符编码查询 — 在线字符码点转换与 ASCII 对照表"
+  description="免费在线字符编码查询工具：输入字符即时查看 Unicode 码点、十六进制与 UTF-8 字节序列，支持中文、emoji 与代理对；反向按十进制、0x 或 U+ 码点查字符，附完整 ASCII 控制字符与可打印字符对照表，程序员调试、字符集学习与编码转换必备，本地处理不上传。"
+  keywords={[
+    "字符编码查询",
+    "ASCII 对照表",
+    "Unicode 码点",
+    "字符集",
+    "编码转换",
+    "UTF-8 字节",
+    "程序员工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>字符编码查询 / ASCII 对照表</h1>
+    <UsageGuide />
+    <p class="lead">
+      字符与 Unicode 码点双向查询，支持十进制、0x、U+ 多种写法，附完整 ASCII
+      对照表。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="字符编码查询表单">
+      <div class="field">
+        <label for="mode">查询方向</label>
+        <select id="mode" class="field-select">
+          <option value="char-to-code" selected>字符 → 编码</option>
+          <option value="code-to-char">编码 → 字符</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input">输入内容</label>
+        <textarea
+          id="input"
+          class="field-input"
+          rows="4"
+          spellcheck="false"
+          placeholder="输入要查询的字符，如：A中😀"
+          aria-describedby="field-error-input"></textarea>
+        <p class="field-error" id="field-error-input" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="query-btn" type="button" class="btn btn-primary">
+          查询
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          清空
+        </button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        选择查询方向并输入内容后，点击「查询」查看结果
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          输入已变更，请重新查询
+        </p>
+        <div class="result-actions">
+          <button
+            type="button"
+            id="copy-btn"
+            class="btn btn-secondary"
+            disabled
+          >
+            复制结果
+          </button>
+        </div>
+        <div class="schedule-table-scroll">
+          <table
+            class="schedule-table"
+            id="result-table"
+            aria-label="查询结果表"
+          >
+            <thead>
+              <tr>
+                <th scope="col">字符</th>
+                <th scope="col">码点（十进制）</th>
+                <th scope="col">十六进制</th>
+                <th scope="col">Unicode</th>
+                <th scope="col">UTF-8 字节</th>
+              </tr>
+            </thead>
+            <tbody id="result-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="ascii-control-heading">
+      <h2 id="ascii-control-heading">ASCII 控制字符表（0-31、127）</h2>
+      <p class="result-hint">
+        控制字符不可打印，用于终端控制与数据分隔；实际文本中最常见的是
+        HT（Tab）、LF（换行）与 CR（回车）。
+      </p>
+      <div class="schedule-table-scroll">
+        <table class="schedule-table" aria-label="ASCII 控制字符对照表">
+          <thead>
+            <tr>
+              <th scope="col">码位</th>
+              <th scope="col">十六进制</th>
+              <th scope="col">缩写</th>
+              <th scope="col">含义</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              ASCII_TABLE.control.map((c) => (
+                <tr>
+                  <td>{c.code}</td>
+                  <td>0x{hex2(c.code)}</td>
+                  <td>{c.name}</td>
+                  <td>{c.desc}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="ascii-printable-heading">
+      <h2 id="ascii-printable-heading">ASCII 可打印字符表（32-126）</h2>
+      <div class="schedule-table-scroll">
+        <table class="schedule-table" aria-label="ASCII 可打印字符对照表">
+          <thead>
+            <tr>
+              <th scope="col">码位</th>
+              <th scope="col">十六进制</th>
+              <th scope="col">字符</th>
+              <th scope="col">名称</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              ASCII_TABLE.printable.map((p) => (
+                <tr>
+                  <td>{p.code}</td>
+                  <td>0x{hex2(p.code)}</td>
+                  <td>{p.char}</td>
+                  <td>{p.name}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="result-hint">
+        ⚠️ 对照表与查询结果仅供参考，编码细节请以 Unicode
+        标准与具体运行环境为准。
+      </p>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/dev/url-encode/">URL 编码解码</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="字符编码查询"
+      description="免费在线字符编码查询工具：字符与 Unicode 码点双向转换，支持十进制、0x、U+ 写法与 UTF-8 字节查看，附完整 ASCII 对照表，本地处理不上传。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/ascii-table-page.js"></script>
+</BaseLayout>
+
+<style>
+  /* 查询结果行由脚本动态生成（无 scope 属性），故用 :global 穿透 */
+  #result-tbody :global(td) {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    white-space: pre;
+  }
+</style>

@@ -1,0 +1,129 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+const faqItems = [
+  {
+    q: "用了什么算法？",
+    a: "同时计算两种相似度：① Levenshtein 编辑距离——把文本 A 改成文本 B 所需的最少单字操作（插入、删除、替换）次数，相似度 = 1 − 编辑距离 ÷ 较长文本的字符数；② Jaccard 词级相似度——两段文本切词后，相同词的占比（交集 ÷ 并集）。前者看字面差异，后者看用词重合，两者互补。",
+  },
+  {
+    q: "中文是怎么切词的？",
+    a: "本工具不做专业分词：中文按单个汉字逐字成词，英文与数字按空白切分为单词，其余非空白连续串作为一个词。例如「计算器 abc」会切成 计/算/器/abc 四个词。逐字策略对中文查重场景足够稳健，但词组级别的重复（如「在线工具」整体出现）会被拆成单字统计。",
+  },
+  {
+    q: "适合什么场景？",
+    a: "常用于内容查重（判断两篇文章/两段描述是否雷同）、近似标题检测（SEO 标题是否撞车）、数据清洗（合并前核对两条记录文本是否同义）、翻译与文案版本比对等。编辑距离高说明字面接近，Jaccard 高说明用词重合，可结合判定标签快速取舍。",
+  },
+  {
+    q: "有长度限制吗？",
+    a: "有。预处理（忽略大小写/空白）后每段文本上限 5000 字符，超限会提示截断后再对比。编辑距离计算量随文本长度平方增长，超长文档建议先截取关键段落分别比对。",
+  },
+  {
+    q: "文本会上传吗？",
+    a: "不会。相似度计算全部在您的浏览器本地完成，输入的两段文本不会发送到服务器，也不会被存储或记录，可放心比对未发布的稿件与内部资料。",
+  },
+];
+---
+
+<BaseLayout
+  title="在线文本相似度对比工具 — 编辑距离+Jaccard 查重"
+  description="免费在线文本相似度对比工具，同时计算 Levenshtein 编辑距离与 Jaccard 词级相似度，输出百分比与高/中/低判定，支持忽略大小写与空白，中文按单字英文按空白切词，适合内容查重、标题近似与数据清洗，本地处理不上传。"
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "文本相似度" },
+      ]}
+    />
+    <h1>文本相似度对比</h1>
+    <UsageGuide />
+    <p class="lead">两段文本一键比对 · 编辑距离 + Jaccard 双指标 · 本地处理</p>
+
+    <form id="calc-form" class="card" novalidate>
+      <div class="field">
+        <label for="text-a">文本 A</label>
+        <textarea
+          id="text-a"
+          class="field-input"
+          rows="7"
+          placeholder="把第一段文本粘贴到这里…"></textarea>
+        <p class="field-error" id="field-error-text-a" hidden></p>
+      </div>
+      <div class="field">
+        <label for="text-b">文本 B</label>
+        <textarea
+          id="text-b"
+          class="field-input"
+          rows="7"
+          placeholder="把第二段文本粘贴到这里…"></textarea>
+        <p class="field-error" id="field-error-text-b" hidden></p>
+      </div>
+      <div class="field-row">
+        <div class="field-inline">
+          <label class="checkbox-label" for="opt-ignore-case">
+            <input id="opt-ignore-case" type="checkbox" />
+            忽略大小写
+          </label>
+        </div>
+        <div class="field-inline">
+          <label class="checkbox-label" for="opt-ignore-whitespace">
+            <input id="opt-ignore-whitespace" type="checkbox" />
+            忽略空白
+          </label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">对比</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >清空</button
+        >
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        粘贴两段文本后点击「对比」查看相似度结果
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">文本相似度结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-verdict" class="result-process"></p>
+        <p id="result-detail" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          输入已变更，请重新对比
+        </p>
+        <p class="result-hint">计算结果仅供参考，请结合人工判断使用。</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled
+            >复制结果</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/line-dedup-cn/">文本行去重工具</a></li>
+        <li><a href="/efficiency/keyword-density-cn/">关键字密度分析</a></li>
+        <li><a href="/dev/code-diff/">代码 Diff 对比</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="文本相似度对比"
+      description="免费在线文本相似度对比工具，同时计算 Levenshtein 编辑距离与 Jaccard 词级相似度，输出百分比与高/中/低判定，支持忽略大小写与空白，适合内容查重、标题近似与数据清洗，本地处理不上传。"
+      faqItems={faqItems}
+    />
+  </main>
+  <script is:inline type="module" src="/scripts/text-similarity-cn-page.js"
+  ></script>
+</BaseLayout>

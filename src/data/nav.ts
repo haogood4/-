@@ -34,6 +34,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "养老金计算器", href: "/finance/pension-cn/" },
       { label: "年终奖个税", href: "/finance/bonus-tax-cn/" },
       { label: "信用卡分期", href: "/finance/credit-installment-cn/" },
+      { label: "人民币大写转换", href: "/finance/rmb-uppercase-cn/" },
     ],
   },
   {
@@ -111,6 +112,10 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "CSV 转 JSON", href: "/dev/csv-to-json/" },
       { label: "文本行去重", href: "/efficiency/line-dedup-cn/" },
       { label: "UUID 生成器", href: "/dev/uuid/" },
+      { label: "字符编码查询", href: "/dev/ascii-table/" },
+      { label: "Markdown 表格生成", href: "/efficiency/md-table-cn/" },
+      { label: "文本相似度", href: "/efficiency/text-similarity-cn/" },
+      { label: "日期格式转换", href: "/dev/date-format/" },
     ],
   },
   {

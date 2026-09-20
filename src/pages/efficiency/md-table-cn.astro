@@ -1,0 +1,176 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const pageTitle = "Markdown 表格生成器 — 分隔文本转 MD 表格/README 博客粘贴";
+const pageDescription =
+  "免费在线 Markdown 表格生成器：粘贴 Excel/TSV/CSV 或竖线分隔文本，一键转换为标准 Markdown 表格，支持分隔符自动检测、首行表头开关与左/中/右对齐，竖线自动转义，适合 GitHub README、博客与 Notion 排版，本地处理不上传。";
+
+const faqItems = [
+  {
+    q: "怎么从 Excel 复制数据过来？",
+    a: "在 Excel 或 WPS 中选中表格区域直接 Ctrl+C，粘贴到本页输入框即可——Excel 复制的内容以制表符（Tab）分隔列、换行分隔行，分隔符选「自动检测」或「Tab」就能正确识别。若手头是 CSV 文本则选「逗号」。",
+  },
+  {
+    q: "生成的表格可以粘贴到哪些平台？",
+    a: "输出遵循 GitHub Flavored Markdown 表格语法，可直接粘贴到 GitHub/GitLab 的 README、Typora、Hexo、VuePress、Hugo 等静态博客，以及 Notion、语雀、CSDN、掘金等支持 Markdown 的平台。粘贴到 Notion 时多数情况下会自动转换为表格块。",
+  },
+  {
+    q: "单元格内容里本身就有竖线怎么办？",
+    a: "本工具会自动把单元格内容中的竖线转义为 \\|，渲染时仍显示为竖线且不会破坏表格结构，无需手动处理。若您的数据本身以竖线分隔且含转义竖线（如现成的 Markdown 表格），分隔符选「竖线」即可原样重建。",
+  },
+  {
+    q: "对齐语法是什么意思？",
+    a: "Markdown 表格通过分隔行控制列对齐：:--- 左对齐、:---: 居中、---: 右对齐。本工具按您选择的对齐方式统一生成所有列的分隔行；如需逐列不同对齐，复制结果后手动在分隔行中微调即可。",
+  },
+  {
+    q: "数据会上传到服务器吗？",
+    a: "不会。表格生成全部在您的浏览器本地完成，粘贴的数据不会发送到服务器，也不会被存储或记录，可放心处理内部报表数据。",
+  },
+  {
+    q: "有大小限制吗？中文列会影响表格吗？",
+    a: "单次处理上限为 200 行、50 列，超限会提示错误。列宽按字符数计算而非显示宽度，中文内容不影响表格正确性，只是源码中竖线不会按视觉宽度对齐，渲染结果不受影响。含引号内换行的复杂 CSV 建议改用 CSV 转 JSON 工具处理。",
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  keywords={[
+    "Markdown表格生成器",
+    "表格转Markdown",
+    "Excel转MD表格",
+    "README表格",
+    "Notion表格",
+    "在线工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "Markdown 表格生成" },
+      ]}
+    />
+    <h1>Markdown 表格生成器</h1>
+    <UsageGuide />
+    <p class="lead">
+      粘贴 Tab/逗号/竖线分隔文本，一键生成标准 Markdown 表格，README、博客与
+      Notion 排版利器。
+    </p>
+
+    <form
+      id="calc-form"
+      class="card"
+      novalidate
+      aria-label="Markdown 表格生成表单"
+    >
+      <div class="field">
+        <label for="text">分隔文本</label>
+        <textarea
+          id="text"
+          class="field-input"
+          rows="10"
+          spellcheck="false"
+          placeholder="从 Excel 复制区域直接粘贴，或输入以 Tab/逗号/竖线分隔的文本…"
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="delimiter">分隔符</label>
+          <select id="delimiter" class="field-select">
+            <option value="auto" selected>自动检测</option>
+            <option value="tab">Tab（制表符）</option>
+            <option value="comma">逗号（,）</option>
+            <option value="pipe">竖线（|）</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="align">列对齐</label>
+          <select id="align" class="field-select">
+            <option value="left" selected>左对齐</option>
+            <option value="center">居中</option>
+            <option value="right">右对齐</option>
+          </select>
+        </div>
+      </div>
+      <div class="field checkline">
+        <label class="checkbox-label" for="has-header">
+          <input type="checkbox" id="has-header" checked />
+          首行为表头
+        </label>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary"
+          >生成表格</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >清空</button
+        >
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        粘贴上方分隔文本后点击「生成表格」查看结果
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">Markdown 表格</p>
+        <p id="result-stats" class="result-process"></p>
+        <div class="field">
+          <label for="output">生成结果</label>
+          <textarea
+            id="output"
+            class="field-input"
+            rows="12"
+            readonly
+            spellcheck="false"
+            aria-label="Markdown 表格输出结果"></textarea>
+        </div>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          输入已变更，请重新生成
+        </p>
+        <p class="result-hint">
+          生成结果仅供参考，粘贴发布前请人工复核表格内容与对齐效果。
+        </p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled
+            >复制表格</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/csv-to-json/">CSV 转 JSON 工具</a></li>
+        <li><a href="/efficiency/line-dedup-cn/">文本行去重工具</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="Markdown 表格生成器"
+      description={pageDescription}
+      faqItems={faqItems}
+    />
+  </main>
+  <script is:inline type="module" src="/scripts/md-table-cn-page.js"></script>
+</BaseLayout>
+
+<style>
+  #output {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.9rem;
+    white-space: pre;
+  }
+</style>

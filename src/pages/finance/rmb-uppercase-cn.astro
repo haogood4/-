@@ -1,0 +1,110 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+const faqItems = [
+  {
+    q: "转换规则的依据是什么？",
+    a: "遵循中国人民银行《正确填写票据和结算凭证的基本规定》及财务金额中文大写规范：数字用零壹贰叁肆伍陆柒捌玖，单位用拾佰仟、万、亿，到角无分时可写「整」或「正」。",
+  },
+  {
+    q: "金额里的连续零怎么处理？",
+    a: "中间连续有几个 0 时只写一个「零」字，如 1005 元写成壹仟零伍元；角位是 0 而分位不是 0 时，「元」后面要写「零」，如 1.05 元写成壹元零伍分。",
+  },
+  {
+    q: "最大可以转换多少金额？",
+    a: "整数部分最多支持 12 位数字，即上限 999999999999.99 元（壹万亿以内），超出会提示金额超出范围。",
+  },
+  {
+    q: "小数部分怎么四舍五入？",
+    a: "自动四舍五入到「分」：第 3 位小数 ≥5 进 1、<5 舍去，如 0.005 元按 0.01 元转换为壹分；无角无分时结尾写「整」。",
+  },
+  {
+    q: "负数金额能转换吗？",
+    a: "可以。输入带负号的金额（如 -1000000），结果以「负」字开头：负壹佰万元整，适用于退款、红字冲销等场景。",
+  },
+  {
+    q: "可以直接照抄到合同、发票上吗？",
+    a: "结果仅供参考，正式票据、合同与结算凭证上的大写金额请人工复核后再填写，并确保与大写、小写金额一致，涂改无效。",
+  },
+];
+---
+
+<BaseLayout
+  title="人民币大写转换器 — 金额数字转中文壹佰贰拾叁元正"
+  description="免费在线人民币大写金额转换器：输入数字金额自动生成壹佰贰拾叁元肆角伍分式中文大写，支持负数、四舍五入到分与连续零规范处理，适用于合同、发票、支票与汇款单金额填写。"
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "金融理财" },
+        { label: "人民币大写转换" },
+      ]}
+    />
+    <h1>人民币大写转换</h1>
+    <UsageGuide />
+    <p class="lead">免费在线人民币金额中文大写转换（壹佰贰拾叁元肆角伍分）</p>
+    <p class="result-hint">
+      <strong>⚠️ 结果仅供参考，正式票据请人工复核。</strong>
+    </p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field">
+        <label for="amount">金额（¥）</label><input
+          id="amount"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="123.45"
+        /><p class="field-error" id="field-error-amount" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">转换</button
+        ><button id="reset-btn" type="button" class="btn btn-secondary"
+          >重置</button>
+      </div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div
+        id="result-content"
+        hidden
+      >
+        <p id="result-caption" class="result-caption"></p><p
+          id="result-main"
+          class="result-main"
+        >
+        </p><p id="result-detail" class="result-process"></p><p
+          id="result-stale-hint"
+          class="result-hint"
+          hidden
+        >
+          输入已变更，请重新计算
+        </p><div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled
+            >复制结果</button>
+        </div>
+      </div>
+    </div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/income-tax-cn/">个税计算器</a></li>
+        <li><a href="/finance/deposit-interest-cn/">存款利息计算器</a></li>
+        <li><a href="/daily/basic/">基础计算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="人民币大写转换"
+      description="免费在线人民币大写金额转换器：输入数字金额自动生成壹佰贰拾叁元肆角伍分式中文大写，支持负数、四舍五入到分与连续零规范处理，适用于合同、发票、支票与汇款单金额填写。"
+      faqItems={faqItems}
+    />
+  </main>
+  <script is:inline type="module" src="/scripts/rmb-uppercase-cn-page.js"
+  ></script>
+</BaseLayout>

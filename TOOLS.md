@@ -1,8 +1,8 @@
-# 计算器大全 — 全部工具清单（73 个）
+# 计算器大全 — 全部工具清单（78 个）
 
 按 6 大分类整理，每行复制即用（站点路径相对于部署根域名）。
 
-## 金融理财（16）
+## 金融理财（17）
 - 房贷计算器 — /finance/mortgage-cn/
 - 贷款计算器 — /finance/loan-cn/
 - 复利计算器 — /finance/compound-interest-cn/
@@ -19,6 +19,7 @@
 - 养老金计算器 — /finance/pension-cn/
 - 年终奖个税 — /finance/bonus-tax-cn/
 - 信用卡分期 — /finance/credit-installment-cn/
+- 人民币大写转换 — /finance/rmb-uppercase-cn/
 
 ## 健康生活（5）
 - BMI 计算器 — /health/bmi-cn/
@@ -46,7 +47,7 @@
 - ROAS 计算器 — /investment/roas-cn/
 - 转化率 — /investment/conversion-rate-cn/
 
-## 效率工具（33）
+## 效率工具（37）
 - 四则运算计算器 — /daily/basic/
 - 百分比计算器 — /math/percentage/
 - 折扣计算器 — /math/discount/
@@ -80,6 +81,10 @@
 - CSV 转 JSON — /dev/csv-to-json/
 - 文本行去重 — /efficiency/line-dedup-cn/
 - UUID 生成器 — /dev/uuid/
+- 字符编码查询 — /dev/ascii-table/
+- Markdown 表格生成 — /efficiency/md-table-cn/
+- 文本相似度 — /efficiency/text-similarity-cn/
+- 日期格式转换 — /dev/date-format/
 
 ## 日常工具（4）
 - 年龄计算器 — /daily/age/
@@ -96,19 +101,19 @@
 - 用户协议 — /legal/terms/
 - 免责声明 — /legal/disclaimer/
 
-合计 73 个计算工具 + 7 个信息页。
+合计 78 个计算工具 + 7 个信息页。
 
 ## 打包复制格式（如需 JSON）
 
 ```json
 {
-  "total": 73,
+  "total": 78,
   "categories": [
-    {"key": "finance", "name": "金融理财", "count": 16, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
+    {"key": "finance", "name": "金融理财", "count": 17, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
     {"key": "health", "name": "健康生活", "count": 5, "tools": [...]},
     {"key": "renovation", "name": "装修家居", "count": 5, "tools": [...]},
     {"key": "investment", "name": "投资专业", "count": 10, "tools": [...]},
-    {"key": "efficiency", "name": "效率工具", "count": 33, "tools": [...]},
+    {"key": "efficiency", "name": "效率工具", "count": 37, "tools": [...]},
     {"key": "daily", "name": "日常工具", "count": 4, "tools": [...]}
   ]
 }
