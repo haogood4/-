@@ -19,7 +19,7 @@ review_cycle: 每周复核
 
 | # | 事项 | 类别 | 操作步骤 | 阻塞影响 | 建议时限 | 状态 |
 |---|---|---|---|---|---|---|
-| M-01 | 法务审核 legal 三页（P1-10，双签编号 DS-202609-08，7 文件资料包已提交） | 法务合规 | 法务部门审核 → 通过后执行 `node scripts/migrate-legal-to-production.mjs --execute`（自动备份到 `.tmp-legal-backup/` 并改 5 文件 / 15 处：移除三页 `noindex` prop + 草稿横幅 + 站点配置 sitemap filter `/legal/` 排除 + footer 注释 + 双签编号记入页面）；随后 `pnpm verify:dist` + git commit 推送 | legal 页保持 noindex 草稿（带水印），不能对外宣称已合规；阻塞正式上线 | 2026-09-26（双签截止） | ⏳ |
+| M-01 | 法务审核 legal 三页（P1-10，双签编号 DS-202609-08，7 文件资料包已提交） | 法务合规 | 法务部门审核 → 通过后执行 `node scripts/migrate-legal-to-production.mjs --execute`（自动备份到 `.tmp-legal-backup/` 并改 5 文件 / 15 处：移除三页 `noindex` prop + 草稿横幅 + 站点配置 sitemap filter `/legal/` 排除 + footer 注释 + 双签编号记入页面）；随后 `pnpm verify:dist` + git commit 推送 | legal 页保持 noindex 草稿（带水印），不能对外宣称已合规；阻塞正式上线 | 2026-09-26（双签截止） | ✅ 已执行 |
 | M-02 | GitHub 推送与 CI 首跑 | 外部凭据 | `git remote add origin <repo-url> && git push -u origin main`；确认 Actions 首跑全绿 | CI 防护网未生效，本地改动无远程备份 | 本周 | ✅ 推送 ✅ |
 | M-02b | CI 首跑确认（GitHub Actions → workflow `CI` 跑完，失败则把日志发回） | 外部验证 | 用户在 Actions tab 核验 → 反馈结果 → 若失败 AI 排查 | CI 防护网未生效 | 本周 | ✅ 全绿 |
 | M-03 | 域名购买与 DNS 配置 | 成本支出 | 购买域名 → Cloudflare 托管 → `export PUBLIC_SITE_URL=https://<正式域名>` 后执行 `pnpm deploy`；predeploy 守卫会拦截占位符 | 阻塞部署与上线（当前 site 为占位符 example-calculator.cn） | 上线前 | ⏳ |
@@ -36,6 +36,7 @@ review_cycle: 每周复核
 | M-00 | Git 仓库本地初始化（main 分支） | 2026-09-20 | 后续推送见 M-02 |
 | M-02a | 推送至 `git@github.com:haogood4/-.git`（main 分支，10 个提交，HEAD=262d901） | 2026-09-20 | SSH 推送（密钥已认证）；CI 首跑仍待用户在 GitHub Actions 中确认（M-02b） |
 | M-02b | CI 首跑全绿（用户确认 `CI` workflow 全 5 步通过：Install/Verify/Build/Smoke/Assert） | 2026-09-20 | 远程回归网生效，后续 push/PR 自动触发 |
+| M-01a | 法务切换落地（`migrate-legal-to-production.mjs --execute`）：5 文件 / 15 处修改；verify:dist 全绿（SMOKE 12/12）；sitemap 新增 legal 三页；commit `90eb9e1` 已推送 | 2026-09-20 | 备份存 `.tmp-legal-backup/`（gitignore 已加），回滚命令：`cp -r .tmp-legal-backup/* .` |
 
 ## 关联文档
 
