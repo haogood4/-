@@ -1,0 +1,189 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "股票佣金计算器" },
+];
+
+const faqItems = [
+  {
+    q: "现在券商佣金一般是多少？",
+    a: "依据中国证券业协会数据与上交所公示：A 股、B 股、基金交易佣金实行最高 3‰ 向下浮动制度，行业平均净佣金率约 1.78‱（2025），新客佣金常见 0.641~2.5‱。本工具默认 2.5‱，用户可输入实际协议费率。",
+  },
+  {
+    q: "印花税和过户费怎么算？",
+    a: "印花税按成交金额 0.5‰ 单边向卖出方收取（A 股、B 股、北交所股票口径一致）；沪深 A 股过户费按成交金额 0.01‰ 向买卖双方收取。本工具默认 0.5‱ 印花税与 0.1‱ 过户费，用户可按券商实际公示值修改。",
+  },
+  {
+    q: "为什么小金额算出来佣金仍是 5 元？",
+    a: "沪深交易所规定：单笔交易佣金不足 5 元的，按 5 元收取。本工具按用户输入的「最低起收」金额（默认 5 元）封底，避免遗漏起收规则。",
+  },
+  {
+    q: "买入和卖出的费用有区别吗？",
+    a: "买入仅收券商佣金 + 过户费；卖出额外加 0.5‱ 印花税（卖方单边）。本工具按买卖方向切换费用项，最终结果区分「净买入成本」与「净卖出到手」。",
+  },
+  {
+    q: "结果可以代替券商账单吗？",
+    a: "不可以。本工具按公示默认参数 + 用户输入费率做精确测算，适合做交易成本预算；实际账单可能因券商协议费率、积分抵扣、北交所/科创板差异而不同，请以券商 APP 账单为准，",
+  },
+];
+---
+
+<BaseLayout
+  title="股票佣金计算器 — A股买卖手续费在线测算（含印花税过户费）"
+  description="免费在线股票佣金计算器：支持自定义费率、最低起收、印花税与过户费，按买入/卖出方向自动测算券商佣金、过户费、印花税与净资金流，附带完整公式代入过程。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>股票佣金计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入单价与股数，可自定义券商佣金费率、最低起收金额、印花税与过户费；按买卖方向自动测算券商佣金 + 过户费 + 印花税并给出净资金流。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="股票佣金计算表单">
+      <div class="field">
+        <label for="input-price">单价（元/股）</label>
+        <input
+          id="input-price"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 10.00"
+          aria-describedby="field-error-price"
+        />
+        <p class="field-error" id="field-error-price" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-shares">股数</label>
+        <input
+          id="input-shares"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="例如 1000（A 股 100 股起）"
+          aria-describedby="field-error-shares"
+        />
+        <p class="field-error" id="field-error-shares" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-direction">方向</label>
+        <select id="input-direction" class="field-select">
+          <option value="buy">买入</option>
+          <option value="sell">卖出</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-rate">券商佣金（‱ 万分之）</label>
+        <input
+          id="input-rate"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="默认 2.5（行业平均）"
+          aria-describedby="field-error-rate"
+        />
+        <p class="field-error" id="field-error-rate" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-min-fee">最低起收（元）</label>
+        <input
+          id="input-min-fee"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="默认 5"
+          aria-describedby="field-error-min-fee"
+        />
+        <p class="field-error" id="field-error-min-fee" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-stamp-tax">印花税（‱ 万分之）</label>
+        <input
+          id="input-stamp-tax"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="默认 5（A 股 0.5‰）"
+          aria-describedby="field-error-stamp"
+        />
+        <p class="field-error" id="field-error-stamp" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-transfer-fee">过户费（‱ 万分之）</label>
+        <input
+          id="input-transfer-fee"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="默认 0.1（沪深 A 股 0.01‰）"
+          aria-describedby="field-error-transfer"
+        />
+        <p class="field-error" id="field-error-transfer" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算费用
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入单价与股数；选择买卖方向；佣金/起收/印花税/过户费按券商协议与上交所公示值填写（默认 2.5‱ / 5 元 / 5‱ / 0.1‱）。</li>
+        <li>点击「计算费用」查看券商佣金、过户费、印花税明细与净资金流（买入为负、卖出为正）。</li>
+        <li>结果仅供参考，实际费率以券商 APP 报价为准；北交所/科创板费率规则不同。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">费用公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>成交金额 = 单价 × 股数；券商佣金 = max(最低起收, 成交金额 × 费率‱ / 10000)；过户费 = 成交金额 × 过户费‱ / 10000；印花税（卖出）= 成交金额 × 印花税‱ / 10000。</p>
+        </li>
+        <li class="formula-item">
+          <p>买入总成本 = 券商佣金 + 过户费；卖出净到手 = 成交金额 - 券商佣金 - 过户费 - 印花税。</p>
+        </li>
+        <li class="formula-item">
+          <p>例：买入 10 元 × 1000 股 @2.5‱，成交 10000 → 佣金 max(5, 2.5)=5 → 过户费 0.1 → 总成本 ¥5.10；净流出 ¥10005.10。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/annualized-return-cn/">年化收益率</a></li>
+  <li><a href="/finance/compound-interest-cn/">复利计算器</a></li>
+  <li><a href="/finance/fund-dca-cn/">基金定投计算器</a></li>
+      </ul></section>
+
+    <p class="disclaimer">结果仅供参考，以券商 APP 实际账单为准；北交所/科创板/港股通等费率口径不同。</p>
+
+    <CalcJsonLd name="股票佣金计算器" description="免费在线股票佣金计算器：支持自定义费率、最低起收、印花税与过户费，按买入/卖出方向自动测算券商佣金、过户费、印花税与净资金流，附带完整公式代入过程。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/stock-commission-page.js"></script>
+</BaseLayout>

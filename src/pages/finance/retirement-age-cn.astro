@@ -1,0 +1,157 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "退休年龄计算器" },
+];
+
+const faqItems = [
+  {
+    q: "法定退休年龄这次怎么调？",
+    a: "依据全国人大常委会 2024-09-13《关于实施渐进式延迟法定退休年龄的决定》：男职工从 60 周岁逐步延迟至 63 周岁，原 55 周岁女职工延迟至 58 周岁，原 50 周岁女职工延迟至 55 周岁，均自 2025-01-01 起施行，用 15 年时间完成。",
+  },
+  {
+    q: "我是 1970-01 出生（原 55 周岁女职工），几岁退休？",
+    a: "原 55 周岁女职工按每 4 个月延迟 1 个月测算。1970-01 月生对应延迟 1 个月，即 55 岁 1 个月退休，2025-02 达到法定退休年龄；本工具按此口径实时计算。",
+  },
+  {
+    q: "弹性提前 / 弹性延迟怎么算？",
+    a: "达到最低缴费年限后，可在原法定退休年龄基础上提前不超过 3 年（不低于女 50/55、男 60 的原法定下限）；所在单位协商一致也可弹性延迟不超过 3 年。提前/延迟后适用法定口径调整，按本工具输入的出生月份反推实际退休月。",
+  },
+  {
+    q: "最低缴费年限是 15 年还是 20 年？",
+    a: "自 2030-01-01 起，按每年 +6 个月从 15 年逐步提高至 20 年；本工具按退休年份返回当前生效年限。结果仅供参考，",
+  },
+  {
+    q: "工具结果可以代替社保经办吗？",
+    a: "不可以。本工具严格按全国人大常委会 2024-09-13 决定与国务院《渐进式延迟法定退休年龄的办法》对照表计算，作为参保规划参考；具体退休年龄以社保经办机构审核为准，",
+  },
+];
+---
+
+<BaseLayout
+  title="退休年龄计算器 — 渐进式延迟法定退休年龄在线测算（2025 新政）"
+  description="免费在线退休年龄计算器：依据全国人大常委会 2024-09-13 决定，按出生年月与职工类别自动测算 60/63、55/58、50/55 三类法定退休年龄与最早退休月份，同步返回最低缴费年限。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>退休年龄计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      依据全国人大常委会 2024-09-13《关于实施渐进式延迟法定退休年龄的决定》：男职工 60→63、原 55 周岁女职工 55→58、原 50 周岁女职工 50→55，按每 4/4/2 个月延迟 1 个月节奏渐进过渡至 2040 年。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="退休年龄计算表单">
+      <div class="field">
+        <label for="input-year">出生年份</label>
+        <input
+          id="input-year"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="例如 1975"
+          aria-describedby="field-error-year"
+        />
+        <p class="field-error" id="field-error-year" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-month">出生月份</label>
+        <input
+          id="input-month"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="1~12"
+          aria-describedby="field-error-month"
+        />
+        <p class="field-error" id="field-error-month" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-day">出生日期（可选）</label>
+        <input
+          id="input-day"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="1~31"
+          aria-describedby="field-error-day"
+        />
+        <p class="field-error" id="field-error-day" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-category">职工类别</label>
+        <select id="input-category" class="field-select">
+          <option value="male">男职工（原 60 周岁）</option>
+          <option value="female55">女职工（原 55 周岁）</option>
+          <option value="female50">女职工（原 50 周岁）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算退休年龄
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填写出生「年」「月」（日期可空）；选择职工类别（男 / 原 55 岁女 / 原 50 岁女）。</li>
+        <li>点击「计算退休年龄」查看新法定退休年龄、退休年月、延迟月数与适用最低缴费年限。</li>
+        <li>结果仅供参考，以社保经办机构审核为准；弹性提前/延迟以单位协商或本人自愿为准。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">测算口径与公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>男职工（原 60 周岁）：每 4 个月延迟 1 个月，基准月 1965-01（→ 2025-02 退休，60岁1月）。原法定退休 = 出生月 + 60 年；延迟月数 = ⌊出生月距 1965-01 月数 / 4⌋ + 1，上限 36 月。</p>
+        </li>
+        <li class="formula-item">
+          <p>原 55 周岁女职工：每 4 个月延迟 1 个月，基准月 1970-01（→ 2025-02 退休，55岁1月）。</p>
+        </li>
+        <li class="formula-item">
+          <p>原 50 周岁女职工：每 2 个月延迟 1 个月，基准月 1975-01（→ 2025-02 退休，50岁1月）。</p>
+        </li>
+        <li class="formula-item">
+          <p>最低缴费年限：2025~2029 退休 15 年；自 2030-01-01 起每年 +6 月，至 20 年上限；本工具按退休年份返回当前生效年限。</p>
+        </li>
+        <li class="formula-item">
+          <p>例：1980-01 出生女职工（原 50 周岁）→ 基准月 1975-01 距 60 个月 → 延迟 ⌊60/2⌋+1 = 31 个月 → 50 岁 31 个月（52 岁 7 个月）→ 2030-01 + 31 月 = 2032-08 退休。天津人社局公开答复同口径。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/pension-cn/">养老金计算器</a></li>
+  <li><a href="/finance/social-insurance-cn/">五险一金计算器</a></li>
+  <li><a href="/daily/age/">年龄计算器</a></li>
+      </ul></section>
+
+    <p class="disclaimer">结果仅供参考，以社保经办机构审核为准；具体执行口径请参阅全国人大常委会 2024-09-13 决定与国务院办法原文。</p>
+
+    <CalcJsonLd name="退休年龄计算器" description="免费在线退休年龄计算器：依据全国人大常委会 2024-09-13 决定，按出生年月与职工类别自动测算 60/63、55/58、50/55 三类法定退休年龄与最早退休月份，同步返回最低缴费年限。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/retirement-age-page.js"></script>
+</BaseLayout>

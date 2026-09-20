@@ -1,8 +1,9 @@
-# 计算器大全 — 全部工具清单（83 个）
+# 计算器大全 — 全部工具清单（85 个）
 
 按 6 大分类整理，每行复制即用（站点路径相对于部署根域名）。
 
-## 金融理财（17）
+## 金融理财（19）
+
 - 房贷计算器 — /finance/mortgage-cn/
 - 贷款计算器 — /finance/loan-cn/
 - 复利计算器 — /finance/compound-interest-cn/
@@ -20,8 +21,11 @@
 - 年终奖个税 — /finance/bonus-tax-cn/
 - 信用卡分期 — /finance/credit-installment-cn/
 - 人民币大写转换 — /finance/rmb-uppercase-cn/
+- 退休年龄计算器 — /finance/retirement-age-cn/
+- 股票佣金计算器 — /finance/stock-commission-cn/
 
 ## 健康生活（5）
+
 - BMI 计算器 — /health/bmi-cn/
 - 卡路里消耗 — /health/calorie-burn-cn/
 - 节拍计算器 — /health/pace-cn/
@@ -29,6 +33,7 @@
 - 排卵期计算器 — /health/ovulation-cn/
 
 ## 装修家居（5）
+
 - 装修预算 — /renovation/renovation-budget-cn/
 - 瓷砖数量 — /renovation/tile-quantity-cn/
 - 乳胶漆用量 — /renovation/paint-quantity-cn/
@@ -36,6 +41,7 @@
 - 油耗计算器 — /daily/fuel-consumption-cn/
 
 ## 投资专业（10）
+
 - 海龟交易法仓位 — /investment/turtle-position-cn/
 - 加密货币仓位 — /investment/crypto-position-cn/
 - 期货保证金 — /investment/futures-margin-cn/
@@ -48,6 +54,7 @@
 - 转化率 — /investment/conversion-rate-cn/
 
 ## 效率工具（42）
+
 - 四则运算计算器 — /daily/basic/
 - 百分比计算器 — /math/percentage/
 - 折扣计算器 — /math/discount/
@@ -92,12 +99,14 @@
 - 日期格式转换 — /dev/date-format/
 
 ## 日常工具（4）
+
 - 年龄计算器 — /daily/age/
 - 日期差计算器 — /daily/date-diff/
 - 手机号归属地查询 — /efficiency/phone-region-cn/
 - 服装尺码对照表 — /daily/clothing-size-cn/
 
 ## 信息页（4）
+
 - 知识库 — /articles/
 - 文章列表 — /articles-list/
 - 场景指南索引 — /hub/
@@ -106,15 +115,15 @@
 - 用户协议 — /legal/terms/
 - 免责声明 — /legal/disclaimer/
 
-合计 83 个计算工具 + 7 个信息页。
+合计 85 个计算工具 + 7 个信息页。
 
 ## 打包复制格式（如需 JSON）
 
 ```json
 {
-  "total": 83,
+  "total": 85,
   "categories": [
-    {"key": "finance", "name": "金融理财", "count": 17, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
+    {"key": "finance", "name": "金融理财", "count": 19, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
     {"key": "health", "name": "健康生活", "count": 5, "tools": [...]},
     {"key": "renovation", "name": "装修家居", "count": 5, "tools": [...]},
     {"key": "investment", "name": "投资专业", "count": 10, "tools": [...]},

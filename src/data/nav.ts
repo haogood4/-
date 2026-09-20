@@ -35,6 +35,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "年终奖个税", href: "/finance/bonus-tax-cn/" },
       { label: "信用卡分期", href: "/finance/credit-installment-cn/" },
       { label: "人民币大写转换", href: "/finance/rmb-uppercase-cn/" },
+      { label: "退休年龄计算器", href: "/finance/retirement-age-cn/" },
+      { label: "股票佣金计算器", href: "/finance/stock-commission-cn/" },
     ],
   },
   {
