@@ -1502,18 +1502,33 @@ body[data-category="daily"] main h1::before {
   border: 0;
 }
 
+/* skip-link：未聚焦时视觉隐藏（仍占位 0 高度、键盘 Tab 可达）；
+   不能用 left:-9999px——Chromium 对绝对定位 off-screen 元素 focus() 后
+   matches(':focus') 立刻 false（scroll-into-view 失败 → 焦点被丢弃）。
+   改用 transform: translateY(-150%) + opacity:0 + position:absolute，
+   元素仍在 DOM 树可达且可正常 focus。聚焦时落到 (8,8) 并显形。
+   亮/暗双主题：bg primary-strong 与主区文字 color-on-primary 对比 ≥4.5:1，
+   焦点环 3px primary 描边保可达性 */
 .skip-link {
   position: absolute;
-  top: 0;
-  left: -9999px;
+  top: -100px;
+  left: 8px;
   z-index: 100;
   padding: 10px var(--space-4);
-  background-color: var(--color-bg-page);
+  background-color: var(--color-primary-strong);
+  color: var(--color-text-on-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  font-weight: 600;
+  text-decoration: none;
 }
 
+.skip-link:focus,
 .skip-link:focus-visible {
   top: 8px;
-  left: 8px;
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .clipboard-helper {
