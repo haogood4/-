@@ -18,6 +18,7 @@
 - 性能巡检：产物健康（HTML 最大 17KB、全 SVG 无位图、系统字体、SW 策略合理）；`_headers` 为 `/scripts/kit-*` 共享 chunk 补一年 immutable 强缓存
 - 结构化数据深化：51 计算器页与 11 文章页新增 BreadcrumbList JSON-LD；新建通用 `BreadcrumbJsonLd` 组件并补齐 5 hub 详情 + hub 索引 + 文章列表（全站 114→183 块、69 个面包屑，noindex 页外全覆盖），smoke 断言 10 双守卫升级 ≥182/≥69，组件测试 +1（272 用例）
 - Git 仓库本地初始化（main 分支、初始提交 556 文件、.gitignore 生效），为 CI 首跑与版本管理铺路
+- a11y 巡检专项：smoke 新增第 11 组硬失败守卫（单 h1 / main 锚点 / skip-link / img alt / 表单 label / 按钮与链接可访问命名 / 颜色 token 9 组对比度 ≥4.5:1），基线 75/75 全过、零代码改动
 
 ## [0.1.0] - 2026-09-20
 
