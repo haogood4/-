@@ -1,0 +1,101 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "手机号归属地查询" },
+];
+
+const faqItems = [
+  {
+    q: "查询结果准不准？",
+    a: "结果反映号码号段「初始分配」时的归属地与运营商，对未变更过的号码基本准确。但号段归属以运营商放号记录为准，历史网络调整可能导致个别号码实际服务城市与结果不一致。",
+  },
+  {
+    q: "携号转网后还能查准吗？",
+    a: "不能。本工具数据不含携号转网信息，号码若已携号转网，查询结果显示的仍是原运营商，实际运营商请以拨打或官方渠道查询为准。",
+  },
+  {
+    q: "支持虚拟运营商号码吗？",
+    a: "170、171 等虚拟运营商号段按数据收录情况标注基础运营商归属；部分新放号或已回收号段可能未收录，此时会提示「该号段未收录或尚未分配」。",
+  },
+  {
+    q: "数据多久更新一次？",
+    a: "当前号段库版本为 2302（2023 年 2 月）。数据文件独立于页面程序，后续更新只需替换数据文件，无需重新下载工具本身。",
+  },
+];
+---
+
+<BaseLayout
+  title="手机号归属地查询 — 号码所在地区与运营商查询"
+  description="免费在线手机号归属地查询：输入 11 位大陆手机号，快速查询号段初始分配的省份、城市与运营商。数据截至 2023 年 2 月，不含携号转网信息，结果仅供参考。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>手机号归属地查询</h1>
+    <p class="lead">
+      查询大陆手机号号段的归属省份、城市与运营商 · 本地查询不上传。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="手机号归属地查询表单">
+      <div class="field">
+        <label for="phone">手机号码</label>
+        <input
+          id="phone"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          maxlength="11"
+          autocomplete="off"
+          placeholder="请输入 11 位大陆手机号"
+          aria-describedby="field-error-phone"
+        />
+        <p class="field-hint">仅支持 13-19 开头的号段，输入在本机完成、不会上传。</p>
+        <p class="field-error" id="field-error-phone" hidden></p>
+      </div>
+      <p class="field-hint" id="data-status" hidden></p>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          查询
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+    <p class="field-hint" id="data-disclaimer">
+      数据截至 2023 年 2 月，不含携号转网信息，结果仅供参考
+    </p>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>输入 11 位中国大陆手机号（13-19 开头）。</li>
+        <li>点击「查询」，首次查询会按需下载对应号段数据块（几百 KB 到 1.6MB 不等，之后缓存在内存）。</li>
+        <li>结果展示号段初始分配的省份、城市与运营商；未收录号段会给出提示。</li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+      <li><a href="/efficiency/pinyin-cn/">汉字转拼音</a></li>
+      <li><a href="/efficiency/ip-subnet-cn/">IP 子网计算器</a></li>
+      <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+    </ul></section>
+
+    <CalcJsonLd name="手机号归属地查询" description="免费在线手机号归属地查询：输入 11 位大陆手机号，快速查询号段初始分配的省份、城市与运营商。数据截至 2023 年 2 月，不含携号转网信息，结果仅供参考。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/phone-region-cn-page.js"></script>
+</BaseLayout>

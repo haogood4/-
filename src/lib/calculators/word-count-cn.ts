@@ -16,15 +16,22 @@ export type WordCalcResult =
 const HAN_RE = /[\u4e00-\u9fa5]/g;
 // 中文标点 + ASCII 标点（含常见中文标点 ！。，；：、《》【】等）
 // 使用 Unicode 转义避免源码中出现全角空格触发 lint
-const PUNCT_RE =
-  /[\u3000-〿＀-｠￰-￿,.!?;:。，！？；：、""''（）【】《》]/g;
+const PUNCT_RE = /[\u3000-〿＀-｠￰-￿,.!?;:。，！？；：、""''（）【】《》]/g;
 
 export function countWords(input: WordInput): WordCalcResult {
   const t = input.text;
   if (!t) {
     return {
       ok: true,
-      value: { chars: 0, charsNoSpace: 0, words: 0, han: 0, punct: 0, lines: 0, paragraphs: 0 },
+      value: {
+        chars: 0,
+        charsNoSpace: 0,
+        words: 0,
+        han: 0,
+        punct: 0,
+        lines: 0,
+        paragraphs: 0,
+      },
     };
   }
   const chars = [...t].length;
@@ -38,7 +45,10 @@ export function countWords(input: WordInput): WordCalcResult {
   const words = wordsEn + nonAscii;
   const lines = t.split("\n").length;
   const paragraphs = t.split(/\n\s*\n/).filter((s) => s.trim()).length;
-  return { ok: true, value: { chars, charsNoSpace, words, han, punct, lines, paragraphs } };
+  return {
+    ok: true,
+    value: { chars, charsNoSpace, words, han, punct, lines, paragraphs },
+  };
 }
 
 export function formatWordCount(value: WordResult) {

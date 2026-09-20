@@ -397,13 +397,29 @@ h2 {
   box-shadow: var(--shadow-sm);
 }
 
+/* 美化包⑤：聚焦品牌色光晕（color-mix 半透明感，暗色下 primary 提亮自动适配） */
 .field-input:focus,
-.field-select:focus {
+.field-select:focus,
+.field-input:focus-visible,
+.field-select:focus-visible {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-soft);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--color-primary) 25%, transparent);
 }
 
-.field-input[aria-invalid="true"] {
+/* 美化包⑤：未挂 .field-input/.field-select 类的裸控件（搜索框等）同样获得光晕 */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* 美化包⑤：错误态选择器 = _page-kit.ts setFieldError 的 aria-invalid="true" */
+.field-input[aria-invalid="true"],
+.field-select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
   border-color: var(--color-error);
 }
 
@@ -420,20 +436,32 @@ h2 {
 }
 
 /* ---------- 结果区 ---------- */
+/* 美化包④：结果态卡片化——左侧 4px 品牌色边条 + surface 底 */
 .result {
   margin-top: var(--space-5);
   padding: var(--space-4);
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
 }
 
+/* 美化包④：空态引导——居中、muted 弱化、预留图标位（现有文案保留） */
 .result-empty {
   display: flex;
   align-items: center;
-  min-height: 44px;
-  color: var(--color-text-secondary);
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 64px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.result-empty svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .result-caption {
@@ -828,18 +856,46 @@ h2 {
 }
 
 /* ---------- 首页 hero 与分类胶囊 ---------- */
+/* 美化包②：hero 渐变强化（soft→faint→page 三段，暗色令牌自动适配） */
 .hero {
   padding: var(--space-6) 0 var(--space-4);
   background: linear-gradient(
     180deg,
-    var(--color-primary-faint) 0%,
+    var(--color-primary-soft) 0%,
+    var(--color-primary-faint) 55%,
     var(--color-bg-page) 100%
   );
 }
 
 .hero__title {
+  margin-top: 0;
   font-size: var(--font-size-h1);
   line-height: 1.3;
+}
+
+/* 美化包②：H1 下方数据条（数字构建期由 NAV_CATEGORIES 求和，禁止硬编码） */
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.hero__stats li {
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--color-bg-page);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.hero__stats strong {
+  font-size: var(--font-size-base);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary-strong);
 }
 
 .hero__sub {
@@ -857,6 +913,7 @@ h2 {
 
 /* 触控目标：垂直 padding 补足（10px + 行高 ≥44），水平 padding 16px；
    min-height 兜底，避免 flex 压缩后低于 44px */
+/* 美化包⑥：chip 分类色边框 + 悬浮填充（--cat-accent 由修饰类注入，默认品牌色） */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -864,15 +921,38 @@ h2 {
   padding: 10px var(--space-4);
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-primary-strong);
-  background-color: var(--color-primary-soft);
+  color: var(--color-text-primary);
+  background-color: color-mix(
+    in srgb,
+    var(--cat-accent, var(--color-primary)) 8%,
+    var(--color-bg-page)
+  );
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--cat-accent, var(--color-primary)) 40%,
+      var(--color-bg-page)
+    );
   border-radius: 999px;
   text-decoration: none;
 }
 
 .chip:hover {
-  color: var(--color-text-on-primary);
-  background-color: var(--color-primary-strong);
+  /* 分类色实底 + 白字：design-system §2「分类色对 white」全部 ≥4.5:1；
+     分类色令牌暗色不翻转，两种模式下该组合均达标（#ffffff 为对比矩阵已验证值） */
+  color: #ffffff;
+  background-color: var(--cat-accent, var(--color-primary-strong));
+  border-color: var(--cat-accent, var(--color-primary-strong));
+}
+
+.chip--finance {
+  --cat-accent: var(--cat-finance);
+}
+.chip--health {
+  --cat-accent: var(--cat-health);
+}
+.chip--daily {
+  --cat-accent: var(--cat-daily);
 }
 
 /* ---------- 首页分类卡网格 ---------- */
@@ -895,10 +975,39 @@ h2 {
   text-decoration: none;
 }
 
+/* 美化包①：卡片头部升级为分类色浅底色带（color-mix 随暗色自适应，
+   文字仍走 --color-text-* 令牌保证两模式对比度） */
 .cat-card__head {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background-color: color-mix(
+    in srgb,
+    var(--cat-accent, var(--color-primary)) 10%,
+    var(--color-bg-surface)
+  );
+}
+
+/* 美化包①：分类色浅底圆角方块图标位（SVG stroke 走 currentColor = 分类主色；
+   soft 底为装饰性色块，暗色下呈亮色徽章效果，无文字对比度风险） */
+.cat-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background-color: var(--cat-accent-soft, var(--color-primary-faint));
+  color: var(--cat-accent, var(--color-primary));
+}
+
+.cat-card__icon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .cat-card__dot {
@@ -927,39 +1036,51 @@ h2 {
   font-size: var(--font-size-sm);
 }
 
-/* 6 组分类修饰：左边框与圆点同色 */
+/* 6 组分类修饰：左边框与圆点同色；美化包①追加 --cat-accent/-soft 供色带与图标消费 */
 .cat-card--finance {
   border-left-color: var(--cat-finance);
+  --cat-accent: var(--cat-finance);
+  --cat-accent-soft: var(--cat-finance-soft);
 }
 .cat-card--finance .cat-card__dot {
   background-color: var(--cat-finance);
 }
 .cat-card--health {
   border-left-color: var(--cat-health);
+  --cat-accent: var(--cat-health);
+  --cat-accent-soft: var(--cat-health-soft);
 }
 .cat-card--health .cat-card__dot {
   background-color: var(--cat-health);
 }
 .cat-card--renovation {
   border-left-color: var(--cat-renovation);
+  --cat-accent: var(--cat-renovation);
+  --cat-accent-soft: var(--cat-renovation-soft);
 }
 .cat-card--renovation .cat-card__dot {
   background-color: var(--cat-renovation);
 }
 .cat-card--investment {
   border-left-color: var(--cat-investment);
+  --cat-accent: var(--cat-investment);
+  --cat-accent-soft: var(--cat-investment-soft);
 }
 .cat-card--investment .cat-card__dot {
   background-color: var(--cat-investment);
 }
 .cat-card--efficiency {
   border-left-color: var(--cat-efficiency);
+  --cat-accent: var(--cat-efficiency);
+  --cat-accent-soft: var(--cat-efficiency-soft);
 }
 .cat-card--efficiency .cat-card__dot {
   background-color: var(--cat-efficiency);
 }
 .cat-card--daily {
   border-left-color: var(--cat-daily);
+  --cat-accent: var(--cat-daily);
+  --cat-accent-soft: var(--cat-daily-soft);
 }
 .cat-card--daily .cat-card__dot {
   background-color: var(--cat-daily);
@@ -1140,6 +1261,26 @@ body[data-category="daily"] main h1::before {
   }
 }
 
+/* 美化包⑤：错误态轻微抖动（aria-invalid 置入时触发一次，移除属性即停） */
+@keyframes field-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .btn,
   .calc-key,
@@ -1170,6 +1311,14 @@ body[data-category="daily"] main h1::before {
       opacity var(--duration-fast) var(--ease-out);
   }
 
+  /* 美化包③：分类卡悬浮微交互——上浮 2px + shadow-md→lg，duration-base 缓动 */
+  .cat-card {
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
   .btn:hover,
   .chip:hover,
   .cat-card:hover {
@@ -1178,7 +1327,15 @@ body[data-category="daily"] main h1::before {
   }
 
   .cat-card:hover {
+    transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
+  }
+
+  /* 美化包⑤：错误输入抖动（reduced-motion 守卫内） */
+  .field-input[aria-invalid="true"],
+  .field-select[aria-invalid="true"],
+  textarea[aria-invalid="true"] {
+    animation: field-shake var(--duration-base) var(--ease-out);
   }
 
   /* 列表页分组容器为非交互元素：禁用悬停浮起，

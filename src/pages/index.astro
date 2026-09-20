@@ -69,6 +69,34 @@ const jsonLd = {
 
 // 大陆口径 6 类导航（唯一数据源 src/data/nav.ts，首页与站内搜索共用）
 const categories = NAV_CATEGORIES;
+
+// 美化包②：hero 数据条工具总数——构建期由 NAV_CATEGORIES 求和计算，禁止硬编码
+const toolCount = categories.reduce((sum, c) => sum + c.tools.length, 0);
+
+// 美化包①：分类线性图标（手绘简单 SVG 内芯，stroke 走 currentColor，装饰性 aria-hidden）
+const CATEGORY_ICONS: Record<string, string> = {
+  // 金融理财：¥ 铜钱
+  finance:
+    '<circle cx="12" cy="12" r="9"/><path d="m9 7.5 3 4 3-4M12 11.5V17M9.5 13.5h5M9.5 15.5h5"/>',
+  // 健康生活：心形
+  health:
+    '<path d="M12 20C7 16 4 12.8 4 9.5 4 7 6 5 8.5 5c1.4 0 2.7.7 3.5 1.8C12.8 5.7 14.1 5 15.5 5 18 5 20 7 20 9.5c0 3.3-3 6.5-8 10.5Z"/>',
+  // 装修家居：房子
+  renovation:
+    '<path d="m3 11 9-8 9 8"/><path d="M5.5 9v11h13V9"/><path d="M10 20v-6h4v6"/>',
+  // 投资专业：趋势线
+  investment: '<path d="m3 17 6-6 4 4 7-7"/><path d="M14 8h6v6"/>',
+  // 效率工具：闪电
+  efficiency: '<path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/>',
+  // 日常工具：日历
+  daily:
+    '<rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4M16 3v4M3.5 10.5h17"/>',
+  // 知识库：书本
+  articles:
+    '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>',
+  // 场景指南：地图
+  hub: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/>',
+};
 ---
 
 <BaseLayout
@@ -81,39 +109,37 @@ const categories = NAV_CATEGORIES;
     type="application/ld+json"
     is:inline
     set:html={JSON.stringify(jsonLd)}
-  ></script>
+  />
   <main id="main">
-    <h1 class="hero__title">计算器大全</h1>
     <section class="hero">
+      <h1 class="hero__title">计算器大全</h1>
+      <ul class="hero__stats">
+        <li><strong>{toolCount}</strong> 个免费工具</li>
+        <li>无需注册</li>
+        <li>打开即用</li>
+        <li>手机电脑通用</li>
+      </ul>
       <p class="hero__sub">
         50+
         免费在线计算工具，无需注册，打开即用，输入即时出结果并附计算公式说明。
       </p>
       <nav class="hero__chips" aria-label="热门工具快捷入口">
-        <a class="chip" href="/finance/mortgage-cn/">
-          房贷
-        </a>
-        <a class="chip" href="/finance/income-tax-cn/">
-          个税
-        </a>
-        <a class="chip" href="/finance/social-insurance-cn/">
+        <a class="chip chip--finance" href="/finance/mortgage-cn/"> 房贷 </a>
+        <a class="chip chip--finance" href="/finance/income-tax-cn/"> 个税 </a>
+        <a class="chip chip--finance" href="/finance/social-insurance-cn/">
           五险一金
         </a>
-        <a class="chip" href="/health/bmi-cn/">
-          BMI
-        </a>
-        <a class="chip" href="/finance/currency-exchange-cn/">
+        <a class="chip chip--health" href="/health/bmi-cn/"> BMI </a>
+        <a class="chip chip--finance" href="/finance/currency-exchange-cn/">
           汇率换算
         </a>
-        <a class="chip" href="/daily/basic/">
-          计算器
-        </a>
+        <a class="chip chip--daily" href="/daily/basic/"> 计算器 </a>
       </nav>
     </section>
     <!-- P2-10 我的工具：最近使用 + 我的收藏（localStorage，无数据时保持隐藏） -->
     <section class="cat-card" id="my-tools" hidden aria-label="我的工具">
       <div class="cat-card__head">
-        <span class="cat-card__dot" aria-hidden="true" />
+        <span class="cat-card__dot" aria-hidden="true"></span>
         <h2 class="cat-card__title">我的工具</h2>
       </div>
       <div id="recent-block" hidden>
@@ -126,25 +152,54 @@ const categories = NAV_CATEGORIES;
       </div>
     </section>
     <div class="cat-grid">
-      {categories.map((category) => (
-        <section class={`cat-card cat-card--${category.key}`} id={category.key}>
-          <div class="cat-card__head">
-            <span class="cat-card__dot" aria-hidden="true" />
-            <h2 class="cat-card__title">{category.name}</h2>
-            <span class="cat-card__count">{category.tools.length} 个工具</span>
-          </div>
-          <ul class="tool-list">
-            {category.tools.map((tool) => (
-              <li>
-                <a href={tool.href}>{tool.label}</a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      {
+        categories.map((category) => (
+          <section
+            class={`cat-card cat-card--${category.key}`}
+            id={category.key}
+          >
+            <div class="cat-card__head">
+              <span class="cat-card__icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  focusable="false"
+                  set:html={CATEGORY_ICONS[category.key]}
+                />
+              </span>
+              <h2 class="cat-card__title">{category.name}</h2>
+              <span class="cat-card__count">
+                {category.tools.length} 个工具
+              </span>
+            </div>
+            <ul class="tool-list">
+              {category.tools.map((tool) => (
+                <li>
+                  <a href={tool.href}>{tool.label}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
       <section class="cat-card" id="articles">
         <div class="cat-card__head">
-          <span class="cat-card__dot" aria-hidden="true" />
+          <span class="cat-card__icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              focusable="false"
+              set:html={CATEGORY_ICONS.articles}
+            />
+          </span>
           <h2 class="cat-card__title">知识库</h2>
           <span class="cat-card__count">{articleCount} 篇</span>
         </div>
@@ -153,16 +208,39 @@ const categories = NAV_CATEGORIES;
         </p>
         <ul class="tool-list">
           <li><a href="/articles-list/">全部文章</a></li>
-          <li><a href="/articles/equal-installment-vs-equal-principal/">等额本息 vs 等额本金</a></li>
-          <li><a href="/articles/personal-income-tax-deductions-2026/">个税专项附加扣除 2026</a></li>
-          <li><a href="/articles/social-insurance-explained/">五险一金缴费比例</a></li>
-          <li><a href="/articles/bmi-standards-cn-vs-who/">BMI 标准双对照</a></li>
-          <li><a href="/articles/tile-quantity-calculation/">瓷砖用量计算</a></li>
+          <li>
+            <a href="/articles/equal-installment-vs-equal-principal/"
+              >等额本息 vs 等额本金</a>
+          </li>
+          <li>
+            <a href="/articles/personal-income-tax-deductions-2026/"
+              >个税专项附加扣除 2026</a>
+          </li>
+          <li>
+            <a href="/articles/social-insurance-explained/">五险一金缴费比例</a>
+          </li>
+          <li>
+            <a href="/articles/bmi-standards-cn-vs-who/">BMI 标准双对照</a>
+          </li>
+          <li>
+            <a href="/articles/tile-quantity-calculation/">瓷砖用量计算</a>
+          </li>
         </ul>
       </section>
       <section class="cat-card" id="hub">
         <div class="cat-card__head">
-          <span class="cat-card__dot" aria-hidden="true" />
+          <span class="cat-card__icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              focusable="false"
+              set:html={CATEGORY_ICONS.hub}
+            />
+          </span>
           <h2 class="cat-card__title">场景指南</h2>
           <span class="cat-card__count">{hubCount} 个场景</span>
         </div>

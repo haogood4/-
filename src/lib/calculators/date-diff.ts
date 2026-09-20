@@ -7,7 +7,14 @@
 export type DateDiffErrorCode = "INVALID_DATE" | "END_BEFORE_START";
 
 export type DateDiffResult =
-  | { ok: true; days: number; weeks: number; months: number; years: number; countDownToTarget: number }
+  | {
+      ok: true;
+      days: number;
+      weeks: number;
+      months: number;
+      years: number;
+      countDownToTarget: number;
+    }
   | { ok: false; error: { code: DateDiffErrorCode; message: string } };
 
 const MS_PER_DAY = 86_400_000;
@@ -38,10 +45,17 @@ function parseUtcDate(raw: string): number | null {
 function diffMonths(startMs: number, endMs: number): number {
   const s = new Date(startMs);
   const e = new Date(endMs);
-  return (e.getUTCFullYear() - s.getUTCFullYear()) * 12 + (e.getUTCMonth() - s.getUTCMonth());
+  return (
+    (e.getUTCFullYear() - s.getUTCFullYear()) * 12 +
+    (e.getUTCMonth() - s.getUTCMonth())
+  );
 }
 
-export function daysBetween(start: string, end: string, todayIso?: string): DateDiffResult {
+export function daysBetween(
+  start: string,
+  end: string,
+  todayIso?: string,
+): DateDiffResult {
   const startMs = parseUtcDate(start);
   if (startMs === null) {
     return {
@@ -66,7 +80,8 @@ export function daysBetween(start: string, end: string, todayIso?: string): Date
   // 倒计时：从今天到「end」日期的天数差（todayIso 缺省时用客户端今天 UTC 日期）
   const today = todayIso ?? new Date().toISOString().slice(0, 10);
   const todayMs = parseUtcDate(today);
-  const countDownToTarget = todayMs === null ? 0 : Math.round((endMs - todayMs) / MS_PER_DAY);
+  const countDownToTarget =
+    todayMs === null ? 0 : Math.round((endMs - todayMs) / MS_PER_DAY);
   const totalMonths = diffMonths(startMs, endMs);
   return {
     ok: true,

@@ -10,7 +10,8 @@ export type PasswordOptions = {
   includeSymbol: boolean;
 };
 
-export type PasswordResult = { ok: true; value: { password: string } }
+export type PasswordResult =
+  | { ok: true; value: { password: string } }
   | { ok: false; error: { code: string; message: string } };
 
 const UPPER = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // 排除 I/O 避免视觉混淆
@@ -29,9 +30,16 @@ export function generatePassword(
   options: PasswordOptions,
   randoms: Uint32Array,
 ): PasswordResult {
-  const { length, includeUpper, includeLower, includeDigit, includeSymbol } = options;
+  const { length, includeUpper, includeLower, includeDigit, includeSymbol } =
+    options;
   if (!Number.isInteger(length) || length < MIN_LEN || length > MAX_LEN) {
-    return { ok: false, error: { code: "INVALID_LENGTH", message: `长度需在 ${MIN_LEN}~${MAX_LEN} 之间` } };
+    return {
+      ok: false,
+      error: {
+        code: "INVALID_LENGTH",
+        message: `长度需在 ${MIN_LEN}~${MAX_LEN} 之间`,
+      },
+    };
   }
   const pool =
     (includeUpper ? UPPER : "") +
@@ -39,10 +47,16 @@ export function generatePassword(
     (includeDigit ? DIGIT : "") +
     (includeSymbol ? SYMBOL : "");
   if (!pool) {
-    return { ok: false, error: { code: "NO_CHARSET", message: "至少选择一种字符类型" } };
+    return {
+      ok: false,
+      error: { code: "NO_CHARSET", message: "至少选择一种字符类型" },
+    };
   }
   if (randoms.length < length) {
-    return { ok: false, error: { code: "INSUFFICIENT_RANDOM", message: "随机源长度不足" } };
+    return {
+      ok: false,
+      error: { code: "INSUFFICIENT_RANDOM", message: "随机源长度不足" },
+    };
   }
   let pw = "";
   for (let i = 0; i < length; i++) {

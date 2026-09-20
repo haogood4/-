@@ -1,0 +1,160 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "二维码生成器" },
+];
+
+const faqItems = [
+  {
+    q: "支持中文吗？",
+    a: "支持。输入内容按 UTF-8 字节模式编码，中文、英文、数字、符号与网址均可生成二维码。",
+  },
+  {
+    q: "容量上限是多少？",
+    a: "本工具支持到二维码第 10 版：L 等级最多约 271 个英文字符（中文约占 3 个字符），纠错等级越高容量越小（H 等级约 119 个英文字符）。超出上限会提示重新精简内容。",
+  },
+  {
+    q: "纯本地生成安全吗？",
+    a: "安全。二维码完全在浏览器本地生成，输入内容不会发送到任何服务器，适合包含敏感信息的文本。",
+  },
+  {
+    q: "纠错等级怎么选？",
+    a: "一般场景选 L（约 7% 容错）即可；需打印或可能轻微磨损遮挡时选 M（约 15%）。Q/H 容错更高但容量更小，且 Q 等级在第 4 版以上个别扫码器识别不稳定，建议仅用于短内容。",
+  },
+];
+---
+
+<BaseLayout
+  title="二维码生成器 — 在线免费生成二维码（支持中文/网址，本地生成）"
+  description="免费在线二维码生成器：支持中文文字与网址，L/M/Q/H 四档纠错等级，自动选择最小版本与最优掩码，浏览器本地生成不上传，可下载 PNG 图片，适合名片、收款、链接分享等场景。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>二维码生成器</h1>
+    <p class="lead">
+      输入文字或网址，本地生成可下载的二维码图片 · 支持中文 · 绝不上传。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="二维码生成表单">
+      <div class="field">
+        <label for="qr-text">内容</label>
+        <textarea
+          id="qr-text"
+          class="field-input"
+          rows="3"
+          placeholder="输入文字或网址，例如 https://example.com"
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field">
+        <label for="qr-level">纠错等级</label>
+        <select id="qr-level" class="field-select">
+          <option value="L" selected>L（推荐，约 7% 容错）</option>
+          <option value="M">M（约 15% 容错）</option>
+          <option value="Q">Q（约 25% 容错，仅建议短内容）</option>
+          <option value="H">H（约 30% 容错）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          生成二维码
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <div class="card" id="qr-preview-card">
+      <canvas
+        id="qr-canvas"
+        class="qr-canvas"
+        width="0"
+        height="0"
+        role="img"
+        aria-label="二维码预览图"></canvas>
+      <p class="field-hint" id="qr-preview-hint">
+        生成后在此预览二维码，确认无误后可下载 PNG 图片。
+      </p>
+      <div class="form-actions">
+        <button
+          id="download-btn"
+          type="button"
+          class="btn btn-secondary"
+          disabled
+        >
+          下载图片
+        </button>
+      </div>
+    </div>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>在「内容」框输入要编码的文字或网址（支持中文）。</li>
+        <li>选择「纠错等级」，一般保持默认的 L 即可。</li>
+        <li>点击「生成二维码」，在预览区确认后点击「下载图片」保存 PNG。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">编码规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            内容按 UTF-8
+            字节模式编码，自动选择不小于内容长度的最小二维码版本（第 1~10
+            版，边长 = 17 + 4 × 版本）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            数据经 Reed-Solomon 纠错编码并交织填充后，从 8
+            种掩码中选取惩罚分最低的一种，保证扫码识别稳定。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+        <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+        <li><a href="/dev/timestamp/">时间戳换算计算器</a></li>
+        <li><a href="/efficiency/password-generator-cn/">随机密码生成器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="二维码生成器"
+      description="免费在线二维码生成器：支持中文文字与网址，L/M/Q/H 四档纠错等级，自动选择最小版本与最优掩码，浏览器本地生成不上传，可下载 PNG 图片，适合名片、收款、链接分享等场景。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/qr-code-cn-page.js"></script>
+</BaseLayout>
+
+<style>
+  .qr-canvas {
+    max-width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    background: #fff;
+    border-radius: 8px;
+  }
+</style>

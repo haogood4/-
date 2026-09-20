@@ -1,0 +1,142 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "JSON 格式化/校验计算器" },
+];
+
+const faqItems = [
+  {
+    q: "这个工具能做什么？",
+    a: "在线格式化（美化缩进）与压缩 JSON 文本，同时校验 JSON 语法是否合法；解析失败时会提示出错的大致行列位置。",
+  },
+  {
+    q: "数据会上传吗？",
+    a: "不会。格式化与校验全部在浏览器本地完成，JSON 内容不会离开您的设备。",
+  },
+  {
+    q: "支持中文和 emoji 吗？",
+    a: "支持。中文、emoji 等多字节字符原样保留，不会转义为 \\uXXXX 序列。",
+  },
+  {
+    q: "格式化用几个空格缩进？",
+    a: "「格式化」使用 2 个空格缩进；「压缩」移除全部多余空白，适合传输与存储。",
+  },
+];
+---
+
+<BaseLayout
+  title="JSON 格式化/校验 — 在线 JSON 美化与压缩工具"
+  description="免费在线 JSON 格式化工具：JSON 美化缩进、压缩去空白、语法校验并定位错误行列位置，支持中文与 emoji，本地处理数据不上传，适合开发调试。"
+  keywords={[
+    "JSON格式化",
+    "JSON校验",
+    "JSON美化",
+    "JSON压缩",
+    "在线JSON工具",
+    "开发者工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>JSON 格式化/校验计算器</h1>
+    <p class="lead">
+      粘贴 JSON 文本，一键美化缩进或压缩体积，同时校验语法并提示错误位置。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="JSON 格式化表单">
+      <div class="field">
+        <label for="text">JSON 文本</label>
+        <textarea
+          id="text"
+          class="field-input"
+          rows="10"
+          spellcheck="false"
+          placeholder='粘贴 JSON，例如 {"name":"计算器","version":1}'
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" data-mode="pretty">
+          格式化
+        </button>
+        <button type="button" class="btn btn-secondary" data-mode="minify">
+          压缩
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          清空
+        </button>
+      </div>
+    </form>
+
+    <div class="output-wrap">
+      <ResultArea />
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>将 JSON 文本粘贴到输入框。</li>
+        <li>
+          点击「格式化」输出 2
+          空格缩进的美化结果，或点击「压缩」输出无空白的紧凑结果。
+        </li>
+        <li>若语法非法，会在输入框下方提示错误原因与大致行列位置。</li>
+        <li>点击「复制结果」可将输出写入剪贴板。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="rule-heading">
+      <h2 id="rule-heading">转换规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>「格式化」：解析 JSON 后以 2 个空格缩进重新序列化。</p>
+        </li>
+        <li class="formula-item">
+          <p>「压缩」：解析 JSON 后移除全部结构空白字符。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/dev/url-encode/">URL 编码解码</a></li>
+        <li><a href="/dev/timestamp/">时间戳换算计算器</a></li>
+        <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="JSON 格式化/校验计算器"
+      description="免费在线 JSON 格式化工具：JSON 美化缩进、压缩去空白、语法校验并定位错误行列位置，支持中文与 emoji，本地处理数据不上传，适合开发调试。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/json-formatter-page.js"
+  ></script>
+</BaseLayout>
+
+<style>
+  .output-wrap :global(.result-main) {
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-align: left;
+    max-height: 28rem;
+    overflow-y: auto;
+  }
+</style>

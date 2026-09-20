@@ -82,7 +82,9 @@ describe("daysBetween / 错误处理", () => {
   });
 
   it("拒绝非 YYYY-MM-DD 格式", () => {
-    expect(daysBetween("2025/01/01", "2025-01-02", "2025-01-01").ok).toBe(false);
+    expect(daysBetween("2025/01/01", "2025-01-02", "2025-01-01").ok).toBe(
+      false,
+    );
     expect(daysBetween("2025-1-1", "2025-01-02", "2025-01-01").ok).toBe(false);
   });
 });

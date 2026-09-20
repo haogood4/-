@@ -94,6 +94,11 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "随机密码生成器", href: "/efficiency/password-generator-cn/" },
       { label: "HEX RGB 颜色转换", href: "/efficiency/color-converter-cn/" },
       { label: "文本处理工具", href: "/efficiency/text-transform-cn/" },
+      { label: "二维码生成器", href: "/efficiency/qr-code-cn/" },
+      { label: "JSON 格式化", href: "/dev/json-formatter/" },
+      { label: "Base64 编码解码", href: "/dev/base64/" },
+      { label: "URL 编码解码", href: "/dev/url-encode/" },
+      { label: "汉字转拼音", href: "/efficiency/pinyin-cn/" },
     ],
   },
   {
@@ -102,6 +107,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
     tools: [
       { label: "年龄计算器", href: "/daily/age/" },
       { label: "日期差计算器", href: "/daily/date-diff/" },
+      { label: "手机号归属地查询", href: "/efficiency/phone-region-cn/" },
     ],
   },
 ];

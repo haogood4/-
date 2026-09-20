@@ -1,0 +1,144 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "URL 编码解码计算器" },
+];
+
+const faqItems = [
+  {
+    q: "这个工具用什么编码规则？",
+    a: "编码方向使用 encodeURIComponent：除字母与 -_.!~*'() 外的字符均按 UTF-8 转成 %XX 序列；解码方向使用 decodeURIComponent。",
+  },
+  {
+    q: "支持中文和 emoji 吗？",
+    a: "支持。中文按 UTF-8 编码为多个 %XX 字节（如「你」→ %E4%BD%A0），emoji 同样可正确往返转换。",
+  },
+  {
+    q: "为什么解码提示非法序列？",
+    a: "百分号后的十六进制不完整（如 %E4%AD 截断）或出现 %zz 等非法转义时，无法还原为有效文本，会提示错误。",
+  },
+  {
+    q: "数据会上传吗？",
+    a: "不会。编码与解码全部在浏览器本地完成，内容不会离开您的设备。",
+  },
+];
+---
+
+<BaseLayout
+  title="URL 编码解码 — 在线 UrlEncode/UrlDecode 工具"
+  description="免费在线 URL 编码解码工具：encodeURIComponent 百分号编码与解码，支持中文、emoji 与多字节字符，自动校验非法转义序列，本地处理数据不上传，适合开发调试。"
+  keywords={[
+    "URL编码",
+    "URL解码",
+    "encodeURIComponent",
+    "UrlEncode",
+    "百分号编码",
+    "开发者工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>URL 编码解码计算器</h1>
+    <p class="lead">
+      百分号（%XX）编码与解码，适合处理查询参数、中文路径与特殊字符。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="URL 编码解码表单">
+      <div class="field">
+        <label for="text">输入内容</label>
+        <textarea
+          id="text"
+          class="field-input"
+          rows="8"
+          spellcheck="false"
+          placeholder="编码方向填原文或 URL；解码方向填 %XX 编码串"
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" data-mode="encode">
+          编码
+        </button>
+        <button type="button" class="btn btn-secondary" data-mode="decode">
+          解码
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          清空
+        </button>
+      </div>
+    </form>
+
+    <div class="output-wrap">
+      <ResultArea />
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>将待处理内容粘贴到输入框。</li>
+        <li>点击「编码」得到百分号编码结果；点击「解码」还原为原始文本。</li>
+        <li>非法转义序列（如 %E4%AD 截断、孤立 %）会提示错误。</li>
+        <li>点击「复制结果」可将输出写入剪贴板。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="rule-heading">
+      <h2 id="rule-heading">转换规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            「编码」：按 encodeURIComponent 规则，非保留字符转 UTF-8
+            字节后逐字节写为 %XX。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            「解码」：按 decodeURIComponent 规则还原 %XX
+            序列，非法序列会被拒绝。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/dev/timestamp/">时间戳换算计算器</a></li>
+        <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="URL 编码解码计算器"
+      description="免费在线 URL 编码解码工具：encodeURIComponent 百分号编码与解码，支持中文、emoji 与多字节字符，自动校验非法转义序列，本地处理数据不上传，适合开发调试。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/url-encode-page.js"></script>
+</BaseLayout>
+
+<style>
+  .output-wrap :global(.result-main) {
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-align: left;
+    max-height: 28rem;
+    overflow-y: auto;
+  }
+</style>

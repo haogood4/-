@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "汉字转拼音" },
+];
+
+const faqItems = [
+  {
+    q: "多音字怎么处理？",
+    a: "默认输出字典收录的主读音（第一读音）。勾选「显示多音读音」后会列出该字全部读音，以 / 分隔，例如「长」显示为 cháng/zhǎng。按上下文自动判定多音字读音需要语言模型，本版本暂不支持。",
+  },
+  {
+    q: "支持哪些汉字？",
+    a: "收录约 2.1 万个常用汉字及多音字读音。字典未收录的生僻字、外文、数字与标点会原样输出，不参与转换。",
+  },
+  {
+    q: "数据有多大？对流量友好吗？",
+    a: "拼音字典约 370KB（JSON），不包含在页面初始 JS 中，首次点击「转换」时才按需下载并缓存在内存；浏览器 HTTP 缓存命中后再次访问零额外流量。转换全程在本地完成，文本不会上传。",
+  },
+  {
+    q: "姓氏读音准吗？",
+    a: "请留意：作姓氏时「单」读 shàn、「解」读 xiè、「曾」读 zēng 等，本工具输出的是常用主读音（dān/jiě/céng）。用于姓名、证件拼音时请人工核对多音姓氏。",
+  },
+];
+---
+
+<BaseLayout
+  title="汉字转拼音转换器 — 在线中文注音/多音字查询"
+  description="免费在线汉字转拼音工具：中文批量转带声调拼音，支持多音字全部读音显示，逐字对照输出，约 2.1 万常用汉字，本地转换不上传，适合注音、拼音输入法练习与文案校对。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>汉字转拼音</h1>
+    <p class="lead">
+      中文一键转带声调拼音 · 支持多音字 · 本地转换不上传。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="汉字转拼音表单">
+      <div class="field">
+        <label for="text">中文文本</label>
+        <textarea
+          id="text"
+          class="field-input"
+          rows="4"
+          autocomplete="off"
+          placeholder="输入或粘贴要转换的中文文本…"
+          aria-describedby="field-error-text"
+        ></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field checkline">
+        <label for="polyphone">
+          <input type="checkbox" id="polyphone" /> 显示多音读音（全部读音以 /
+          分隔）
+        </label>
+      </div>
+      <p class="field-hint" id="data-status" hidden></p>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          转换
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>在文本框中输入或粘贴中文内容（可包含标点、英文，将原样保留）。</li>
+        <li>需要查看全部多音读音时，勾选「显示多音读音」。</li>
+        <li>
+          点击「转换」查看结果：主行为逐字拼音，下方为「字(拼音)」逐字对照。
+        </li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+      <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      <li><a href="/efficiency/text-transform-cn/">文本处理工具</a></li>
+      <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+    </ul></section>
+
+    <CalcJsonLd name="汉字转拼音" description="免费在线汉字转拼音工具：中文批量转带声调拼音，支持多音字全部读音显示，逐字对照输出，约 2.1 万常用汉字，本地转换不上传，适合注音、拼音输入法练习与文案校对。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/pinyin-cn-page.js"></script>
+</BaseLayout>

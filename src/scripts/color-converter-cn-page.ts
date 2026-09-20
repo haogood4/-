@@ -66,7 +66,11 @@ form.addEventListener("submit", (ev) => {
   if (rgbRaw) {
     const parts = rgbRaw.split(/[,\s]+/).map((s) => parseInt(s, 10));
     if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
-      setFieldError(rgbInput, err_rgb, "RGB 必须是 3 个 0~255 整数（逗号或空格分隔）");
+      setFieldError(
+        rgbInput,
+        err_rgb,
+        "RGB 必须是 3 个 0~255 整数（逗号或空格分隔）",
+      );
       clearPreview();
       setState("empty");
       return;
@@ -95,6 +99,8 @@ resetBtn.addEventListener("click", () => {
   setState("empty");
 });
 
-[hexInput, rgbInput].forEach((el) => el.addEventListener("input", goStaleIfComputed));
+[hexInput, rgbInput].forEach((el) =>
+  el.addEventListener("input", goStaleIfComputed),
+);
 bindCopyButton(copyBtn, () => lastCopy);
 setState("empty");

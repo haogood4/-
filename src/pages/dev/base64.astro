@@ -1,0 +1,146 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "Base64 编码解码计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持中文和 emoji 吗？",
+    a: "支持。编码前按 UTF-8 处理，因此中文、emoji 与各类多字节字符均可正确互转，不会出现乱码。",
+  },
+  {
+    q: "解码时为什么报「非法 UTF-8」？",
+    a: "Base64 字符串本身合法，但解码出的字节不是有效的 UTF-8 文本（例如二进制文件内容），此时会提示错误。",
+  },
+  {
+    q: "Base64 能当加密用吗？",
+    a: "不能。Base64 只是编码格式，任何人都可以还原，不提供任何保密性，请勿用于存储密码或敏感信息。",
+  },
+  {
+    q: "数据会上传吗？",
+    a: "不会。编码与解码全部在浏览器本地完成，内容不会离开您的设备。",
+  },
+];
+---
+
+<BaseLayout
+  title="Base64 编码解码 — 在线 Base64 转换工具"
+  description="免费在线 Base64 编码解码工具：文本与 Base64 双向转换，UTF-8 安全，支持中文与 emoji，自动校验非法输入，本地处理数据不上传，适合开发调试。"
+  keywords={[
+    "Base64编码",
+    "Base64解码",
+    "在线Base64",
+    "Base64转换",
+    "UTF-8编码",
+    "开发者工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>Base64 编码解码计算器</h1>
+    <p class="lead">文本与 Base64 双向转换，UTF-8 安全，支持中文与 emoji。</p>
+
+    <form
+      id="calc-form"
+      class="card"
+      novalidate
+      aria-label="Base64 编码解码表单"
+    >
+      <div class="field">
+        <label for="text">输入内容</label>
+        <textarea
+          id="text"
+          class="field-input"
+          rows="8"
+          spellcheck="false"
+          placeholder="编码方向填原文；解码方向填 Base64 字符串"
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" data-mode="encode">
+          编码
+        </button>
+        <button type="button" class="btn btn-secondary" data-mode="decode">
+          解码
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          清空
+        </button>
+      </div>
+    </form>
+
+    <div class="output-wrap">
+      <ResultArea />
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>将待处理内容粘贴到输入框。</li>
+        <li>点击「编码」得到 Base64 字符串；点击「解码」还原为原始文本。</li>
+        <li>非法 Base64 字符串或解码后非 UTF-8 文本的内容会提示错误。</li>
+        <li>点击「复制结果」可将输出写入剪贴板。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="rule-heading">
+      <h2 id="rule-heading">转换规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            「编码」：原文按 UTF-8 转字节后编码为 Base64（标准字母表，含 =
+            填充）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            「解码」：Base64 还原为字节后按 UTF-8 解码为文本，非法内容会被拒绝。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+        <li><a href="/dev/url-encode/">URL 编码解码</a></li>
+        <li><a href="/dev/timestamp/">时间戳换算计算器</a></li>
+        <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="Base64 编码解码计算器"
+      description="免费在线 Base64 编码解码工具：文本与 Base64 双向转换，UTF-8 安全，支持中文与 emoji，自动校验非法输入，本地处理数据不上传，适合开发调试。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/base64-page.js"></script>
+</BaseLayout>
+
+<style>
+  .output-wrap :global(.result-main) {
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-align: left;
+    max-height: 28rem;
+    overflow-y: auto;
+  }
+</style>
