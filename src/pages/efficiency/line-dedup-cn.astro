@@ -1,0 +1,135 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+const faqItems = [
+  {
+    q: "文本内容会上传吗？",
+    a: "不会。去重计算全部在您的浏览器本地完成，粘贴的文本不会发送到服务器，也不会被存储或记录，可放心处理邮箱名单、账号列表等敏感内容。",
+  },
+  {
+    q: "去重规则是什么？",
+    a: "按行拆分文本（兼容 \\n 与 \\r\\n），保留每行内容首次出现的顺序，后续重复行删除。可勾选「去除首尾空格」让带空格的相同行判为重复，勾选「删除空行」清理空行与纯空白行，结果统计共 N 行、保留 X、去除 Y。",
+  },
+  {
+    q: "忽略大小写会改变原文吗？",
+    a: "不会。「忽略大小写」只在比较两行是否重复时按小写归一处理（如 ABC 与 abc 视为同一行），输出仍保留首次出现那一行的原始大小写。",
+  },
+  {
+    q: "适合什么场景？",
+    a: "常用于关键词列表去重、SEO 采集词清洗、邮箱/手机号/UID 名单合并、标签与分类整理、日志行汇总等需要删除重复行、保留唯一值的场景。",
+  },
+  {
+    q: "有文本大小限制吗？",
+    a: "有。单次处理上限为 2MB 文本、50000 行，超限会提示错误。更大的数据建议先分段再分别处理。",
+  },
+];
+---
+
+<BaseLayout
+  title="在线文本行去重工具 — 删除重复行/关键词名单清洗"
+  description="免费在线文本行去重工具，粘贴多行文本一键删除重复行并保留首次出现顺序，支持去除首尾空格、忽略大小写与删除空行，适合关键词列表去重、邮箱名单清洗、标签整理，本地处理不上传。"
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "文本行去重" },
+      ]}
+    />
+    <h1>文本行去重工具</h1>
+    <UsageGuide />
+    <p class="lead">多行文本一键删除重复行 · 保留首次出现顺序 · 本地处理</p>
+
+    <form id="calc-form" class="card" novalidate>
+      <div class="field">
+        <label for="text">多行文本</label>
+        <textarea
+          id="text"
+          class="field-input"
+          rows="10"
+          placeholder="把要处理的文本粘贴到这里，每行一条…"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field-row">
+        <div class="field-inline">
+          <label class="checkbox-label" for="opt-trim">
+            <input id="opt-trim" type="checkbox" checked />
+            去除首尾空格
+          </label>
+        </div>
+        <div class="field-inline">
+          <label class="checkbox-label" for="opt-ignore-case">
+            <input id="opt-ignore-case" type="checkbox" />
+            忽略大小写
+          </label>
+        </div>
+        <div class="field-inline">
+          <label class="checkbox-label" for="opt-remove-empty">
+            <input id="opt-remove-empty" type="checkbox" checked />
+            删除空行
+          </label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">去重</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >清空</button
+        >
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        粘贴上方多行文本后点击「去重」查看结果
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">去重结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail" class="result-process"></p>
+        <div class="field">
+          <label for="output-text">去重后文本</label>
+          <textarea
+            id="output-text"
+            class="field-input"
+            rows="10"
+            readonly
+            aria-label="去重后文本"></textarea>
+        </div>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          输入已变更，请重新去重
+        </p>
+        <p class="result-hint">
+          计算结果仅供参考，请人工复核关键名单后再使用。
+        </p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled
+            >复制结果</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+        <li><a href="/efficiency/text-transform-cn/">文本处理工具</a></li>
+        <li><a href="/efficiency/keyword-density-cn/">关键字密度分析</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="文本行去重工具"
+      description="免费在线文本行去重工具，粘贴多行文本一键删除重复行并保留首次出现顺序，支持去除首尾空格、忽略大小写与删除空行，适合关键词列表去重、邮箱名单清洗、标签整理，本地处理不上传。"
+      faqItems={faqItems}
+    />
+  </main>
+  <script is:inline type="module" src="/scripts/line-dedup-cn-page.js"></script>
+</BaseLayout>

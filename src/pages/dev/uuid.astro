@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "UUID 在线生成器" },
+];
+
+const faqItems = [
+  {
+    q: "UUID 会重复吗？",
+    a: "理论上可能，实际上几乎不可能。UUID v4 有 122 位随机位（约 5.3×10^36 种取值），全球范围内持续生成到出现一次碰撞的概率低到可以忽略，工程上普遍将其视为全局唯一。",
+  },
+  {
+    q: "什么是 UUID v4？",
+    a: "UUID（Universally Unique Identifier）是 128 位标识符，标准写法为 8-4-4-4-12 的 36 位十六进制字符串。v4 表示「完全随机」版本：除固定的版本号位与 variant 位外，其余 122 位均由密码学安全随机数填充。",
+  },
+  {
+    q: "碰撞概率到底有多大？",
+    a: "按生日悖论估算：要生成约 27 亿亿（2.7×10^18）个 UUID，碰撞概率才达到约 10^-9。以每秒生成 10 亿个的速度也需要约 85 年。因此对数据库主键、消息 ID 等场景可放心使用。",
+  },
+  {
+    q: "UUID 可以用于什么场景？",
+    a: "常见用途包括：数据库主键（避免自增 ID 暴露业务量）、分布式系统的资源标识、接口幂等键（Idempotency-Key）、请求追踪 TraceId、文件名去重、设备与用户匿名标识等。",
+  },
+  {
+    q: "生成的数据会上传吗？",
+    a: "不会。所有随机数与生成过程均在浏览器本地完成（使用 crypto.getRandomValues），生成的 UUID 不会经过任何网络传输。",
+  },
+];
+---
+
+<BaseLayout
+  title="UUID 在线生成器 — 批量生成 UUID v4 唯一标识符"
+  description="免费在线 UUID 生成器：批量生成 RFC 4122 v4 唯一标识符，支持标准带连字符、无连字符、大写等格式，适用于数据库主键、接口幂等键、分布式 ID 与请求追踪场景，浏览器本地生成不上传。"
+  keywords={[
+    "UUID生成器",
+    "UUID v4",
+    "在线UUID",
+    "唯一标识符",
+    "GUID生成",
+    "开发者工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>UUID 在线生成器</h1>
+    <UsageGuide />
+    <p class="lead">批量生成 UUID v4 · 密码学安全随机 · 本地生成绝不上传</p>
+
+    <form id="calc-form" class="card" novalidate aria-label="UUID 生成表单">
+      <div class="field">
+        <label for="count">生成数量（1~1000）</label>
+        <input
+          type="number"
+          id="count"
+          class="field-input"
+          min="1"
+          max="1000"
+          step="1"
+          value="5"
+          inputmode="numeric"
+          aria-describedby="field-error-count"
+        />
+        <p class="field-error" id="field-error-count" hidden></p>
+      </div>
+      <div class="field">
+        <label for="format">输出格式</label>
+        <select id="format" class="field-input">
+          <option value="dash" selected>标准带连字符（8-4-4-4-12 小写）</option>
+          <option value="no-dash">无连字符（32 位小写十六进制）</option>
+          <option value="no-dash-upper">大写无连字符（GUID 风格）</option>
+        </select>
+      </div>
+      <div class="field checkline">
+        <label for="prefix">
+          <input type="checkbox" id="prefix" /> 每行前缀序号（如
+          <code>1. xxxxxxxx-…</code>，仅影响显示，复制内容含序号）
+        </label>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          生成 UUID
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">点击「生成 UUID」按钮</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">
+          生成结果（每行一个，点击「复制全部」保存）
+        </p>
+        <textarea
+          id="uuid-list"
+          class="uuid-output"
+          rows="10"
+          readonly
+          spellcheck="false"
+          aria-label="UUID 列表输出"></textarea>
+        <p id="result-detail" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          选项已变更，请重新生成
+        </p>
+        <div class="result-actions">
+          <button
+            type="button"
+            id="copy-btn"
+            class="btn btn-secondary"
+            disabled
+          >
+            复制全部
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p class="disclaimer">
+      ⚠️ UUID 由浏览器本地生成，<strong>不会上传到任何服务器</strong
+      >；生成结果仅供参考，请在正式业务中自行校验使用。
+    </p>
+
+    <AdContainer />
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2>
+      <ul class="tool-list">
+        <li>
+          <a href="/efficiency/password-generator-cn/">随机密码生成器</a>
+        </li>
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="UUID 在线生成器"
+      description="免费在线 UUID 生成器：批量生成 RFC 4122 v4 唯一标识符，支持标准带连字符、无连字符、大写等格式，适用于数据库主键、接口幂等键、分布式 ID 与请求追踪场景，浏览器本地生成不上传。"
+      faqItems={faqItems}
+      featureList={[
+        "批量生成 1~1000 个 UUID v4",
+        "标准/无连字符/大写多种格式",
+        "crypto.getRandomValues 密码学安全随机",
+        "本地生成绝不上传",
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/uuid-page.js"></script>
+</BaseLayout>
+
+<style>
+  .uuid-output {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    resize: vertical;
+    word-break: break-all;
+  }
+</style>

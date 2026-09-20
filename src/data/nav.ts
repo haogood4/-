@@ -106,6 +106,11 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "正则表达式测试", href: "/dev/regex-tester/" },
       { label: "图片压缩工具", href: "/efficiency/image-compress-cn/" },
       { label: "繁体简体转换", href: "/efficiency/chinese-convert-cn/" },
+      { label: "图片格式转换", href: "/efficiency/image-convert-cn/" },
+      { label: "重量换算", href: "/unit/weight/" },
+      { label: "CSV 转 JSON", href: "/dev/csv-to-json/" },
+      { label: "文本行去重", href: "/efficiency/line-dedup-cn/" },
+      { label: "UUID 生成器", href: "/dev/uuid/" },
     ],
   },
   {

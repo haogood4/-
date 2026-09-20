@@ -1,0 +1,203 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const pageTitle = "CSV 转 JSON — 在线表格数据转换与清洗工具";
+const pageDescription =
+  "免费在线 CSV 转 JSON 工具：粘贴 CSV 即可转为对象数组或二维数组 JSON，支持逗号/分号/Tab 分隔符自动检测、RFC 4180 引号转义与表头开关，适合数据清洗、API 调试与前端联调，本地处理数据不上传，结果仅供参考。";
+
+const faqItems = [
+  {
+    q: "数据会上传吗？",
+    a: "不会。CSV 解析与 JSON 生成全部在您的浏览器本地完成，表格内容不会离开您的设备，可放心处理内部数据。",
+  },
+  {
+    q: "Excel 导出的 CSV 打开乱码怎么办？",
+    a: "Excel 默认按系统编码（如 GBK）保存 CSV，直接粘贴常出现乱码。请在 Excel 中另存为「CSV UTF-8（逗号分隔）」格式后再粘贴到本工具；本工具按 UTF-8 文本处理输入。",
+  },
+  {
+    q: "数字为什么变成了字符串？",
+    a: "CSV 本身没有类型信息，「42」既可能是编号也可能是数值。为避免精度丢失（如长订单号被转成科学计数法），本工具将所有字段原样保留为 JSON 字符串，类型请在后端或脚本中按需转换。",
+  },
+  {
+    q: "支持多大的文件？",
+    a: "解析为纯本地同步执行，数千至数万行的常规表格可即时完成；若文件达数十 MB，浏览器可能出现短暂卡顿，建议拆分后再转换。",
+  },
+  {
+    q: "各行字段数不一致会怎样？",
+    a: "会中止转换并提示出错行号与字段数差异（引号内的换行也计入行号），方便您回到源文件定位缺列或多列的记录。",
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  keywords={[
+    "CSV转JSON",
+    "CSV转换",
+    "表格数据清洗",
+    "API调试",
+    "在线CSV工具",
+    "开发者工具",
+  ]}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "开发者工具" },
+        { label: "CSV 转 JSON 工具" },
+      ]}
+    />
+    <h1>CSV 转 JSON 工具</h1>
+    <UsageGuide />
+    <p class="lead">
+      粘贴 CSV 文本，自动识别分隔符并转换为 JSON 数组，数据清洗与 API
+      调试的轻量利器。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="CSV 转 JSON 表单">
+      <div class="field">
+        <label for="csv">CSV 文本</label>
+        <textarea
+          id="csv"
+          class="field-input"
+          rows="10"
+          spellcheck="false"
+          placeholder="粘贴 CSV，例如：
+name,city
+Alice,Beijing"
+          aria-describedby="field-error-csv"></textarea>
+        <p class="field-error" id="field-error-csv" hidden></p>
+      </div>
+      <div class="field">
+        <label for="delimiter">分隔符</label>
+        <select id="delimiter" class="field-select">
+          <option value="auto" selected>自动检测</option>
+          <option value="comma">逗号（,）</option>
+          <option value="semicolon">分号（;）</option>
+          <option value="tab">Tab（制表符）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="indent">JSON 缩进</label>
+        <select id="indent" class="field-select">
+          <option value="2" selected>2 空格</option>
+          <option value="4">4 空格</option>
+          <option value="0">压缩（无空白）</option>
+        </select>
+      </div>
+      <div class="field checkline">
+        <label class="checkbox-label" for="has-header">
+          <input type="checkbox" id="has-header" checked />
+          首行为表头（转为对象数组；取消勾选则输出二维数组）
+        </label>
+      </div>
+      <div class="form-actions">
+        <button id="convert-btn" type="button" class="btn btn-primary">
+          转换 JSON
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          清空
+        </button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        粘贴 CSV 后点击「转换 JSON」查看结果
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">JSON 结果</p>
+        <textarea
+          id="output"
+          class="field-input"
+          rows="14"
+          readonly
+          spellcheck="false"
+          aria-label="JSON 输出结果"></textarea>
+        <p id="result-stats" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          输入已变更，请重新转换
+        </p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled
+            >复制 JSON</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>将从 Excel、数据库导出或接口下载的 CSV 文本粘贴到输入框。</li>
+        <li>
+          分隔符默认「自动检测」（按首行统计逗号/分号/Tab
+          出现频次），也可显式指定；勾选状态决定「首行为表头」。
+        </li>
+        <li>
+          点击「转换
+          JSON」输出结果并按所选缩进排版，可一键复制；字段数不一致时提示出错行号。
+        </li>
+        <li>转换在浏览器本地完成，结果仅供参考，重要数据请复核后再入库。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="rule-heading">
+      <h2 id="rule-heading">转换规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            遵循 RFC
+            4180：双引号包裹的字段内可含分隔符与换行，连续两个引号（""）表示一个字面引号。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            勾选「首行为表头」时输出对象数组（键为表头列名）；取消勾选输出二维数组。所有字段值保留为字符串，不做数值推断。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            各行字段数须与首行一致，否则报错并给出行号；兼容 LF 与 CRLF
+            行尾，纯空白行自动忽略。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计工具</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="CSV 转 JSON 工具"
+      description={pageDescription}
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/csv-to-json-page.js"></script>
+</BaseLayout>
+
+<style>
+  #output {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.9rem;
+    white-space: pre;
+  }
+</style>
