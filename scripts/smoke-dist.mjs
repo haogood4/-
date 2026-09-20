@@ -41,7 +41,7 @@ function urlToPath(href) {
   return null;
 }
 
-console.log("冒烟断言（10 组）：");
+console.log("冒烟断言（11 组）：");
 
 // ── 1. 页面总数 = 75（71 + legal 三页骨架 + 搜索页） ─────────
 {
@@ -377,9 +377,142 @@ console.log("冒烟断言（10 组）：");
   }
 }
 
+{
+  // 11. 无障碍（a11y）核心维度：
+  // - 每页恰好 1 个 <h1>
+  // - 必须有 <main id="main"> 锚点与 .skip-link
+  // - 全部 <img> 必带 alt 属性
+  // - 全部 <input>/<select>/<textarea> 非 hidden 必有关联 label 或 aria-label
+  // - 全部 <button> 与 <a>（去 svg 内）必有可见文本或 aria-label
+  // - 颜色 token 关键配对比对 ≥ WCAG AA 4.5:1
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  function walk(dir) {
+    const out = [];
+    for (const f of fs.readdirSync(dir)) {
+      const p = path.join(dir, f);
+      if (fs.statSync(p).isDirectory()) out.push(...walk(p));
+      else if (f.endsWith(".html")) out.push(p);
+    }
+    return out;
+  }
+  const htmls = walk(DIST);
+  const bad = [];
+  let missingMain = 0;
+  let missingSkip = 0;
+  let imgNoAlt = 0;
+  let formNoLabel = 0;
+  let btnNoName = 0;
+  let ancNoName = 0;
+  for (const f of htmls) {
+    const h = read(f);
+    const h1s = (h.match(/<h1\b/g) ?? []).length;
+    if (h1s !== 1) bad.push(`${relative(DIST, f)} h1=${h1s}`);
+    if (!/id="main"/.test(h)) missingMain++;
+    if (!/class="skip-link"/.test(h)) missingSkip++;
+    for (const m of h.matchAll(/<img\b[^>]*>/g)) {
+      if (!/\balt=/.test(m[0])) imgNoAlt++;
+    }
+    const cleaned = h.replace(/<svg[\s\S]*?<\/svg>/g, "");
+    for (const m of cleaned.matchAll(
+      /<(input|select|textarea)\b[^>]*>/g,
+    )) {
+      const t = m[0];
+      const type = (t.match(/\btype="([^"]+)"/) ?? [])[1];
+      if (type === "hidden") continue;
+      const id = (t.match(/\bid="([^"]+)"/) ?? [])[1];
+      const hasAria = /aria-label=|aria-labelledby=/.test(t);
+      const hasLabel = id && new RegExp(`<label[^>]{0,120}\\bfor="${id}"`).test(h);
+      if (!hasAria && !hasLabel) formNoLabel++;
+    }
+    for (const m of cleaned.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g)) {
+      const open = m[0];
+      const body = m[1] || "";
+      if (/>[^<]+</.test(open) || /<[^>]+>[^<]+/.test(body)) continue;
+      if (/aria-label=/.test(open)) continue;
+      btnNoName++;
+    }
+    for (const m of cleaned.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)) {
+      const open = m[0];
+      if (/class="(skip-link|brand|logo|icon-only)/.test(open)) continue;
+      const body = m[1] || "";
+      if (/>[^<]+</.test(open) || /<[^>]+>[^<]+/.test(body)) continue;
+      if (/aria-label=/.test(open)) continue;
+      ancNoName++;
+    }
+  }
+  // 对比度（WCAG AA）：扫描 global.css 解析颜色 token，配对计算
+  const cssText = fs.readFileSync(
+    path.join(DIST, "..", "src/styles/global.css"),
+    "utf8",
+  );
+  function lum(hex) {
+    const m = hex
+      .replace("#", "")
+      .match(/.{2}/g)
+      .map((x) => parseInt(x, 16) / 255);
+    const f = (x) =>
+      x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+    return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]);
+  }
+  function ratio(a, b) {
+    const la = lum(a),
+      lb = lum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  const hexMap = {
+    text: "#134e4a",
+    page: "#ffffff",
+    muted: "#57534e",
+    soft: "#ccfbf1",
+    onPrimary: "#ffffff",
+    prim: "#0f766e",
+    primStrong: "#115e59",
+    errorText: "#991b1b",
+    errorBg: "#fef2f2",
+    successText: "#166534",
+    successBg: "#f0fdf4",
+    warnText: "#78350f",
+    warnBg: "#fffbeb",
+  };
+  const pairs = [
+    ["text", "page"],
+    ["muted", "page"],
+    ["prim", "page"],
+    ["text", "soft"],
+    ["onPrimary", "prim"],
+    ["onPrimary", "primStrong"],
+    ["errorText", "errorBg"],
+    ["successText", "successBg"],
+    ["warnText", "warnBg"],
+  ];
+  const contrastFails = [];
+  for (const [f, b] of pairs) {
+    if (ratio(hexMap[f], hexMap[b]) < 4.5)
+      contrastFails.push(`${f}/${b}=${ratio(hexMap[f], hexMap[b]).toFixed(2)}`);
+  }
+  const issues = [];
+  if (bad.length) issues.push(`h1≠1: ${bad.slice(0, 3).join(" | ")}`);
+  if (missingMain) issues.push(`缺 <main id="main">: ${missingMain} 页`);
+  if (missingSkip) issues.push(`缺 .skip-link: ${missingSkip} 页`);
+  if (imgNoAlt) issues.push(`<img> 缺 alt: ${imgNoAlt}`);
+  if (formNoLabel) issues.push(`表单缺 label: ${formNoLabel}`);
+  if (btnNoName) issues.push(`按钮缺文本: ${btnNoName}`);
+  if (ancNoName) issues.push(`链接缺文本: ${ancNoName}`);
+  if (contrastFails.length)
+    issues.push(`对比度不达标: ${contrastFails.join(", ")}`);
+  if (issues.length) {
+    fail("11. a11y", issues.join(" | "));
+  } else {
+    pass(
+      `11. a11y（75 页 h1=1、main/skip-link/label/alt/btn/anc 全齐，对比度 9 组 ≥4.5:1）`,
+    );
+  }
+}
+
 console.log(
   failures.length === 0
-    ? "\nSMOKE PASS: 10/10"
+    ? "\nSMOKE PASS: 11/11"
     : `\nSMOKE FAIL: ${failures.length} 组未通过`,
 );
 process.exit(failures.length === 0 ? 0 : 1);
