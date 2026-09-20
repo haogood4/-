@@ -1,0 +1,149 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "四则运算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "运算优先级是怎样的？",
+    a: "乘除（× ÷）优先于加减（+ −），同优先级从左到右计算；可以用括号 () 改变顺序，例如 2 + 3 × 4 = 14，(2 + 3) × 4 = 20。",
+  },
+  {
+    q: "可以输入负数吗？",
+    a: "可以。在数字前按 ± 键即可切换正负号；也可以在表达式开头或括号内直接用 − 表示负数，例如 −5 + 3 = −2。",
+  },
+  {
+    q: "百分号 % 怎么用？",
+    a: "% 等价于「÷100」，常用于折扣与税率场景。例如 200 × 15% 实际等于 200 × 15 ÷ 100 = 30。",
+  },
+  {
+    q: "结果可以用于正式决策吗？",
+    a: "不可以。本工具结果仅供参考，请勿直接作为财务、税务或法律决策依据。",
+  },
+];
+---
+<BaseLayout
+  title="四则运算计算器 — 在线加减乘除计算"
+  description="免费在线四则运算计算器：支持加、减、乘、除与括号，附运算优先级与一元负号，键盘与鼠标双通道，无需注册。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>四则运算计算器</h1>
+    <p class="lead">
+      直接按数字与运算符即可完成加减乘除，支持括号、负号与百分号。结果仅供参考。
+    </p>
+
+    <section class="card calc" aria-labelledby="calc-heading">
+      <h2 id="calc-heading" class="visually-hidden">四则运算面板</h2>
+
+      <output
+        id="calc-display"
+        class="calc-display"
+        role="status"
+        aria-live="off"
+        aria-atomic="true"
+      >0</output>
+      <div id="calc-live" class="visually-hidden" aria-live="polite"></div>
+      <p id="calc-error" class="calc-hint" role="alert" hidden></p>
+
+      <div id="calc-keypad" class="calc-keypad" role="group" aria-label="四则运算按键">
+        <button type="button" class="calc-key is-clear" data-key="AC">AC</button>
+        <button type="button" class="calc-key is-clear" data-key="C">C</button>
+        <button type="button" class="calc-key is-action" data-key="⌫">⌫</button>
+        <button type="button" class="calc-key is-action" data-key="±">±</button>
+
+        <button type="button" class="calc-key is-action" data-key="%">%</button>
+        <button type="button" class="calc-key" data-key="7">7</button>
+        <button type="button" class="calc-key" data-key="8">8</button>
+        <button type="button" class="calc-key" data-key="9">9</button>
+
+        <button type="button" class="calc-key is-operator" data-key="÷">÷</button>
+        <button type="button" class="calc-key" data-key="4">4</button>
+        <button type="button" class="calc-key" data-key="5">5</button>
+        <button type="button" class="calc-key" data-key="6">6</button>
+
+        <button type="button" class="calc-key is-operator" data-key="×">×</button>
+        <button type="button" class="calc-key" data-key="1">1</button>
+        <button type="button" class="calc-key" data-key="2">2</button>
+        <button type="button" class="calc-key" data-key="3">3</button>
+
+        <button type="button" class="calc-key is-operator" data-key="−">−</button>
+        <button type="button" class="calc-key" data-key="0">0</button>
+        <button type="button" class="calc-key" data-key=".">.</button>
+        <button type="button" class="calc-key is-equals" data-key="=">=</button>
+
+        <button type="button" class="calc-key is-operator calc-key--wide" data-key="+">+</button>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" id="copy-btn" class="btn btn-secondary" disabled>
+          复制结果
+        </button>
+      </div>
+    </section>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>点击数字键 0–9 输入数字；点击 . 输入小数点（同一段不能重复）。</li>
+        <li>点击 + − × ÷ 输入运算符；连按两次相同运算符会被忽略。</li>
+        <li>点击 ± 切换当前数字段的正负号；点击 % 等价于「÷100」。</li>
+        <li>点击 = 触发计算；再次点击 = 会基于上次结果续算（标准计算器行为）。</li>
+        <li>C 清空当前正在输入的数字段；AC 全部清空；⌫ 删除一个字符。</li>
+        <li>也可用键盘：数字键、+ - * /、.、Enter / Backspace / Escape。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">运算规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>优先级</strong>：× ÷ 高于 + −；同优先级从左到右计算。</p>
+          <p>例：<code>2 + 3 × 4 = 14</code>，<code>(2 + 3) × 4 = 20</code></p>
+        </li>
+        <li class="formula-item">
+          <p><strong>一元负号</strong>：仅在表达式开头或括号内合法。</p>
+          <p>例：<code>−5 + 3 = −2</code>，<code>5 × (−2) = −10</code></p>
+        </li>
+        <li class="formula-item">
+          <p><strong>百分号</strong>：等价于「÷100」。</p>
+          <p>例：<code>200 × 15% = 200 × 15 ÷ 100 = 30</code></p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="notes-heading">
+      <h2 id="notes-heading">注意事项</h2>
+      <ul class="note-list">
+        <li>表达式总字符数不超过 32；单个数字段有效位数不超过 16。</li>
+        <li>除以 0 会显示「不能除以 0」，不会产生 Infinity 或 NaN。</li>
+        <li>结果绝对值超过 1e12 会被拒绝（避免科学计数法影响阅读）。</li>
+        <li>计算结果仅供参考，不构成任何财务或法律决策依据。</li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/math/percentage/">百分比计算器</a></li>
+        <li><a href="/math/discount/">折扣计算器</a></li>
+        <li><a href="/math/average/">平均数计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="四则运算计算器" description="免费在线四则运算计算器：支持加、减、乘、除与括号，附运算优先级与一元负号，键盘与鼠标双通道，无需注册。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/basic-page.js"></script>
+</BaseLayout>

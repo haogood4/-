@@ -1,0 +1,103 @@
+---
+/**
+ * src/pages/hub/[slug].astro — 场景 Hub 详情页
+ * 步骤卡片 + 工具 CTA + FAQ + 免责声明
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import BreadcrumbJsonLd from "../../components/BreadcrumbJsonLd.astro";
+import { HUBS } from "../../data/hubs";
+
+export function getStaticPaths() {
+  return HUBS.map((hub) => ({
+    params: { slug: hub.slug },
+    props: { hub },
+  }));
+}
+
+const { hub } = Astro.props;
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "场景指南", href: "/hub/" },
+  { label: hub.title },
+];
+---
+
+<BaseLayout
+  title={`${hub.title} | 计算器大全场景指南`}
+  description={hub.scenario}
+  keywords={[hub.title, hub.scenario, "计算器大全"]}
+  ogType="article"
+>
+  <BreadcrumbJsonLd
+    items={[
+      { name: "首页", href: "/" },
+      { name: "场景指南", href: "/hub/" },
+      { name: hub.title },
+    ]}
+  />
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <article class={`hub hub--${hub.category}`}>
+      <header class="hub__header">
+        <h1>{hub.title}</h1>
+        <p class="lead">{hub.scenario}</p>
+        <div class="hub__badges">
+          <span class="hub__badge">⏱ {hub.estimatedTime}</span>
+          <span class="hub__badge hub__badge--difficulty">难度：{hub.difficulty}</span>
+        </div>
+      </header>
+
+      <section class="hub__steps" aria-label="分步骤指南">
+        <ol class="hub-step-list">
+          {
+            hub.steps.map((step) => (
+              <li class={`hub-step cat-card--${hub.category}`}>
+                <h2 class="hub-step__title">{step.title}</h2>
+                <p class="hub-step__desc">{step.description}</p>
+                {step.tools.length > 0 && (
+                  <div class="hub-step__tools">
+                    <strong>使用工具：</strong>
+                    <ul class="tool-list">
+                      {step.tools.map((tool) => (
+                        <li class="hub-tool-item">
+                          <a href={tool.href}>{tool.name}</a>
+                          <span class="hub-tool-item__reason"> — {tool.reason}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {step.note && (
+                  <p class="hub-step__note">
+                    <strong>注意：</strong>
+                    {step.note}
+                  </p>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      {
+        hub.faq.length > 0 && (
+          <section class="hub__faq" aria-labelledby="hub-faq">
+            <h2 id="hub-faq">常见问题</h2>
+            {hub.faq.map((item) => (
+              <details class="faq-item">
+                <summary>{item.q}</summary>
+                <p>{item.a}</p>
+              </details>
+            ))}
+          </section>
+        )
+      }
+
+      <aside class="ymyl-notice">
+        ⚠️ 本场景指南仅供参考，不构成任何专业建议。具体决策请结合个人实际情况并咨询专业人士（金融/医疗/法律）。
+      </aside>
+    </article>
+  </main>
+</BaseLayout>

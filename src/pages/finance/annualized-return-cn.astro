@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "年化如何计算？", a: "年化 = ((1 + 总收益)^(365/天数) - 1) × 100。" }, { q: "年化收益率有什么局限？", a: "对短期收益做年化会放大随机性，不代表未来真实年度水平；应结合持有期与回撤综合判断。" }, { q: "为什么年化收益不等于实际到手收益？", a: "年化假设期间收益可按同等水平再投资（复利），实际资金安排往往达不到该假设。" }];
+---
+<BaseLayout title="年化收益率计算器 — 在线持有收益换算年化" description="免费在线年化收益率计算器：输入持有期总收益率与持有天数，一键换算年化收益率，帮助对比银行理财、基金、定期存款等不同期限产品的真实收益水平。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"年化收益率计算器"}]} />
+    <h1>年化收益率计算器</h1>
+    <p class="lead">免费在线年化收益率换算</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="totalReturn">总收益（%）</label><input id="totalReturn" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="7" /><p class="field-error" id="field-error-totalReturn" hidden></p></div>
+      <div class="field"><label for="days">持有天数</label><input id="days" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="365" /><p class="field-error" id="field-error-days" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/compound-interest-cn/">复利计算器</a></li>
+  <li><a href="/finance/irr-cn/">IRR 计算器</a></li>
+  <li><a href="/finance/fund-dca-cn/">基金定投计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="年化收益率计算器" description="免费在线年化收益率计算器：输入持有期总收益率与持有天数，一键换算年化收益率，帮助对比银行理财、基金、定期存款等不同期限产品的真实收益水平。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/annualized-return-cn-page.js"></script>
+</BaseLayout>

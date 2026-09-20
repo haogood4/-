@@ -1,0 +1,30 @@
+---
+/**
+ * BreadcrumbJsonLd — 通用 BreadcrumbList JSON-LD（构建期渲染，无运行时 JS）
+ * 用法：<BreadcrumbJsonLd items={[{ name: "首页", href: "/" }, { name: "当前页" }]} />
+ * 末项省略 href 时自动取当前页 canonical URL。
+ */
+interface Crumb {
+  name: string;
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+const origin = Astro.site ?? Astro.url;
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: items.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href ?? Astro.url.pathname, origin).href,
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />

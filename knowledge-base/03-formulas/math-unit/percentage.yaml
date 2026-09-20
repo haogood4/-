@@ -1,0 +1,77 @@
+calculator_id: percentage
+name: 百分比计算器
+name_en: Percentage Calculator
+category: math
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+# 支持四种常见百分比运算（通过 mode 字段选择）
+inputs:
+  - name: mode
+    label: 计算模式
+    type: select
+    options: [pct_of, pct_change, pct_of_total, increase_by_pct]
+    default: pct_of
+    required: true
+  - name: a
+    label: 数值 A
+    type: number
+    required: true
+  - name: b
+    label: 数值 B
+    type: number
+    required: true
+
+formula: |
+  if mode == pct_of:        return a * b / 100
+  if mode == pct_change:    return (b - a) / a * 100
+  if mode == pct_of_total:  return a / b * 100
+  if mode == increase_by_pct: return a * (1 + b / 100)
+
+outputs:
+  - name: result
+    label: 结果
+    unit: number
+    primary: true
+
+test_vectors:
+  - input: {mode: percent-of, a: "200", b: "15"}
+    expected_output: {ok: true, value: 30, display: "30"}
+    derivation: unit-test
+    note: 200 的 15%（src/lib/calculators/percentage.test.ts）
+  - input: {mode: what-percent, a: "30", b: "200"}
+    expected_output: {ok: true, value: 15, display: "15"}
+    derivation: unit-test
+    note: 30 占 200 的百分比
+  - input: {mode: change, a: "100", b: "150"}
+    expected_output: {ok: true, value: 50, display: "50"}
+    derivation: unit-test
+    note: 100 → 150 增长 50%
+  - input: {mode: change, a: "150", b: "100"}
+    expected_output: {ok: true, value: -33.33333333333333, display: "约 -33.333333"}
+    derivation: unit-test
+    note: value 为 JS 浮点实际值；formatResult 最多 6 位小数、round-half-up 并加「约」前缀
+  - input: {mode: change, a: "0", b: "100"}
+    expected_output: {ok: false, error: {code: INVALID_BASE, message: "此模式要求原值大于 0"}}
+    derivation: unit-test
+    note: 原值 ≤ 0 报错，不输出 Infinity
+  - input: {mode: what-percent, a: "30", b: "0"}
+    expected_output: {ok: false, error: {code: DIVIDE_BY_ZERO, message: "总数不能为 0"}}
+    derivation: unit-test
+    note: 分母为 0 报错
+  - input: {mode: percent-of, a: "", b: "15"}
+    expected_output: {ok: false, error: {code: EMPTY, message: "请输入数值"}}
+    derivation: unit-test
+    note: 空值校验；字母/NaN/Infinity/绝对值 > 1e12/小数超 6 位等校验见单元测试
+
+sources:
+  - title: 百分比 · 维基百科
+    url: https://zh.wikipedia.org/wiki/%E7%99%BE%E5%88%86%E6%AF%94
+    type: reference
+    accessed_at: 2025-01-01
+---

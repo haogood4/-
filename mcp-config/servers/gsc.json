@@ -1,0 +1,18 @@
+{
+  "id": "gsc",
+  "description": "Google Search Console；查询收录、排名、点击；提交 sitemap 需审批。",
+  "url": "https://mcp.example.com/gsc",
+  "headers": { "Authorization": "Bearer ${env:GSC_API_KEY}" },
+  "tools": {
+    "read": [
+      "sites.list",
+      "searchanalytics.query",
+      "urlInspection.index.inspect"
+    ],
+    "propose": ["sitemaps.submit_draft"]
+  },
+  "examples": [
+    {"name": "查询 '房贷计算器' 排名", "args": { "siteUrl": "https://example.com/", "query": "房贷计算器", "rowLimit": 25 }}
+  ],
+  "audit_required": true
+}

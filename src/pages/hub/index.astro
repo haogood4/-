@@ -1,0 +1,57 @@
+---
+/**
+ * src/pages/hub/index.astro — 场景指南列表页
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadcrumbJsonLd from "../../components/BreadcrumbJsonLd.astro";
+import { HUBS } from "../../data/hubs";
+
+const categories = [
+  { key: "finance", label: "金融理财" },
+  { key: "health", label: "健康生活" },
+  { key: "renovation", label: "装修家居" },
+];
+
+const grouped = categories
+  .map((c) => ({ ...c, items: HUBS.filter((h) => h.category === c.key) }))
+  .filter((g) => g.items.length > 0);
+---
+
+<BaseLayout
+  title="场景指南 — 计算器大全"
+  description="基于真实使用场景串联多个计算工具：从首次买房到装修预算，从个税申报到健身减脂，每步推荐合适工具。"
+  keywords={["场景指南", "计算器组合", "买房决策", "装修预算"]}
+>
+  <BreadcrumbJsonLd items={[{ name: "首页", href: "/" }, { name: "场景指南" }]} />
+  <main id="main">
+    <h1>场景指南</h1>
+    <p class="lead">
+      每个真实使用场景都串联了 3-7 个计算工具，按步骤指引使用。当前已收录 <strong>{HUBS.length}</strong> 个场景。
+    </p>
+
+    {
+      grouped.map((group) => (
+        <section class={`cat-card cat-card--${group.key}`} id={`hub-${group.key}`}>
+          <header class="cat-card__head">
+            <span class="cat-card__dot" aria-hidden="true"></span>
+            <h2 class="cat-card__title">{group.label}</h2>
+            <span class="cat-card__count">{group.items.length} 个场景</span>
+          </header>
+          <ul class="hub-list">
+            {group.items.map((hub) => (
+              <li class="hub-list__item">
+                <a href={`/hub/${hub.slug}/`}>
+                  <strong>{hub.title}</strong>
+                  <span class="hub-list__meta">
+                    ⏱ {hub.estimatedTime} · 难度：{hub.difficulty}
+                  </span>
+                  <p>{hub.scenario}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </main>
+</BaseLayout>

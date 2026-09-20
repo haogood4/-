@@ -1,0 +1,124 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "温度换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些单位？",
+    a: "摄氏（°C）、华氏（°F）、开尔文（K）三种温度单位互转。",
+  },
+  {
+    q: "转换公式是什么？",
+    a: "本工具统一以「开尔文」为中间值：°C → K：+273.15；°F → K：(°F − 32) × 5/9 + 273.15；K → °C：−273.15；K → °F：(K − 273.15) × 9/5 + 32。",
+  },
+  {
+    q: "为什么有时被拒绝？",
+    a: "绝对零度（0 K = −273.15°C = −459.67°F）以下没有物理意义；本工具会在结果低于 0 K 时拒绝输入。",
+  },
+  {
+    q: "可以用来校准温度计吗？",
+    a: "本工具仅做数值换算；精密校准请使用专业仪表并参照国家计量标准。",
+  },
+];
+---
+
+<BaseLayout
+  title="温度单位换算器 — 在线摄氏度华氏度开尔文互转"
+  description="免费在线温度单位换算器：摄氏度、华氏度、开尔文三种单位一键互转，附常见温度对照参考，适合海淘电器参数核对、菜谱烘焙与气象数据阅读。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>温度换算计算器</h1>
+    <p class="lead">
+      摄氏、华氏、开尔文三单位互转，自动校验不低于 0 K（绝对零度）。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="温度换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 0"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="C">摄氏 (°C)</option>
+          <option value="F">华氏 (°F)</option>
+          <option value="K">开尔文 (K)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="F">华氏 (°F)</option>
+          <option value="C">摄氏 (°C)</option>
+          <option value="K">开尔文 (K)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>°C → °F</strong>：°F = °C × 9/5 + 32</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>°F → °C</strong>：°C = (°F − 32) × 5/9</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>K ↔ °C</strong>：K = °C + 273.15；°C = K − 273.15</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/unit/length/">长度单位换算器</a></li>
+  <li><a href="/daily/basic/">四则运算计算器</a></li>
+  <li><a href="/math/ratio/">比例计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="温度换算计算器" description="免费在线温度单位换算器：摄氏度、华氏度、开尔文三种单位一键互转，附常见温度对照参考，适合海淘电器参数核对、菜谱烘焙与气象数据阅读。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/temperature-page.js"></script>
+</BaseLayout>

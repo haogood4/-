@@ -1,0 +1,14 @@
+{
+  "id": "playwright",
+  "description": "浏览器自动化；用于页面验证、移动端走查、SEO 检查；生产页面操作需审批。",
+  "command": "mcp-server-playwright",
+  "tools": {
+    "read": ["navigate", "screenshot", "get_text", "get_attribute", "evaluate"],
+    "propose": ["assert", "compare_screenshot"],
+    "approve": ["submit_form_live", "click_live", "modify_dom"]
+  },
+  "examples": [
+    {"name": "截图房贷页面", "args": { "url": "https://staging.example.com/finance/mortgage", "viewport": {"width": 390, "height": 844} }}
+  ],
+  "audit_required": false
+}

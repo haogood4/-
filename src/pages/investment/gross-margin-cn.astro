@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "毛利率公式？", a: "(营收 − 营业成本) / 营收 × 100。" }, { q: "毛利率和净利率有何区别？", a: "毛利率只扣除营业成本；净利率还需扣除期间费用、税金与利息，跨期比较应以同行业口径为准。" }, { q: "哪些因素会拉低毛利率？", a: "原材料涨价、降价促销、产品组合中低毛利品占比上升、产能利用率不足导致的单位成本上升等。" }];
+---
+<BaseLayout title="毛利率计算器 — 在线毛利润与毛利率快速核算" description="免费在线毛利率计算器：输入营业收入与营业成本，即时算出毛利润与毛利率，支持定价方案快速试算与产品毛利横向对比，财务分析与经营决策的基础工具。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"毛利率计算器"}]} />
+    <h1>毛利率计算器</h1>
+    <p class="lead">毛利率</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="revenue">营收</label><input id="revenue" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="100000" /><p class="field-error" id="field-error-revenue" hidden></p></div>
+      <div class="field"><label for="cost">营业成本</label><input id="cost" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="60000" /><p class="field-error" id="field-error-cost" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/investment/break-even-cn/">盈亏平衡计算器</a></li>
+  <li><a href="/math/discount/">折扣计算器</a></li>
+  <li><a href="/math/percentage/">百分比计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="毛利率计算器" description="免费在线毛利率计算器：输入营业收入与营业成本，即时算出毛利润与毛利率，支持定价方案快速试算与产品毛利横向对比，财务分析与经营决策的基础工具。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/gross-margin-cn-page.js"></script>
+</BaseLayout>

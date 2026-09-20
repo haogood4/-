@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# 上线前替换为正式域名
+Sitemap: https://example-calculator.cn/sitemap-index.xml
+Sitemap: https://example-calculator.cn/sitemap-0.xml

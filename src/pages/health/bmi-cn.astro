@@ -1,0 +1,123 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "健康生活", href: "/" },
+  { label: "BMI 计算器" },
+];
+
+const faqItems = [
+  {
+    q: "中国标准和 WHO 标准有什么区别？",
+    a: "中国标准（WS/T 428-2013）认为 BMI ≥ 24 即为偏胖、≥ 28 为肥胖，比 WHO 标准（≥ 25 超重、≥ 30 肥胖）更严格。原因是亚洲人群在较低 BMI 下即面临较高的代谢疾病风险。",
+  },
+  {
+    q: "BMI 能准确衡量胖瘦吗？",
+    a: "BMI 仅反映体重与身高的比例，无法区分肌肉与脂肪。运动员、孕妇、老年人及未成年人使用 BMI 评估存在偏差，应结合体脂率、腰围等指标。",
+  },
+  {
+    q: "我的健康体重范围是怎么算出来的？",
+    a: "由身高反推：健康体重 = BMI 区间上下限 × 身高（米）的平方。中国标准取 18.5–23.9，WHO 标准取 18.5–24.9。",
+  },
+  {
+    q: "BMI 偏高或偏低应该怎么办？",
+    a: "本计算器仅提供数值参考，不能替代专业医疗建议。如有健康疑问，请咨询医生或注册营养师，制定个性化的饮食与运动方案。",
+  },
+];
+---
+<BaseLayout
+  title="BMI 计算器 — 在线体质指数测算（中国 + WHO 双标准）"
+  description="免费在线 BMI 计算器：输入身高体重，一键计算体质指数，按中国标准与 WHO 标准双分类，并给出健康体重区间。结果仅供参考。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>BMI 计算器</h1>
+    <p class="lead">
+      输入身高与体重，一键计算 BMI 体质指数，同时按中国标准与 WHO 标准给出分类与健康体重区间。
+    </p>
+    <p class="ymyl-notice">
+      ⚠️ 结果仅供参考，健康疑问请咨询医生。本计算不能替代医生诊断。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="BMI 计算表单">
+      <div class="field">
+        <label for="height">身高（cm）</label>
+        <input id="height" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 170" aria-describedby="field-error-height" />
+        <p class="field-error" id="field-error-height" hidden></p>
+      </div>
+      <div class="field">
+        <label for="weight">体重（kg）</label>
+        <input id="weight" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 65" aria-describedby="field-error-weight" />
+        <p class="field-error" id="field-error-weight" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">计算</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">重置</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">填写上方字段后显示结果</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption"></p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail1" class="result-process"></p>
+        <p id="result-detail2" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入身高（厘米，50-250）与体重（千克，2-500）。</li>
+        <li>点击「计算」按钮查看 BMI 数值。</li>
+        <li>结果同时按中国标准与 WHO 标准分类，并给出对应的健康体重区间。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式与分类标准</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>BMI</strong> = 体重（kg） ÷ 身高（m）²</p>
+          <p>例如：65 kg ÷ 1.70 m² ≈ 22.5。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>中国标准</strong>：&lt; 18.5 偏瘦 / 18.5–23.9 正常 / 24–27.9 偏胖 / ≥ 28 肥胖</p>
+          <p><strong>WHO 标准</strong>：&lt; 18.5 偏瘦 / 18.5–24.9 正常 / 25–29.9 偏胖 / ≥ 30 肥胖</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>健康体重区间</strong> = BMI 区间 × 身高（m）²</p>
+          <p>中国标准取 18.5–23.9，WHO 标准取 18.5–24.9。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/health/calorie-burn-cn/">卡路里消耗计算器</a></li>
+        <li><a href="/health/pace-cn/">节拍计算器</a></li>
+        <li><a href="/health/due-date-cn/">预产期计算器</a></li>
+        <li><a href="/health/ovulation-cn/">排卵期计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="BMI 计算器" description="免费在线 BMI 计算器：输入身高体重，一键计算体质指数，按中国标准与 WHO 标准双分类，并给出健康体重区间。结果仅供参考。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/bmi-cn-page.js"></script>
+</BaseLayout>

@@ -1,0 +1,15 @@
+{
+  "id": "sentry",
+  "description": "错误与性能监控；只读 + 评论草稿；关闭 issue 需审批。",
+  "url": "https://mcp.example.com/sentry",
+  "headers": { "Authorization": "Bearer ${env:SENTRY_TOKEN}" },
+  "tools": {
+    "read": ["list_issues", "get_issue", "get_event"],
+    "propose": ["add_comment_draft"],
+    "approve": ["resolve_issue", "delete_issue"]
+  },
+  "examples": [
+    {"name": "本周新错误", "args": { "project": "calculator-site", "range": "7d" }}
+  ],
+  "audit_required": true
+}

@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// 骨架页：内容未通过法务审核前保持 noindex，审核通过后移除 noindex 并补全条款
+---
+
+<BaseLayout
+  title="免责声明"
+  description="计算器大全免责声明：计算结果仅供参考，不构成专业建议。"
+  noindex
+>
+  <main id="main">
+    <h1>免责声明</h1>
+    <p class="lead">最近更新：2026-09-20（草稿）</p>
+    <p class="legal-notice">
+      ⚠️ 本页为占位草稿，尚未通过法务审核，正式上线前需由专业人员审定。
+    </p>
+
+    <section class="section">
+      <h2>一、结果仅供参考</h2>
+      <p>
+        本站全部计算器（含房贷、个税、社保、BMI、装修预算等）的输出结果基于公开公式与用户输入生成，
+        仅供估算参考，<strong>不构成任何金融、税务、健康或法律建议</strong>。
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>二、专业领域提示</h2>
+      <ul class="note-list">
+        <li>金融/税务类：实际税费、利率以税务机关与贷款机构最新政策为准，重大决策请咨询持证专业人士。</li>
+        <li>健康类：计算结果不能替代医生诊断，健康疑问请咨询医生或注册营养师。</li>
+        <li>装修类：材料用量为理论估算，实际以现场测量与施工方报价为准。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>三、信息时效</h2>
+      <p>
+        本站引用的政策参数（如 LPR、税率表、社保基数）存在更新滞后风险，使用前请核对官方最新数据。
+      </p>
+    </section>
+  </main>
+
+  <style>
+    .legal-notice {
+      padding: var(--space-3) var(--space-4);
+      border-left: 4px solid var(--color-warning, #d97706);
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-md);
+      color: var(--color-text-secondary);
+    }
+  </style>
+</BaseLayout>

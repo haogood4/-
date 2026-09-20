@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "ROAS vs ROI？", a: "ROAS = 销售额/广告费；ROI = 利润/广告费。" }, { q: "ROAS 多少算健康？", a: "取决于毛利率：盈亏平衡 ROAS = 1 ÷ 毛利率。例如毛利率 50% 时 ROAS 需大于 2 才不亏损。" }, { q: "ROAS 会高估广告贡献吗？", a: "可能。归因窗口会把部分自然转化计入广告，建议结合整体 GMV 与增量测试综合评估。" }];
+---
+<BaseLayout title="ROAS 计算器 — 在线广告支出回报率与盈亏线估算" description="免费在线广告 ROAS 计算器：输入广告花费与广告销售额，即时得出 ROAS 与 ROI，结合毛利率可测算盈亏平衡 ROAS 线，电商投放与品牌广告效果评估常用工具。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"广告 ROAS 计算器"}]} />
+    <h1>广告 ROAS 计算器</h1>
+    <p class="lead">广告投放 ROAS / ROI</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="adCost">广告费</label><input id="adCost" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="1000" /><p class="field-error" id="field-error-adCost" hidden></p></div>
+      <div class="field"><label for="revenue">广告带来销售额</label><input id="revenue" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="5000" /><p class="field-error" id="field-error-revenue" hidden></p></div>
+      <div class="field"><label for="profitRate">毛利率（%，可选）</label><input id="profitRate" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="30" /><p class="field-error" id="field-error-profitRate" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/investment/conversion-rate-cn/">转化率计算器</a></li>
+  <li><a href="/investment/gross-margin-cn/">毛利率计算器</a></li>
+  <li><a href="/investment/break-even-cn/">盈亏平衡计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="广告 ROAS 计算器" description="免费在线广告 ROAS 计算器：输入广告花费与广告销售额，即时得出 ROAS 与 ROI，结合毛利率可测算盈亏平衡 ROAS 线，电商投放与品牌广告效果评估常用工具。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/roas-cn-page.js"></script>
+</BaseLayout>

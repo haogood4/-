@@ -1,0 +1,12 @@
+{
+  "id": "web-search",
+  "description": "通用网页搜索与抓取；只读；用于查官方资料、竞品、SEO。",
+  "command": "mcp-server-fetch",
+  "tools": {
+    "read": ["search", "fetch"]
+  },
+  "examples": [
+    {"name": "查 LPR 最新公告", "args": { "query": "site:pbc.gov.cn 贷款市场报价利率 2025" }}
+  ],
+  "audit_required": false
+}

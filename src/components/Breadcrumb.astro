@@ -1,0 +1,32 @@
+---
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="面包屑">
+  <ol>
+    {
+      items.map((item) => (
+        <li>
+          {item.href ? (
+            <a href={item.href}>{item.label}</a>
+          ) : (
+            <>
+              {/* 装饰性圆点分隔符：仅多级面包屑（items.length > 1）时渲染，避免首页多余圆点 */}
+              {items.length > 1 && <span class="breadcrumb__dot" aria-hidden="true"></span>}
+              <span aria-current="page">{item.label}</span>
+            </>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

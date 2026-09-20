@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Quality gates + build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify (typecheck + lint + tests + prettier + mcp + bundle)
+        run: pnpm verify
+
+      - name: Build
+        run: pnpm build
+
+      - name: Smoke test dist (10 assertion groups)
+        run: node scripts/smoke-dist.mjs
+
+      - name: Assert sitemap and robots present
+        run: |
+          test -f dist/sitemap-index.xml || { echo "::error::sitemap-index.xml missing"; exit 1; }
+          test -f dist/robots.txt || { echo "::error::robots.txt missing"; exit 1; }
+          test -f dist/manifest.json || { echo "::error::manifest.json missing"; exit 1; }

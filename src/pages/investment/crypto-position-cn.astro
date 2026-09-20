@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "爆仓价？", a: "维持保证金率触发强平的价格。" }, { q: "爆仓价是什么意思？", a: "指保证金被亏尽、仓位被交易所强制平仓的价格；杠杆越高爆仓价越接近入场价，逐仓与全仓的计算方式不同。" }, { q: "高杠杆有哪些额外风险？", a: "价格波动被杠杆倍数放大，插针行情也可能触发爆仓；本工具估算未计入资金费率与滑点。" }];
+---
+<BaseLayout title="加密货币仓位计算器 — 在线仓位大小与爆仓价估算" description="免费在线加密货币仓位计算器：输入账户权益、杠杆倍数与入场价，估算可开仓位、名义价值与多空爆仓价，辅助永续合约风险控制，结果仅供参考不构成投资建议。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"加密货币仓位计算器"}]} />
+    <h1>加密货币仓位计算器</h1>
+    <p class="lead">加密货币仓位 + 爆仓价</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="equity">账户权益（USDT）</label><input id="equity" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="10000" /><p class="field-error" id="field-error-equity" hidden></p></div>
+      <div class="field"><label for="leverage">杠杆倍数</label><input id="leverage" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="10" /><p class="field-error" id="field-error-leverage" hidden></p></div>
+      <div class="field"><label for="entryPrice">入场价</label><input id="entryPrice" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="30000" /><p class="field-error" id="field-error-entryPrice" hidden></p></div>
+      <div class="field"><label for="side">方向</label><select id="side" class="field-select"><option value="long">做多</option><option value="short">做空</option></select></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/investment/futures-margin-cn/">期货保证金计算器</a></li>
+  <li><a href="/investment/turtle-position-cn/">海龟仓位计算器</a></li>
+  <li><a href="/finance/irr-cn/">IRR 计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="加密货币仓位计算器" description="免费在线加密货币仓位计算器：输入账户权益、杠杆倍数与入场价，估算可开仓位、名义价值与多空爆仓价，辅助永续合约风险控制，结果仅供参考不构成投资建议。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/crypto-position-cn-page.js"></script>
+</BaseLayout>

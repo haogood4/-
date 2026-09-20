@@ -1,0 +1,118 @@
+calculator_id: basic
+name: 四则运算计算器
+name_en: Basic Arithmetic Calculator
+category: daily
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+inputs:
+  - name: expression
+    label: 表达式
+    type: expression
+    required: true
+    grammar: |
+      表达式 := 数字 (二元运算符 数字)*
+      数字 := [−]?( \d+(\.\d+)? | .\d+ )
+      二元运算符 := + | − | × | ÷
+      一元负号 := 仅允许出现在表达式开头或二元运算符之后
+      括号 := ( 表达式 )
+      上限：表达式总字符数 ≤ 32，单个数字段有效位数 ≤ 16
+      拒绝：连续两个二元运算符、连续两个小数点、一元正号
+
+formula: |
+  # 标准中缀表达式 → shunting-yard → 后缀 → 求值
+  # 优先级：× ÷ (2) > + − (1)；同优先级左结合
+  # 一元负号：在表达式开头或二元运算符后，等价于"−1 × 数字"
+
+formula_math: |
+  给定中缀 tokens T = [n₁, op₁, n₂, op₂, n₃, ...]，通过 shunting-yard 转为后缀：
+    对每个 token：
+      number → 输出队列
+      op     → 弹出栈顶优先级 ≥ 当前 op 的运算符到输出队列，然后入栈
+      (      → 入栈
+      )      → 弹出栈中运算符直到遇到 ( 为止
+    最后清空栈中所有运算符
+  对后缀队列从左到右求值：
+    number → 入栈
+    op     → 弹出 right、left，计算 left op right，结果入栈
+  最终栈顶即为结果；任何除零 / 表达式不完整 / 字符超 32 / 数值绝对值 > 1e12 返回错误码
+
+outputs:
+  - name: value
+    label: 计算结果
+    unit: number
+    primary: true
+
+test_vectors:
+  - input: {expression: "2+3"}
+    expected_output: {ok: true, value: 5}
+    derivation: unit-test
+    note: 加法
+  - input: {expression: "10−4"}
+    expected_output: {ok: true, value: 6}
+    derivation: unit-test
+    note: 减法（使用全角减号 "−"）
+  - input: {expression: "3×7"}
+    expected_output: {ok: true, value: 21}
+    derivation: unit-test
+    note: 乘法
+  - input: {expression: "20÷4"}
+    expected_output: {ok: true, value: 5}
+    derivation: unit-test
+    note: 除法
+  - input: {expression: "2+3×4"}
+    expected_output: {ok: true, value: 14}
+    derivation: unit-test
+    note: 运算优先级：× 高于 +
+  - input: {expression: "4×(2+3)"}
+    expected_output: {ok: true, value: 20}
+    derivation: unit-test
+    note: 括号改变优先级
+  - input: {expression: "−5+3"}
+    expected_output: {ok: true, value: -2}
+    derivation: unit-test
+    note: 一元负号开头
+  - input: {expression: "5×(−2)"}
+    expected_output: {ok: true, value: -10}
+    derivation: unit-test
+    note: 括号内一元负号
+  - input: {expression: "(−3)×(−2)"}
+    expected_output: {ok: true, value: 6}
+    derivation: unit-test
+    note: 双一元负号相乘为正
+  - input: {expression: "0.1+0.2"}
+    expected_output: {ok: true, value: 0.30000000000000004}
+    derivation: unit-test
+    note: 浮点累计误差；展示层用「约 0.3」
+  - input: {expression: "5÷0"}
+    expected_output: {ok: false, error: {code: DIVIDE_BY_ZERO, message: "不能除以 0"}}
+    derivation: unit-test
+    note: 除零拒绝
+  - input: {expression: "12+"}
+    expected_output: {ok: false, error: {code: INCOMPLETE_EXPR, message: "表达式不完整"}}
+    derivation: unit-test
+    note: 表达式末尾运算符拒绝
+  - input: {expression: "1.2.3"}
+    expected_output: {ok: false, error: {code: INVALID_FORMAT, message: "表达式格式不正确"}}
+    derivation: unit-test
+    note: 双小数点拒绝
+  - input: {expression: "1000000000000×2"}
+    expected_output: {ok: false, error: {code: OUT_OF_RANGE, message: "数值超出范围（绝对值不能超过 1e12）"}}
+    derivation: unit-test
+    note: 数值超 1e12 拒绝
+
+sources:
+  - title: Shunting-yard algorithm · 维基百科
+    url: https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+    type: reference
+    accessed_at: 2025-01-01
+  - title: Reverse Polish notation · 维基百科
+    url: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+    type: reference
+    accessed_at: 2025-01-01
+---

@@ -1,0 +1,102 @@
+calculator_id: bmr
+name: 基础代谢率（BMR / TDEE）计算器
+name_en: Basal Metabolic Rate Calculator
+category: health
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+inputs:
+  - name: gender
+    label: 性别
+    type: radio
+    options: [male, female]
+    required: true
+  - name: age
+    label: 年龄
+    type: number
+    unit: year
+    required: true
+    min: 1
+    max: 120
+  - name: height
+    label: 身高
+    type: number
+    unit: cm
+    required: true
+    min: 50
+    max: 250
+  - name: weight
+    label: 体重
+    type: number
+    unit: kg
+    required: true
+    min: 10
+    max: 300
+  - name: activity
+    label: 活动水平
+    type: select
+    options: [sedentary, light, moderate, active, very_active]
+    required: true
+    default: sedentary
+
+formula: |
+  # Mifflin-St Jeor 公式
+  if gender == male:
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5
+  else:
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161
+
+  activity_factor:
+    sedentary: 1.2
+    light: 1.375
+    moderate: 1.55
+    active: 1.725
+    very_active: 1.9
+
+  tdee = bmr * factor
+
+formula_math: |
+  BMR(m)   = 10·W + 6.25·H − 5·A + 5
+  BMR(f)   = 10·W + 6.25·H − 5·A − 161
+  TDEE     = BMR × activity_factor
+
+outputs:
+  - name: bmr
+    label: 基础代谢率
+    unit: kcal
+    primary: true
+  - name: tdee
+    label: 每日总消耗
+    unit: kcal
+    primary: true
+  - name: lose_weight
+    label: 减重摄入建议
+    unit: kcal
+  - name: gain_weight
+    label: 增重摄入建议
+    unit: kcal
+
+test_vectors:
+  - input: {gender: male, age: 30, height: 175, weight: 70, activity: moderate}
+    expected_output: {bmr: 1649.75, tdee: 2557.11}
+    derivation: unverified
+    note: 基准（男性 30 岁）
+  - input: {gender: female, age: 25, height: 165, weight: 55, activity: light}
+    expected_output: {bmr: 1310.25, tdee: 1801.59}
+    derivation: unverified
+    note: 女性
+
+sources:
+  - title: Mifflin et al. 1990 · A new predictive equation
+    url: https://pubmed.ncbi.nlm.nih.gov/2305711/
+    type: academic
+    accessed_at: 2025-01-01
+
+notes_for_ai: |
+  - 必须显示免责声明："本结果仅供参考，不构成医疗或营养建议。"
+---

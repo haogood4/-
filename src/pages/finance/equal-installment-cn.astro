@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "等额本息总利息如何计算？", a: "总利息 = 月供 × 总期数 - 贷款本金。" },
+    { q: "等额本息 vs 等额本金？", a: "等额本息每月固定，等额本金每月递减，总利息等额本金更少但前期压力大。" }, { q: "等额本息月供公式如何推导？", a: "由年金现值公式得出：月供 = 本金 × 月利率 × (1+月利率)^期数 ÷ [(1+月利率)^期数 − 1]。" }, { q: "等额本息和等额本金哪个划算？", a: "等额本金总利息更少但前期月供高；等额本息月供固定、压力均匀，按现金流状况选择即可。" }];
+---
+<BaseLayout title="等额本息计算器 — 在线房贷月供与总利息试算" description="免费在线等额本息贷款计算器：输入贷款本金、年限与年利率，即时计算月供、总利息与还款总额，支持等额本息与等额本金两种还款方式对比，房贷还款方式选择参考。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"等额本息计算器"}]} />
+    <h1>等额本息计算器</h1>
+    <p class="lead">免费在线等额本息月供计算器</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="principal">贷款本金（¥）</label><input id="principal" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="1000000" /><p class="field-error" id="field-error-principal" hidden></p></div>
+      <div class="field"><label for="years">贷款年限</label><input id="years" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="30（1-30 年）" /><p class="field-error" id="field-error-years" hidden></p></div>
+      <div class="field"><label for="rate">年利率（%）</label><input id="rate" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="4.2（参考 LPR）" /><p class="field-error" id="field-error-rate" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/mortgage-cn/">房贷计算器</a></li>
+  <li><a href="/finance/loan-cn/">贷款计算器</a></li>
+  <li><a href="/finance/prepayment-cn/">提前还款计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="等额本息计算器" description="免费在线等额本息贷款计算器：输入贷款本金、年限与年利率，即时计算月供、总利息与还款总额，支持等额本息与等额本金两种还款方式对比，房贷还款方式选择参考。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/equal-installment-cn-page.js"></script>
+</BaseLayout>

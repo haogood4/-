@@ -1,0 +1,75 @@
+calculator_id: unit-converter
+name: 单位换算
+name_en: Unit Converter
+category: math
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+# 支持多种物理量
+categories:
+  - length:    {base: m, units: [km, m, cm, mm, in, ft, yd, mi]}
+  - mass:      {base: kg, units: [kg, g, mg, lb, oz]}
+  - area:      {base: m2, units: [m2, km2, ft2, yd2, mu]}
+  - volume:    {base: L, units: [L, mL, gal_us, gal_uk, cup]}
+  - speed:     {base: m_s, units: [m_s, km_h, mph, knot]}
+  - temperature:{base: C, units: [C, F, K]}
+  - data:      {base: B, units: [B, KB, MB, GB, TB, KiB, MiB, GiB, TiB]}
+
+inputs:
+  - name: category
+    label: 物理量
+    type: select
+    options: [length, mass, area, volume, speed, temperature, data]
+    required: true
+  - name: from_unit
+    label: 原始单位
+    type: select
+    required: true
+  - name: to_unit
+    label: 目标单位
+    type: select
+    required: true
+  - name: value
+    label: 数值
+    type: number
+    required: true
+
+formula: |
+  base = to_base(category, value, from_unit)
+  result = from_base(category, base, to_unit)
+
+outputs:
+  - name: result
+    label: 换算结果
+    unit: text
+    primary: true
+
+test_vectors:
+  - input: {category: length, from_unit: km, to_unit: m, value: 1.5}
+    expected_output: {result: 1500}
+    derivation: unverified
+    note: 基准
+  - input: {category: temperature, from_unit: C, to_unit: F, value: 100}
+    expected_output: {result: 212}
+    derivation: unverified
+    note: 摄氏到华氏
+  - input: {category: data, from_unit: GB, to_unit: GiB, value: 1}
+    expected_output: {result: 0.931}
+    derivation: unverified
+    note: GB → GiB
+
+sources:
+  - title: NIST · Units & Constants
+    url: https://physics.nist.gov/cuu/Units/
+    type: official
+    accessed_at: 2025-01-01
+  - title: IEC 80000-13 · Information Units
+    url: https://en.wikipedia.org/wiki/Gigabyte
+    type: institutional
+    accessed_at: 2025-01-01
+---

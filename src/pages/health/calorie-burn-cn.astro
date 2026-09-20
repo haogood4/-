@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "MET 是什么？", a: "代谢当量；跑步 9.8 / 走路 3.5 / 骑车 7.5。" }, { q: "估算包含基础代谢吗？", a: "不包含。本工具仅估算运动额外消耗；基础代谢因人而异，减重需结合全天总摄入与总消耗。" }, { q: "力量训练也用 MET 估算吗？", a: "MET 表主要基于有氧运动；力量训练实际消耗受组数、间歇与负荷影响大，估算值仅作粗略参考。" }];
+---
+<BaseLayout title="卡路里消耗计算器 — 在线 MET 运动热量消耗估算" description="免费在线运动卡路里消耗计算器：按体重、运动时长与 MET 强度值估算跑步、游泳、骑行等运动的热量消耗，辅助减脂饮食计划制定与运动强度管理。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"健康生活"},{label:"卡路里消耗计算器"}]} />
+    <h1>卡路里消耗计算器</h1>
+    <p class="lead">免费在线运动卡路里消耗估算</p>
+    <p class="result-hint"><strong>⚠️ 估算结果仅供参考，健康疑问请咨询医生或专业营养师。</strong></p>
+    <p class="result-hint"><strong>⚠️ 本计算结果不能替代医生诊断。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="weight">体重（kg）</label><input id="weight" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="70" /><p class="field-error" id="field-error-weight" hidden></p></div>
+      <div class="field"><label for="minutes">运动时长（分钟）</label><input id="minutes" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="30" /><p class="field-error" id="field-error-minutes" hidden></p></div>
+      <div class="field"><label for="met">运动 MET 值（跑步 9.8）</label><input id="met" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="9.8" /><p class="field-error" id="field-error-met" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/health/bmi-cn/">BMI 计算器</a></li>
+  <li><a href="/health/pace-cn/">跑步配速计算器</a></li>
+  <li><a href="/daily/basic/">四则运算计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="卡路里消耗计算器" description="免费在线运动卡路里消耗计算器：按体重、运动时长与 MET 强度值估算跑步、游泳、骑行等运动的热量消耗，辅助减脂饮食计划制定与运动强度管理。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/calorie-burn-cn-page.js"></script>
+</BaseLayout>

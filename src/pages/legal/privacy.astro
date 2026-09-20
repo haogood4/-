@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// 骨架页：内容未通过法务审核前保持 noindex，审核通过后移除 noindex 并补全条款
+---
+
+<BaseLayout
+  title="隐私政策"
+  description="计算器大全隐私政策：我们收集哪些信息、如何使用 Cookie、以及您享有的权利。"
+  noindex
+>
+  <main id="main">
+    <h1>隐私政策</h1>
+    <p class="lead">最近更新：2026-09-20（草稿）</p>
+    <p class="legal-notice">
+      ⚠️ 本页为占位草稿，尚未通过法务审核，正式上线前需由专业人员审定。
+    </p>
+
+    <section class="section">
+      <h2>一、信息收集</h2>
+      <p>
+        本站为纯静态网站，所有计算均在您的浏览器本地完成，输入的数据（如身高、体重、金额、日期等）
+        不会上传到任何服务器，本站不主动收集用户个人身份信息。
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>二、Cookie 与本地存储</h2>
+      <p>
+        本站可能使用浏览器本地存储（localStorage）保存「最近使用的工具」等偏好数据，
+        这些数据仅存储在您的设备上，清除浏览器数据即可删除。
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>三、第三方服务</h2>
+      <p>
+        若页面展示广告或访问统计（如 Google Analytics、广告联盟），第三方服务商可能按其隐私政策
+        收集信息。具体清单与链接待法务审核后补充。
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>四、您的权利</h2>
+      <p>
+        您有权查询、更正、删除您的个人信息，或对本政策提出疑问。联系方式：
+        <a href="mailto:privacy@example-calculator.cn">privacy@example-calculator.cn</a>（待启用）。
+      </p>
+    </section>
+  </main>
+
+  <style>
+    .legal-notice {
+      padding: var(--space-3) var(--space-4);
+      border-left: 4px solid var(--color-warning, #d97706);
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-md);
+      color: var(--color-text-secondary);
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,132 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/mcp-servers/main/schema/mcp-config.schema.json",
+  "project": "calculator-site",
+  "version": "1.0.0",
+  "defaults": {
+    "timeout_ms": 15000,
+    "rate_limit_per_min": 30,
+    "audit_log": "./logs/mcp-audit.log",
+    "tier_default": "read"
+  },
+  "servers": [
+    {
+      "id": "github",
+      "type": "stdio",
+      "command": "mcp-server-github",
+      "args": ["--repo", "your-org/calculator-site"],
+      "env": {
+        "GITHUB_TOKEN": "${env:GITHUB_TOKEN}"
+      },
+      "tier": {
+        "read":   ["list_issues", "get_issue", "list_prs", "get_pr", "list_commits", "get_file", "list_files", "search_code"],
+        "propose": ["create_issue_draft", "create_pr_draft", "create_pr_comment"],
+        "approve":["merge_pr", "delete_branch", "create_release", "update_pr_status"]
+      }
+    },
+    {
+      "id": "linear",
+      "type": "stdio",
+      "command": "mcp-server-linear",
+      "env": { "LINEAR_API_KEY": "${env:LINEAR_API_KEY}" },
+      "tier": {
+        "read":   ["list_issues", "get_issue", "list_projects", "get_team"],
+        "propose": ["create_issue_draft", "update_issue_draft"],
+        "approve":["create_issue", "update_issue_status", "delete_issue"]
+      }
+    },
+    {
+      "id": "notion",
+      "type": "stdio",
+      "command": "mcp-server-notion",
+      "env": { "NOTION_TOKEN": "${env:NOTION_TOKEN}" },
+      "tier": {
+        "read":   ["search_pages", "get_page", "get_blocks", "list_databases"],
+        "propose": ["create_page_draft", "update_page_draft", "append_blocks_draft"],
+        "approve":["create_page", "update_page", "delete_page"]
+      }
+    },
+    {
+      "id": "postgres",
+      "type": "stdio",
+      "command": "mcp-server-postgres",
+      "deferred": true,
+      "deferred_note": "MVP 阶段不接入 Postgres，10-20 个计算器为纯前端计算，无持久化需求；出现真实持久化需求后重新评估",
+      "env": {
+        "DATABASE_URL": "${env:SUPABASE_DATABASE_URL}"
+      },
+      "tier": {
+        "read":   ["list_tables", "describe_table", "execute_select"],
+        "propose": ["insert_draft", "generate_migration"],
+        "approve":["execute_insert_staging", "execute_migration", "execute_update_prod", "execute_delete_prod"]
+      }
+    },
+    {
+      "id": "playwright",
+      "type": "stdio",
+      "command": "mcp-server-playwright",
+      "tier": {
+        "read":   ["navigate", "screenshot", "get_text", "get_attribute", "evaluate"],
+        "propose": ["click_dry_run", "fill_dry_run", "assert"],
+        "approve":["click_live", "submit_live", "modify_dom"]
+      }
+    },
+    {
+      "id": "web-search",
+      "type": "stdio",
+      "command": "mcp-server-fetch",
+      "tier": {
+        "read":   ["search", "fetch"]
+      }
+    },
+    {
+      "id": "ga4",
+      "type": "http",
+      "url": "https://mcp.example.com/ga4",
+      "headers": { "Authorization": "Bearer ${env:GA4_API_KEY}" },
+      "tier": {
+        "read":   ["runReport", "getMetadata"]
+      }
+    },
+    {
+      "id": "gsc",
+      "type": "http",
+      "url": "https://mcp.example.com/gsc",
+      "headers": { "Authorization": "Bearer ${env:GSC_API_KEY}" },
+      "tier": {
+        "read":   ["searchanalytics.query", "sites.list", "urlInspection.index.inspect"],
+        "propose": ["sitemaps.submit_draft"]
+      }
+    },
+    {
+      "id": "sentry",
+      "type": "http",
+      "url": "https://mcp.example.com/sentry",
+      "headers": { "Authorization": "Bearer ${env:SENTRY_TOKEN}" },
+      "tier": {
+        "read":   ["list_issues", "get_issue", "get_event"],
+        "propose": ["add_comment_draft"],
+        "approve":["delete_issue", "resolve_issue"]
+      }
+    }
+  ],
+  "policies": {
+    "require_human_for": [
+      "production_release",
+      "formula_change",
+      "tax_or_health_content_change",
+      "delete_production_db_row",
+      "send_external_email"
+    ],
+    "rate_limits": {
+      "github":     { "per_min": 30 },
+      "linear":     { "per_min": 30 },
+      "notion":     { "per_min": 30 },
+      "postgres":   { "per_min": 20 },
+      "playwright": { "per_min": 10 },
+      "web-search": { "per_min": 30 },
+      "ga4":        { "per_min": 20 },
+      "gsc":        { "per_min": 20 },
+      "sentry":     { "per_min": 30 }
+    }
+  }
+}

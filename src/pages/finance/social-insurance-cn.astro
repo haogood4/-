@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "五险一金缴费基数上下限？", a: "通常以本人上一年度月均工资核定，最低不低于社平工资 60%，最高不超过社平工资 300%。本工具按用户输入作为基数。" },
+  { q: "各城市缴费比例差异？", a: "公积金比例因城而异（北京 12%、上海 7%、深圳 5%）；医保、养老、失业国家规定相对统一。" },
+  { q: "灵活就业人员如何缴费？", a: "灵活就业通常只缴养老 + 医疗，缴费基数在当地社平 60%-300% 之间自选。" },
+];
+---
+<BaseLayout title="五险一金计算器 — 在线社保公积金个人公司缴纳明细" description="免费在线五险一金计算器：按缴费基数计算养老、医疗、失业、工伤、生育保险与住房公积金的个人及单位缴纳金额，得出税后实发工资，参保调基一目了然。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"五险一金计算器"}]} />
+    <h1>五险一金计算器</h1>
+    <p class="lead">选择城市与月薪，一键计算个人与公司缴费明细。</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考。实际缴费以当地社保局与公积金中心为准。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="monthlySalary">缴费基数 / 月薪（¥）</label><input id="monthlySalary" class="field-input" type="text" inputmode="decimal" placeholder="如 15000" /><p class="field-error" id="field-error-monthlySalary" hidden></p></div>
+      <div class="field"><label for="city">城市</label><select id="city" class="field-select"><option value="beijing">北京（公积金 12%）</option><option value="shanghai">上海（公积金 7%）</option><option value="shenzhen">深圳（公积金 5%）</option><option value="guangzhou">广州（公积金 10%）</option><option value="hangzhou">杭州（公积金 12%）</option></select></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <section class="section"><h2>计算明细</h2><ul class="formula-list"><li class="formula-item"><p><strong>个人部分</strong>：养老 8% + 医疗 2% + 失业 0.5% + 公积金（5-12% 城市差异）</p></li><li class="formula-item"><p><strong>公司部分</strong>：养老 16% + 医疗 8-9% + 失业 0.5% + 公积金（个人同）</p></li></ul></section>
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/income-tax-cn/">个税计算器</a></li>
+  <li><a href="/finance/pension-cn/">养老金计算器</a></li>
+  <li><a href="/finance/bonus-tax-cn/">年终奖个税计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="五险一金计算器" description="免费在线五险一金计算器：按缴费基数计算养老、医疗、失业、工伤、生育保险与住房公积金的个人及单位缴纳金额，得出税后实发工资，参保调基一目了然。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/social-insurance-cn-page.js"></script>
+</BaseLayout>

@@ -1,0 +1,108 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "平均数计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些分隔符？",
+    a: "支持空格、逗号（中英文皆可）、分号、换行；任意混合均可，例如「10, 20 30;40」。",
+  },
+  {
+    q: "最多能算多少个数字？",
+    a: "上限 100 个；超过 100 个时本工具会拒绝并提示，避免极端长输入拖慢浏览器。",
+  },
+  {
+    q: "支持小数和负数吗？",
+    a: "支持。允许前导正负号与小数点，例如「-5, 5.5, 10」。",
+  },
+  {
+    q: "结果可以用来做统计吗？",
+    a: "可以用于日常核算；本工具计算的是简单算术平均（加权请使用其他工具）。",
+  },
+];
+---
+
+<BaseLayout
+  title="平均数计算器 — 在线求多组数字的算术平均"
+  description="免费在线平均数计算器：支持空格、逗号、分号、换行分隔数字，最多 100 个，输出总和、平均值、个数。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>平均数计算器</h1>
+    <p class="lead">
+      输入一组数字（用空格、逗号或换行分隔），一键输出总和、平均值与个数。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="平均数计算表单">
+      <div class="field">
+        <label for="input-raw">数字列表</label>
+        <textarea
+          id="input-raw"
+          class="field-input"
+          rows="4"
+          autocomplete="off"
+          placeholder="例如：10 20 30 或 1.5, 2.5, 3"
+          aria-describedby="field-error-raw"></textarea>
+        <p class="field-hint">最多 100 个数字，支持空格 / 逗号 / 分号 / 换行混合分隔。</p>
+        <p class="field-error" id="field-error-raw" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>在文本框内输入一组数字，用空格、逗号、分号或换行分隔。</li>
+        <li>点击「计算」后查看总和、平均值与个数。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>总和</strong>：所有数字相加。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>平均数</strong>：总和 ÷ 个数。</p>
+          <p>例：<code>(10 + 20 + 30) ÷ 3 = 20</code></p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/math/percentage/">百分比计算器</a></li>
+        <li><a href="/math/ratio/">比例计算器</a></li>
+        <li><a href="/math/discount/">折扣计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="平均数计算器" description="免费在线平均数计算器：支持空格、逗号、分号、换行分隔数字，最多 100 个，输出总和、平均值、个数。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/average-page.js"></script>
+</BaseLayout>

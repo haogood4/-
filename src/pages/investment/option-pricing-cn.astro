@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "BS 假设？", a: "对数正态分布、无风险利率恒定、波动率恒定、无交易成本。" }, { q: "什么是隐含波动率？", a: "使期权市场价格等于 BS 理论价格的波动率，反映市场对未来波动的预期，是期权贵贱的核心指标。" }, { q: "BS 模型有哪些局限？", a: "假设价格对数正态分布、波动率恒定且无交易成本，会低估极端行情概率；主要适用于欧式期权。" }];
+---
+<BaseLayout title="期权定价计算器 — 在线 Black-Scholes 模型试算" description="免费在线 Black-Scholes 期权定价计算器：输入标的价格、行权价、无风险利率、波动率与到期时间，估算看涨/看跌期权理论价格与希腊字母，为期权交易提供参考。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"期权定价计算器"}]} />
+    <h1>期权定价计算器</h1>
+    <p class="lead">Black-Scholes 期权定价</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="spot">标的价</label><input id="spot" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="100" /><p class="field-error" id="field-error-spot" hidden></p></div>
+      <div class="field"><label for="strike">行权价</label><input id="strike" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="100" /><p class="field-error" id="field-error-strike" hidden></p></div>
+      <div class="field"><label for="rate">无风险利率（%）</label><input id="rate" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="4" /><p class="field-error" id="field-error-rate" hidden></p></div>
+      <div class="field"><label for="vol">波动率（%）</label><input id="vol" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="20" /><p class="field-error" id="field-error-vol" hidden></p></div>
+      <div class="field"><label for="time">到期时间（年）</label><input id="time" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="1" /><p class="field-error" id="field-error-time" hidden></p></div>
+      <div class="field"><label for="type">类型</label><select id="type" class="field-select"><option value="call">看涨</option><option value="put">看跌</option></select></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/investment/futures-margin-cn/">期货保证金计算器</a></li>
+  <li><a href="/finance/irr-cn/">IRR 计算器</a></li>
+  <li><a href="/finance/annualized-return-cn/">年化收益率计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="期权定价计算器" description="免费在线 Black-Scholes 期权定价计算器：输入标的价格、行权价、无风险利率、波动率与到期时间，估算看涨/看跌期权理论价格与希腊字母，为期权交易提供参考。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/option-pricing-cn-page.js"></script>
+</BaseLayout>

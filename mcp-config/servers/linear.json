@@ -1,0 +1,15 @@
+{
+  "id": "linear",
+  "description": "任务跟踪；可创建草稿任务；删除任务需人工审批。",
+  "command": "mcp-server-linear",
+  "env_required": ["LINEAR_API_KEY"],
+  "tools": {
+    "read": ["list_issues", "get_issue", "list_projects", "list_teams", "list_milestones"],
+    "propose": ["create_issue_draft", "update_issue_draft"],
+    "approve": ["create_issue", "update_issue", "delete_issue", "close_milestone"]
+  },
+  "examples": [
+    {"name": "查询过期任务", "args": { "filter": "due < now AND state = open" }}
+  ],
+  "audit_required": true
+}

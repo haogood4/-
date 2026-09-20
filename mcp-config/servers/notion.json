@@ -1,0 +1,15 @@
+{
+  "id": "notion",
+  "description": "项目知识库、决策日志、会议纪要的检索与草稿写入；删除页需审批。",
+  "command": "mcp-server-notion",
+  "env_required": ["NOTION_TOKEN"],
+  "tools": {
+    "read": ["search_pages", "get_page", "get_blocks", "list_databases"],
+    "propose": ["create_page_draft", "update_page_draft", "append_blocks_draft"],
+    "approve": ["create_page", "update_page", "delete_page"]
+  },
+  "examples": [
+    {"name": "读取决策日志", "args": { "database_id": "DECISION_LOG_DB_ID" }}
+  ],
+  "audit_required": true
+}

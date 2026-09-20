@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "实际年化如何换算？", a: "信用卡分期月费率 0.6% ≈ 实际年化 13% 以上。" }, { q: "为什么实际年化约是名义手续费率的两倍？", a: "手续费按全额本金逐月收取，但实际占用本金逐月递减；按 IRR 折算的实际年化约为名义年费的 1.8 倍上下。" }, { q: "提前还清分期划算吗？", a: "多数银行提前结清仍需支付剩余期数手续费或一次性违约金，办理前请先向发卡行确认结清规则。" }];
+---
+<BaseLayout title="信用卡分期计算器 — 在线分期月供与实际年化利率换算" description="免费在线信用卡分期计算器：输入分期本金、月手续费率与期数，即时得出月供与总手续费，并按 IRR 口径折算实际年化利率，帮你看清低月费背后的真实资金成本。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"信用卡分期计算器"}]} />
+    <h1>信用卡分期计算器</h1>
+    <p class="lead">免费在线信用卡分期月供与实际年化</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="principal">分期本金（¥）</label><input id="principal" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="10000" /><p class="field-error" id="field-error-principal" hidden></p></div>
+      <div class="field"><label for="monthlyRate">月手续费率（%）</label><input id="monthlyRate" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="0.6" /><p class="field-error" id="field-error-monthlyRate" hidden></p></div>
+      <div class="field"><label for="months">期数</label><input id="months" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="12" /><p class="field-error" id="field-error-months" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/loan-cn/">贷款计算器</a></li>
+  <li><a href="/finance/auto-loan-cn/">车贷计算器</a></li>
+  <li><a href="/finance/irr-cn/">IRR 计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="信用卡分期计算器" description="免费在线信用卡分期计算器：输入分期本金、月手续费率与期数，即时得出月供与总手续费，并按 IRR 口径折算实际年化利率，帮你看清低月费背后的真实资金成本。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/credit-installment-cn-page.js"></script>
+</BaseLayout>

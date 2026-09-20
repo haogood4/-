@@ -1,0 +1,63 @@
+---
+/**
+ * CalcJsonLd — 计算器页结构化数据（P1-9）
+ * 输出 SoftwareApplication + FAQPage + BreadcrumbList 三块 JSON-LD（构建期渲染，无运行时 JS）。
+ * 用法：<CalcJsonLd name="BMI 计算器" description="…" faqItems={faqItems} />
+ */
+interface FaqItem {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  /** 工具名称（与页面 h1 一致） */
+  name: string;
+  /** 工具简介（与 BaseLayout description 一致） */
+  description: string;
+  /** 页面 FAQ 列表（与 FaqSection items 同源） */
+  faqItems: FaqItem[];
+  /** 可选功能点列表，用于 featureList */
+  featureList?: string[];
+}
+
+const { name, description, faqItems, featureList = [] } = Astro.props;
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+
+const applicationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name,
+  description,
+  url: pageUrl,
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Web browser（全平台）",
+  inLanguage: "zh-CN",
+  isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" },
+  ...(featureList.length > 0 ? { featureList } : {}),
+};
+
+const rootUrl = new URL("/", Astro.site ?? Astro.url).href;
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "首页", item: rootUrl },
+    { "@type": "ListItem", position: 2, name, item: pageUrl },
+  ],
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(applicationJsonLd)} />
+{faqItems.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />}
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />

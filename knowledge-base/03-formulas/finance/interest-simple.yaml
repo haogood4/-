@@ -1,0 +1,82 @@
+calculator_id: interest-simple
+name: 利息计算器（单利）
+name_en: Simple Interest Calculator
+category: finance
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+inputs:
+  - name: principal
+    label: 本金
+    type: number
+    unit: CNY
+    required: true
+    min: 0
+  - name: annual_rate
+    label: 年利率
+    type: number
+    unit: percent
+    required: true
+    min: 0
+    max: 100
+  - name: years
+    label: 年限
+    type: number
+    unit: year
+    required: true
+    min: 0
+  - name: days
+    label: 额外天数
+    type: number
+    unit: day
+    required: false
+    min: 0
+    max: 365
+    default: 0
+
+formula: |
+  interest = principal * annual_rate / 100 * (years + days / 365)
+  total = principal + interest
+
+formula_math: |
+  I = P * R/100 * (Y + D/365)
+  T = P + I
+
+outputs:
+  - name: interest
+    label: 利息
+    unit: CNY
+    primary: true
+  - name: total
+    label: 本息合计
+    unit: CNY
+
+test_vectors:
+  - input: {principal: 10000, annual_rate: 3, years: 1, days: 0}
+    expected_output: {interest: 300, total: 10300}
+    derivation: unverified
+    note: 基准
+  - input: {principal: 10000, annual_rate: 0, years: 5, days: 0}
+    expected_output: {interest: 0, total: 10000}
+    derivation: unverified
+    note: 零利率
+  - input: {principal: 10000, annual_rate: 3, years: 1, days: 30}
+    expected_output: {interest: 324.66, total: 10324.66}
+    derivation: unverified
+    note: 带额外天数
+
+sources:
+  - title: 复利/单利定义 · 维基百科
+    url: https://zh.wikipedia.org/wiki/%E5%88%A9%E6%81%AF
+    type: reference
+    accessed_at: 2025-01-01
+
+notes_for_ai: |
+  - 页面需注明"单利"以避免与"复利"混淆。
+  - 复利计算器 v2 单独实现。
+---

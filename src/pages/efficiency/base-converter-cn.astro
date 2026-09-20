@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "支持小数？", a: "本工具仅支持整数转换。" }, { q: "十六进制常用于哪些场景？", a: "颜色代码（如 #RRGGBB）、内存地址与汇编指令等广泛使用十六进制，每 1 位恰好对应 4 位二进制。" }, { q: "二进制负数如何表示？", a: "计算机中通常用补码：对绝对值按位取反再加 1。例如 8 位下 −1 表示为 11111111。" }];
+---
+<BaseLayout title="进制转换计算器 — 在线二进制八进制十进制十六进制互转" description="免费在线进制转换工具：支持二进制、八进制、十进制、十六进制任意互转，结果同时展示四种进制形式，适合编程学习、颜色代码换算与内存地址计算。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"进制转换计算器"}]} />
+    <h1>进制转换计算器</h1>
+    <p class="lead">二进制/八进制/十进制/十六进制互转</p>
+    
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="value">数值</label><input id="value" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="255" /><p class="field-error" id="field-error-value" hidden></p></div>
+      <div class="field"><label for="fromBase">源进制（2/8/10/16）</label><input id="fromBase" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="10" /><p class="field-error" id="field-error-fromBase" hidden></p></div>
+      <div class="field"><label for="toBase">目标进制（2/8/10/16）</label><input id="toBase" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="16" /><p class="field-error" id="field-error-toBase" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/efficiency/ip-subnet-cn/">IP 子网计算器</a></li>
+  <li><a href="/efficiency/scientific-cn/">科学计算器</a></li>
+  <li><a href="/dev/timestamp/">Unix 时间戳转换</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="进制转换计算器" description="免费在线进制转换工具：支持二进制、八进制、十进制、十六进制任意互转，结果同时展示四种进制形式，适合编程学习、颜色代码换算与内存地址计算。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/base-converter-cn-page.js"></script>
+</BaseLayout>

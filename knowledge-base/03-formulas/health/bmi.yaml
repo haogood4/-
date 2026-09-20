@@ -1,0 +1,109 @@
+calculator_id: bmi
+name: BMI 计算器
+name_en: BMI Calculator
+category: health
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+inputs:
+  - name: height
+    label: 身高
+    type: number
+    unit: cm
+    required: true
+    min: 50
+    max: 250
+  - name: weight
+    label: 体重
+    type: number
+    unit: kg
+    required: true
+    min: 10
+    max: 300
+  - name: unit_system
+    label: 单位制
+    type: radio
+    options: [metric, imperial]
+    default: metric
+  - name: age
+    label: 年龄
+    type: number
+    unit: year
+    required: false
+    min: 0
+    max: 120
+    default: null
+    note: 仅用于成人/儿童分类
+
+formula: |
+  if unit_system == imperial:
+    height_m = (height * 0.3048) + 0  # height 实际单位是 ft -> m
+    weight_kg = weight * 0.453592
+  else:
+    height_m = height / 100
+    weight_kg = weight
+  bmi = weight_kg / (height_m ** 2)
+
+formula_math: |
+  BMI = W(kg) / H(m)^2
+
+classification:
+  - {min: 0,    max: 18.5, label: 偏瘦}
+  - {min: 18.5, max: 24,   label: 正常}
+  - {min: 24,   max: 28,   label: 超重}
+  - {min: 28,   max: null, label: 肥胖}
+
+outputs:
+  - name: bmi
+    label: BMI
+    unit: number
+    primary: true
+  - name: category
+    label: 分类
+    unit: text
+    primary: true
+  - name: ideal_weight_min
+    label: 理想体重最小值
+    unit: kg
+  - name: ideal_weight_max
+    label: 理想体重最大值
+    unit: kg
+
+test_vectors:
+  - input: {height: 170, weight: 65, unit_system: metric}
+    expected_output: {bmi: 22.49, category: 正常}
+    derivation: unverified
+    note: 基准
+  - input: {height: 170, weight: 90, unit_system: metric}
+    expected_output: {bmi: 31.14, category: 肥胖}
+    derivation: unverified
+    note: 高 BMI
+  - input: {height: 170, weight: 45, unit_system: metric}
+    expected_output: {bmi: 15.57, category: 偏瘦}
+    derivation: unverified
+    note: 低 BMI
+  - input: {height: 5.7, weight: 154, unit_system: imperial}
+    expected_output: {bmi: 23.65, category: 正常}
+    derivation: unverified
+    note: 英制 (height 是 ft, weight 是 lb)
+
+sources:
+  - title: WHO · Obesity and overweight
+    url: https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight
+    type: official
+    accessed_at: 2025-01-01
+  - title: 中国肥胖问题工作组 · 中国成人 BMI 分类
+    url: https://www.cma.org.cn/
+    type: institutional
+    accessed_at: 2025-01-01
+
+notes_for_ai: |
+  - 中国成人标准：18.5–24 正常；24–28 超重；≥28 肥胖（与 WHO 略有差异）。
+  - 必须显示："BMI 是群体级指标，不能用于个体诊断，请咨询医生。"
+  - 儿童/青少年请勿使用此分类表，需另行实现（v2）。
+---

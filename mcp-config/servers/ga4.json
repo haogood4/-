@@ -1,0 +1,14 @@
+{
+  "id": "ga4",
+  "description": "Google Analytics 4 数据查询；只读。",
+  "url": "https://mcp.example.com/ga4",
+  "headers": { "Authorization": "Bearer ${env:GA4_API_KEY}" },
+  "tools": {
+    "read": ["runReport", "getMetadata"]
+  },
+  "examples": [
+    {"name": "上周自然流量", "args": { "metrics": ["sessions"], "dimensions": ["sessionDefaultChannelGroup"], "dateRange": "last_7_days" }},
+    {"name": "Top 计算器完成数", "args": { "metrics": ["eventCount"], "dimensions": ["customEvent:calculator_id"], "filter": "eventName == calc_complete" }}
+  ],
+  "audit_required": false
+}

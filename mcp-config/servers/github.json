@@ -1,0 +1,35 @@
+{
+  "id": "github",
+  "description": "代码仓库、Issue、PR、CI 状态读取；可生成草稿；合并与发布需人工审批。",
+  "command": "mcp-server-github",
+  "env_required": ["GITHUB_TOKEN"],
+  "scopes": ["repo", "read:org", "workflow"],
+  "tools": {
+    "read": [
+      "list_issues",
+      "get_issue",
+      "list_pull_requests",
+      "get_pull_request",
+      "list_commits",
+      "get_file_contents",
+      "search_code",
+      "list_workflow_runs"
+    ],
+    "propose": [
+      "create_issue_draft",
+      "create_pull_request_draft",
+      "add_pr_comment_draft"
+    ],
+    "approve": [
+      "merge_pull_request",
+      "create_release",
+      "delete_branch",
+      "trigger_workflow"
+    ]
+  },
+  "examples": [
+    {"name": "列出本周打开的 Bug", "args": { "label": "bug", "state": "open" }},
+    {"name": "查看 CI 状态", "args": { "workflow": "ci.yml" }}
+  ],
+  "audit_required": true
+}

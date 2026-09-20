@@ -1,0 +1,90 @@
+---
+import "../styles/global.css";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  /** 5-8 个核心关键词，避免堆砌；仅首页与分类页建议传入 */
+  keywords?: string[];
+  /** OG 类型：首页/列表页用 website，工具详情页用 article */
+  ogType?: "website" | "article";
+  /** 是否禁止索引（测试页使用） */
+  noindex?: boolean;
+}
+
+const { title, description, keywords = [], ogType = "website", noindex = false } = Astro.props;
+
+// 站点绝对 URL：Astro 配置 site（astro.config.mjs），部署前需替换为正式域名
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+// 社交分享图：PNG 格式（微信/微博/Facebook 对 SVG 支持差），1200×630
+const ogImageURL = new URL("/og-image.png", Astro.site ?? Astro.url);
+const siteName = "计算器大全";
+
+// 当前页面分类（与 SiteHeader 的映射规则保持一致）：
+// finance/health/renovation/investment/daily 原样；math/unit/dev 归入 efficiency；首页 → undefined
+const CATEGORY_MAP: Record<string, string | undefined> = {
+  finance: "finance",
+  health: "health",
+  renovation: "renovation",
+  investment: "investment",
+  daily: "daily",
+  math: "efficiency",
+  unit: "efficiency",
+  dev: "efficiency",
+};
+const firstSegment = Astro.url.pathname.split("/").filter(Boolean)[0] ?? "";
+// undefined 属性会被 Astro 省略，因此首页不会渲染 data-category
+const pageCategory = CATEGORY_MAP[firstSegment];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {keywords.length > 0 && <meta name="keywords" content={keywords.join(",")} />}
+    <meta name="robots" content={noindex ? "noindex,nofollow" : "index,follow,max-image-preview:large"} />
+    <meta name="author" content={siteName} />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <!-- Open Graph：社交分享卡片 -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:image" content={ogImageURL.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${siteName} — 免费在线计算工具`} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL.href} />
+
+    <!-- 品牌与浏览器元信息 -->
+    <meta name="theme-color" content="#0f766e" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="alternate" type="application/rss+xml" title="计算器大全 — 知识库与政策资讯" href="/rss.xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  </head>
+  <body data-category={pageCategory}>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <SiteHeader />
+    <div class="container">
+      <slot />
+      <SiteFooter />
+    </div>
+    <!-- Service Worker 注册（外部文件，兼容 CSP script-src 'self'） -->
+    <script is:inline src="/register-sw.js"></script>
+  </body>
+</html>

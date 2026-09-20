@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "IRR 含义？", a: "内部收益率使所有现金流现值之和为零的折现率，常用于投资评估。" }, { q: "IRR 出现多解怎么办？", a: "当现金流符号多次变化时 IRR 可能有多解或无解，此时建议改用 NPV 或修正内部收益率 MIRR 评估。" }, { q: "IRR 能直接比较不同规模的项目吗？", a: "不能。IRR 是相对指标、不反映绝对收益规模，投资额差异大的项目应以 NPV 为主判断。" }];
+---
+<BaseLayout title="IRR 计算器 — 在线内部收益率现金流试算" description="免费在线 IRR（内部收益率）计算器：输入多期现金流序列，Newton-Raphson 数值法求解 IRR，适用于增额终身寿与年金险收益评估、项目投资决策与基金实际回报测算。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"IRR 内部收益率计算器"}]} />
+    <h1>IRR 内部收益率计算器</h1>
+    <p class="lead">免费在线 IRR（内部收益率）计算器，支持现金流序列</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="cashflows">现金流序列（逗号/换行/空格分隔，首期为负）</label><textarea id="cashflows" class="field-input" rows="3" placeholder="-10000, 3000, 4000, 5000"></textarea><p class="field-error" id="field-error-cashflows" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/annualized-return-cn/">年化收益率计算器</a></li>
+  <li><a href="/finance/fund-dca-cn/">基金定投计算器</a></li>
+  <li><a href="/finance/compound-interest-cn/">复利计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="IRR 内部收益率计算器" description="免费在线 IRR（内部收益率）计算器：输入多期现金流序列，Newton-Raphson 数值法求解 IRR，适用于增额终身寿与年金险收益评估、项目投资决策与基金实际回报测算。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/irr-cn-page.js"></script>
+</BaseLayout>

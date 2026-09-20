@@ -1,0 +1,94 @@
+calculator_id: date-diff
+name: 日期差 / 工作日计算器
+name_en: Date Difference / Workday Calculator
+category: daily
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+inputs:
+  - name: start_date
+    label: 起始日期
+    type: date
+    required: true
+  - name: end_date
+    label: 结束日期
+    type: date
+    required: true
+  - name: include_end
+    label: 是否包含结束日
+    type: radio
+    options: [true, false]
+    default: false
+  - name: workdays_only
+    label: 仅计算工作日
+    type: radio
+    options: [true, false]
+    default: false
+  - name: holidays
+    label: 节假日列表（可选）
+    type: list<date>
+    required: false
+
+formula: |
+  if include_end:
+    span = (end - start) + 1 day
+  else:
+    span = (end - start)
+  if workdays_only:
+    # 用日历表跳过周末与节假日
+    days = count_workdays(start, end, holidays)
+  else:
+    days = span.days
+
+outputs:
+  - name: total_days
+    label: 总天数
+    unit: day
+    primary: true
+  - name: workdays
+    label: 工作日
+    unit: day
+  - name: weeks
+    label: 周数
+    unit: week
+  - name: months
+    label: 月数
+    unit: month
+
+test_vectors:
+  - input: {start_date: 2025-01-01, end_date: 2025-01-02}
+    expected_output: {ok: true, days: 1}
+    derivation: unit-test
+    note: 同月相邻日，end − start 不含首尾双计
+  - input: {start_date: 2024-02-28, end_date: 2024-03-01}
+    expected_output: {ok: true, days: 2}
+    derivation: unit-test
+    note: 跨闰年 2 月（2024 为闰年，2 月 29 日计入）
+  - input: {start_date: 2025-01-31, end_date: 2025-02-01}
+    expected_output: {ok: true, days: 1}
+    derivation: unit-test
+    note: 月底跨月
+  - input: {start_date: 2024-12-31, end_date: 2025-01-01}
+    expected_output: {ok: true, days: 1}
+    derivation: unit-test
+    note: 跨年
+  - input: {start_date: 2025-01-01, end_date: 2025-01-01}
+    expected_output: {ok: true, days: 0}
+    derivation: unit-test
+    note: 同年同日为 0
+  - input: {start_date: 2025-02-01, end_date: 2025-01-01}
+    expected_output: {ok: false, error: {code: END_BEFORE_START, message: "结束日期早于开始日期"}}
+    derivation: unit-test
+    note: 结束日期早于开始日期应报错
+
+sources:
+  - title: ISO 8601 日期
+    url: https://en.wikipedia.org/wiki/ISO_8601
+    type: reference
+    accessed_at: 2025-01-01
+---

@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "什么是基金定投？", a: "基金定投（DCA）指每月固定金额投资同一只基金，平摊成本降低择时风险，适合长期投资。" },
+  { q: "年化 8% 合理吗？", a: "过去十年偏股混合基金年化约 10-12%；保守型投资者可用 6-8% 估算。" },
+  { q: "定投何时止盈？", a: "常用策略：目标收益率止盈（如 20-30%）、估值止盈、市场情绪止盈。具体需结合个人风险偏好。" },
+];
+---
+<BaseLayout title="基金定投计算器 — 在线 DCA 终值" description="免费在线基金定投计算器：每月定额投入，按年化收益率复利计算终值。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"基金定投计算器"}]} />
+    <h1>基金定投计算器</h1>
+    <p class="lead">输入每月定投金额、年化收益率与年限，一键计算终值。</p>
+    <p class="result-hint"><strong>⚠️ 投资有风险，计算结果仅供参考，不构成投资建议。过往业绩不代表未来。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="monthly">每月定投（¥）</label><input id="monthly" class="field-input" type="text" inputmode="decimal" placeholder="如 1000" /><p class="field-error" id="field-error-monthly" hidden></p></div>
+      <div class="field"><label for="rate">年化收益率（%）</label><input id="rate" class="field-input" type="text" inputmode="decimal" placeholder="如 8" /><p class="field-error" id="field-error-rate" hidden></p></div>
+      <div class="field"><label for="years">定投年限</label><input id="years" class="field-input" type="text" inputmode="decimal" placeholder="1-50 年" /><p class="field-error" id="field-error-years" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <section class="section"><h2>计算公式</h2><ul class="formula-list"><li class="formula-item"><p><strong>终值</strong>：FV = M × [(1 + r/12)^n − 1] / (r/12) × (1 + r/12)</p><p>其中 M 为月投金额，r 为年化，n 为月数。</p></li></ul></section>
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list"><li><a href="/finance/compound-interest-cn/">复利计算器</a></li><li><a href="/finance/annualized-return-cn/">年化收益率</a></li><li><a href="/finance/irr-cn/">IRR</a></li></ul></section>
+  
+    <CalcJsonLd name="基金定投计算器" description="免费在线基金定投计算器：每月定额投入，按年化收益率复利计算终值。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/fund-dca-cn-page.js"></script>
+</BaseLayout>

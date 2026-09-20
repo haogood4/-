@@ -1,0 +1,107 @@
+# 公式标准模板（formula-template.yaml）
+# 复制本文件后：
+#   1. 改 calculator_id / name / version
+#   2. 补全 inputs / formula / test_vectors / sources
+#   3. 状态必须从 draft 开始；通过专业人工审核后改为 approved
+
+calculator_id: example-cn              # 全站唯一 ID
+name: 示例计算器                         # 中文显示名
+name_en: Example Calculator             # 英文显示名
+category: finance | health | daily | math   # 必须四选一
+jurisdiction: 中国大陆                    # 适用地区/法规
+locale: zh-CN                            # 语言
+version: 0.1.0                          # semver
+status: draft                           # draft | in-review | approved | deprecated
+effective_from: 2025-01-01               # 生效日期
+effective_to:                            # 失效日期（可空）
+review_status: pending                   # pending | approved（approved 需附人工审核记录）
+reviewer: 待定                           # 人类审核人姓名
+last_updated: 2025-01-01
+
+# ============== 输入字段 ==============
+inputs:
+  - name: amount
+    label: 金额
+    type: number
+    unit: CNY
+    required: true
+    min: 0
+    max: 100000000
+    default: null
+    validation: 整数；最多 8 位
+
+# ============== 公式定义 ==============
+# 用伪代码 + 数学表达式两种方式书写，便于人类审阅与机器执行
+formula: |
+  monthly = principal * (month_rate * (1 + month_rate) ** months) / ((1 + month_rate) ** months - 1)
+formula_math: |
+  设本金 P，月利率 r = R / 12，月数 n = Y * 12
+  月供 M = P * r * (1 + r)^n / ((1 + r)^n - 1)
+notes:
+  - 等额本息公式
+  - r = 0 时按本金/n 处理
+edge_cases:
+  - loan_amount == 0
+  - annual_rate == 0
+  - loan_years > 30
+
+# ============== 输出 ==============
+outputs:
+  - name: monthly_payment
+    label: 月供
+    unit: CNY
+    primary: true
+  - name: total_payment
+    label: 总还款
+    unit: CNY
+  - name: total_interest
+    label: 总利息
+    unit: CNY
+    primary: true
+
+# ============== 精度与舍入 ==============
+rounding_rule: 展示层 round-half-up 保留 2 位小数，计算过程不提前舍入
+precision: 0.01
+
+# ============== 测试数据（必须 ≥ 5 组）==============
+# 每条测试向量必须带 derivation 字段，标注期望值的来源与可信度：
+#   - unverified: AI 起草、未经独立验证的占位值，不得作为验收依据
+#   - unit-test: 已由自动化单元测试推导并通过断言验证
+#   - human-verified: 已由专业人员人工推导并签字确认
+test_vectors:
+  - input: {loan_amount: 1000000, annual_rate: 4.2, loan_years: 30}
+    expected_output: {monthly_payment: 4887.49, total_interest: 759496.49}
+    derivation: unverified
+    note: 基准案例
+  - input: {loan_amount: 500000, annual_rate: 0, loan_years: 10}
+    expected_output: {monthly_payment: 4166.67, total_interest: 0}
+    derivation: unverified
+    note: 零利率边界
+  - input: {loan_amount: 0, annual_rate: 5, loan_years: 10}
+    expected_output: {monthly_payment: 0, total_interest: 0}
+    derivation: unverified
+    note: 零本金边界
+  - input: {loan_amount: 100000, annual_rate: 4.2, loan_years: 1}
+    expected_output: {monthly_payment: 8518.39, total_interest: 2220.68}
+    derivation: unverified
+    note: 短期限
+  - input: {loan_amount: 100000000, annual_rate: 4.2, loan_years: 30}
+    expected_output: {monthly_payment: 488749.21, total_interest: 75949650.21}
+    derivation: unverified
+    note: 上限
+
+# ============== 来源 ==============
+# 优先级：official > institutional > academic > competitor
+sources:
+  - title: 中国人民银行 · LPR 公告
+    url: https://www.pbc.gov.cn/
+    type: official
+    accessed_at: 2025-01-01
+  - title: 中国建设银行个人贷款计算器（参考）
+    url: https://www.ccb.com/
+    type: institutional
+    accessed_at: 2025-01-01
+notes_for_ai: |
+  - 仅在 PR 包含 test_vectors 全通过 + sources 至少 1 个 official/institutional 时才允许合并。
+  - 任何 modification 必须更新 version + last_updated，并在 decision-log.md 追加条目。
+---

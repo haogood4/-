@@ -1,0 +1,150 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "百分比计算器" },
+];
+
+const faqItems = [
+  {
+    q: "百分比是怎么计算的？",
+    a: "一个数的百分比 = 该数 × 百分比 ÷ 100。例如 200 的 15% = 200 × 15 ÷ 100 = 30。",
+  },
+  {
+    q: "百分比和小数如何互转？",
+    a: "百分比去掉百分号后除以 100 就是小数；小数乘以 100 再加上百分号就是百分比。例如 15% = 0.15，0.08 = 8%。",
+  },
+  {
+    q: "变化率为负数代表什么？",
+    a: "表示下降。例如从 150 到 100 的变化率约为 -33.333333%，即新值比原值低约 33.33%。",
+  },
+  {
+    q: "计算结果可以用于正式决策吗？",
+    a: "不可以。本工具结果仅供参考，请勿直接作为财务、税务或法律决策依据。",
+  },
+];
+---
+
+<BaseLayout
+  title="百分比计算器 — 在线求百分比、占比与变化率"
+  description="免费在线百分比计算器：支持求一个数的百分之几、求占比、求增减变化率三种模式，附公式代入过程，无需注册。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>百分比计算器</h1>
+    <p class="lead">
+      输入数值，一键计算百分比、占比与变化率，并展示公式代入过程。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="百分比计算表单">
+      <div class="field">
+        <label for="mode">计算模式</label>
+        <select id="mode" class="field-select">
+          <option value="percent-of">一个数的百分之几（a 的 b%）</option>
+          <option value="what-percent">占比（a 占 b 的百分比）</option>
+          <option value="change">变化率（a 到 b 的增减幅）</option>
+        </select>
+        <p id="mode-desc" class="field-hint">
+          计算 a 的 b% 是多少。例如：200 的 15% = 30。
+        </p>
+      </div>
+      <div class="field">
+        <label for="input-a" id="label-a">数值 a（原值）</label>
+        <input
+          id="input-a"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 200"
+          aria-describedby="field-error-a"
+        />
+        <p class="field-error" id="field-error-a" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-b" id="label-b">百分比 b（%）</label>
+        <input
+          id="input-b"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 15"
+          aria-describedby="field-error-b"
+        />
+        <p class="field-error" id="field-error-b" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择计算模式：求一个数的百分之几、求占比或求变化率。</li>
+        <li>按提示在 a、b 两个输入框中填入数值。</li>
+        <li>点击「计算」按钮，查看结果与公式代入过程。</li>
+        <li>修改任一输入后需重新点击「计算」；点击「重置」可清空全部输入。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>一个数的百分之几</strong>：a × b ÷ 100</p>
+          <p>例：<code>200 × 15 ÷ 100 = 30</code></p>
+        </li>
+        <li class="formula-item">
+          <p><strong>占比</strong>：a ÷ b × 100</p>
+          <p>例：<code>30 ÷ 200 × 100 = 15%</code></p>
+        </li>
+        <li class="formula-item">
+          <p><strong>变化率</strong>：(b − a) ÷ a × 100</p>
+          <p>例：<code>(150 − 100) ÷ 100 × 100 = 50%</code></p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="notes-heading">
+      <h2 id="notes-heading">注意事项</h2>
+      <ul class="note-list">
+        <li>数值绝对值不能超过 1e12，小数位数最多 6 位。</li>
+        <li>「占比」模式要求总数 b 不为 0；「变化率」模式要求原值 a 大于 0。</li>
+        <li>变化率为正表示增长，为负表示下降。</li>
+        <li>计算结果仅供参考。</li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/math/discount/">折扣计算器</a></li>
+        <li><a href="/math/ratio/">比例计算器</a></li>
+        <li><a href="/math/average/">平均数计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="百分比计算器" description="免费在线百分比计算器：支持求一个数的百分之几、求占比、求增减变化率三种模式，附公式代入过程，无需注册。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/percentage-page.js"></script>
+</BaseLayout>

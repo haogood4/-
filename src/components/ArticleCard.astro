@@ -1,0 +1,40 @@
+---
+/**
+ * ArticleCard.astro — 知识库文章卡片
+ * 用于列表页与首页推荐区；样式复用现有 .cat-card 视觉语言 + 分类色点。
+ */
+interface Props {
+  title: string;
+  description: string;
+  category: string;
+  href: string;
+  readingTime?: number;
+  publishedAt: Date;
+}
+
+const { title, description, category, href, readingTime, publishedAt } = Astro.props;
+const categoryLabelMap: Record<string, string> = {
+  finance: "金融理财",
+  health: "健康生活",
+  renovation: "装修家居",
+  investment: "投资专业",
+  efficiency: "效率工具",
+  daily: "日常工具",
+};
+const dateLabel = publishedAt.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" });
+---
+
+<article class={`article-card cat-card--${category}`}>
+  <header class="article-card__head">
+    <span class="cat-card__dot" aria-hidden="true"></span>
+    <span class="article-card__category">{categoryLabelMap[category] ?? category}</span>
+  </header>
+  <h3 class="article-card__title">
+    <a href={href}>{title}</a>
+  </h3>
+  <p class="article-card__desc">{description}</p>
+  <footer class="article-card__meta">
+    <time datetime={publishedAt.toISOString()}>{dateLabel}</time>
+    {readingTime && <span> · 阅读 {readingTime} 分钟</span>}
+  </footer>
+</article>

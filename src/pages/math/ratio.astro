@@ -1,0 +1,147 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "比例计算器" },
+];
+
+const faqItems = [
+  {
+    q: "什么叫比例？",
+    a: "若 a : b = c : d，则 a × d = b × c。例如 2 : 4 = 3 : 6（2 × 6 = 4 × 3 = 12）。",
+  },
+  {
+    q: "解比例项的公式是什么？",
+    a: "求 d：d = b × c ÷ a；求 c：c = a × d ÷ b。等价于交叉相乘后解方程。",
+  },
+  {
+    q: "为什么 a、b 不能为 0？",
+    a: "若 a 或 b 为 0，比例左侧退化为 0 : b，右侧任何 c : d 都不能与其相等。本工具会拒绝 a 或 b 为 0。",
+  },
+  {
+    q: "支持负数吗？",
+    a: "支持，比例中的 c 可以为负数；结果相应为负数。",
+  },
+];
+---
+
+<BaseLayout
+  title="比例计算器 — 在线解比例与未知项"
+  description="免费在线比例计算器：输入 a:b 和 c，自动解出比例中的未知项，支持两种模式（求 d 或求 c）。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>比例计算器</h1>
+    <p class="lead">
+      给定比例 a : b = c : x（或 x : c），自动解出未知项；选择模式即可切换。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="比例计算表单">
+      <div class="field">
+        <label for="mode">求解模式</label>
+        <select id="mode" class="field-select">
+          <option value="find-d">求 d：a : b = c : x</option>
+          <option value="find-c">求 c：a : b = x : c</option>
+        </select>
+        <p id="mode-desc" class="field-hint">
+          由 a、b、c 解出 x。例：2 : 4 = 3 : x → x = 6。
+        </p>
+      </div>
+      <div class="field">
+        <label for="input-a">数值 a</label>
+        <input
+          id="input-a"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 2"
+          aria-describedby="field-error-a"
+        />
+        <p class="field-error" id="field-error-a" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-b">数值 b</label>
+        <input
+          id="input-b"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 4"
+          aria-describedby="field-error-b"
+        />
+        <p class="field-error" id="field-error-b" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-c">数值 c</label>
+        <input
+          id="input-c"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 3"
+          aria-describedby="field-error-c"
+        />
+        <p class="field-error" id="field-error-c" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择模式：「求 d」或「求 c」。</li>
+        <li>填入 a、b、c 三个数值。</li>
+        <li>点击「计算」查看未知项结果与公式代入过程。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>求 d（a:b = c:x）</strong>：x = b × c ÷ a</p>
+          <p>例：<code>4 × 3 ÷ 2 = 6</code></p>
+        </li>
+        <li class="formula-item">
+          <p><strong>求 c（a:b = x:c）</strong>：x = a × c ÷ b</p>
+          <p>例：<code>2 × 6 ÷ 4 = 3</code></p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/math/percentage/">百分比计算器</a></li>
+        <li><a href="/math/average/">平均数计算器</a></li>
+        <li><a href="/math/unit-price/">单价比较计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="比例计算器" description="免费在线比例计算器：输入 a:b 和 c，自动解出比例中的未知项，支持两种模式（求 d 或求 c）。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/ratio-page.js"></script>
+</BaseLayout>

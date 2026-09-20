@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const faqItems = [
+  { q: "贷款计算器与房贷计算器有什么区别？", a: "贷款计算器适用于消费贷、车贷、信用贷等通用贷款；房贷计算器专门针对住房贷款，年限通常 20-30 年。" },
+  { q: "实际利率比名义利率高吗？", a: "是的。信用卡分期、消费金融常按月费率宣传（如月 0.6%），实际年化约为 13% 以上。本工具按实际年利率计算。" },
+  { q: "等额本息总利息如何计算？", a: "总利息 = 每月月供 × 总期数 - 贷款本金。" },
+];
+---
+<BaseLayout title="贷款计算器 — 在线消费贷/车贷月供" description="免费在线贷款计算器：通用等额本息月供计算，覆盖消费贷、车贷、信用贷等场景。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"贷款计算器"}]} />
+    <h1>贷款计算器</h1>
+    <p class="lead">输入贷款本金、年限与年利率，一键计算等额本息月供。</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成贷款建议。实际利率以放贷机构为准。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="principal">贷款本金（¥）</label><input id="principal" class="field-input" type="text" inputmode="decimal" placeholder="例如 100000" /><p class="field-error" id="field-error-principal" hidden></p></div>
+      <div class="field"><label for="years">贷款年限</label><input id="years" class="field-input" type="text" inputmode="decimal" placeholder="1-30 年" /><p class="field-error" id="field-error-years" hidden></p></div>
+      <div class="field"><label for="rate">年利率（%）</label><input id="rate" class="field-input" type="text" inputmode="decimal" placeholder="例如 6" /><p class="field-error" id="field-error-rate" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <section class="section"><h2>计算公式</h2><ul class="formula-list"><li class="formula-item"><p><strong>等额本息月供</strong>：M = P × [r(1+r)^n] / [(1+r)^n - 1]</p><p>其中 P 为本金，r 为月利率，n 为总期数。</p></li></ul></section>
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list"><li><a href="/finance/mortgage-cn/">房贷计算器</a></li><li><a href="/finance/auto-loan-cn/">车贷计算器</a></li><li><a href="/finance/credit-installment-cn/">信用卡分期</a></li></ul></section>
+  
+    <CalcJsonLd name="贷款计算器" description="免费在线贷款计算器：通用等额本息月供计算，覆盖消费贷、车贷、信用贷等场景。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/loan-cn-page.js"></script>
+</BaseLayout>

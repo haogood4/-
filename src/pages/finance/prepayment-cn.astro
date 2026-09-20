@@ -1,0 +1,140 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财", href: "/" },
+  { label: "提前还款计算器" },
+];
+
+const faqItems = [
+  {
+    q: "缩短年限和降低月供怎么选？",
+    a: "两种方案中，月供基本不变、缩短剩余年限（方案 A）通常节省更多利息；年限不变、重算降低月供（方案 B）能减轻每月现金流压力，但节省利息较少。可按自身资金状况选择。",
+  },
+  {
+    q: "提前还款需要支付违约金吗？",
+    a: "部分贷款合同约定还款满一定期数（常见 1 年）后提前还款免收违约金，未满期数可能收取。本计算器未计入违约金，实际费用以贷款机构规定为准。",
+  },
+  {
+    q: "为什么计算结果与银行试算不一致？",
+    a: "本计算基于等额本息标准公式并按月利率理论摊还，实际计息受起息日、大小月、利率调整、还款日等因素影响，结果与银行试算可能有小幅差异，以贷款机构实际试算为准。",
+  },
+  {
+    q: "等额本金贷款可以用这个计算器吗？",
+    a: "不可以。本计算器仅支持等额本息还款方式。等额本金贷款的提前还款请参照房贷计算器或咨询贷款机构。",
+  },
+];
+---
+<BaseLayout
+  title="提前还款计算器 — 在线等额本息缩短年限/降低月供对比"
+  description="免费在线提前还款计算器：输入贷款信息与已还期数，对比「月供不变缩短年限」与「年限不变降低月供」两种方案的新月供、剩余期数与节省利息。结果仅供参考。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>提前还款计算器</h1>
+    <p class="lead">
+      等额本息贷款已还若干期后一次性提前还款，一键对比「月供基本不变、缩短年限」与「年限不变、降低月供」两种方案的节省利息。
+    </p>
+    <p class="ymyl-notice">
+      ⚠️ 计算结果仅供参考，不构成任何贷款建议，实际金额以贷款机构实际试算为准。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="提前还款计算表单">
+      <div class="field">
+        <label for="principal">贷款本金（¥）</label>
+        <input id="principal" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 1000000" aria-describedby="field-error-principal" />
+        <p class="field-error" id="field-error-principal" hidden></p>
+      </div>
+      <div class="field">
+        <label for="years">贷款年限</label>
+        <input id="years" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 30（1-30 年）" aria-describedby="field-error-years" />
+        <p class="field-error" id="field-error-years" hidden></p>
+      </div>
+      <div class="field">
+        <label for="rate">年利率（%）</label>
+        <input id="rate" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 4.2" aria-describedby="field-error-rate" />
+        <p class="field-error" id="field-error-rate" hidden></p>
+      </div>
+      <div class="field">
+        <label for="paidMonths">已还期数（月）</label>
+        <input id="paidMonths" class="field-input" type="text" inputmode="numeric" autocomplete="off" placeholder="例如 12" aria-describedby="field-error-paidMonths" />
+        <p class="field-hint">等额本息方式下已正常还款的期数</p>
+        <p class="field-error" id="field-error-paidMonths" hidden></p>
+      </div>
+      <div class="field">
+        <label for="prepay">提前还款金额（¥）</label>
+        <input id="prepay" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 100000" aria-describedby="field-error-prepay" />
+        <p class="field-error" id="field-error-prepay" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">计算</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">重置</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">填写上方字段后显示结果</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption"></p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail1" class="result-process"></p>
+        <p id="result-detail2" class="result-process"></p>
+        <p id="result-detail3" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入贷款本金、年限与年利率（与最初签约一致）。</li>
+        <li>填入已正常还款的期数（月）与本次一次性提前还款金额。</li>
+        <li>点击「计算」按钮，对比方案 A（缩短年限）与方案 B（降低月供）的新月供、剩余期数与节省利息。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>等额本息月供</strong>：M = P × i × (1+i)^n ÷ [(1+i)^n − 1]</p>
+          <p>其中 P 为本金，i 为月利率（年利率 ÷ 12），n 为总期数（月）。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>已还 k 期后剩余本金</strong>：B = P × (1+i)^k − M × [(1+i)^k − 1] ÷ i</p>
+          <p>提前还款后新本金 P′ = B − 提前还款金额。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>方案 A</strong>：月供保持 M 不变，逐期摊还直至 P′ 结清，剩余期数缩短。</p>
+          <p><strong>方案 B</strong>：剩余期数不变（n − k），按 P′ 重算月供 M′ = P′ × i × (1+i)^(n−k) ÷ [(1+i)^(n−k) − 1]。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/finance/mortgage-cn/">房贷计算器</a></li>
+        <li><a href="/finance/equal-installment-cn/">等额本息计算器</a></li>
+        <li><a href="/finance/loan-cn/">贷款计算器</a></li>
+        <li><a href="/finance/compound-interest-cn/">复利计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="提前还款计算器" description="免费在线提前还款计算器：输入贷款信息与已还期数，对比「月供不变缩短年限」与「年限不变降低月供」两种方案的新月供、剩余期数与节省利息。结果仅供参考。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/prepayment-cn-page.js"></script>
+</BaseLayout>

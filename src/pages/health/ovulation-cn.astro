@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "排卵日怎么算？", a: "排卵日 ≈ 下次月经前 14 天。" }, { q: "日历推算法可靠吗？", a: "仅适用于周期规律者；压力、疾病、作息变化都可能使排卵提前或推后，建议结合基础体温与排卵试纸判断。" }, { q: "身体会有哪些排卵信号？", a: "可能出现蛋清样宫颈黏液增多、一侧下腹隐痛、基础体温升高等表现，个体差异较大。" }];
+---
+<BaseLayout title="排卵期计算器 — 在线排卵日与易孕期窗口推算" description="免费在线排卵期计算器：根据末次月经首日与月经周期长度推算下次排卵日与易孕期窗口，辅助备孕计划与生理期管理，不适合作为避孕或医疗依据。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"健康生活"},{label:"排卵期计算器"}]} />
+    <h1>排卵期计算器</h1>
+    <p class="lead">免费在线排卵日估算</p>
+    <p class="result-hint"><strong>⚠️ 估算结果仅供参考，不可作为避孕或医疗依据；如有需求请咨询医生。</strong></p>
+    <p class="result-hint"><strong>⚠️ 本计算结果不能替代医生诊断。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="lastPeriod">末次月经日期</label><input id="lastPeriod" class="field-input" type="date" /><p class="field-error" id="field-error-lastPeriod" hidden></p></div>
+      <div class="field"><label for="cycle">月经周期（天）</label><input id="cycle" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="28" /><p class="field-error" id="field-error-cycle" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/health/due-date-cn/">预产期计算器</a></li>
+  <li><a href="/daily/date-diff/">日期天数计算器</a></li>
+  <li><a href="/health/bmi-cn/">BMI 计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="排卵期计算器" description="免费在线排卵期计算器：根据末次月经首日与月经周期长度推算下次排卵日与易孕期窗口，辅助备孕计划与生理期管理，不适合作为避孕或医疗依据。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/ovulation-cn-page.js"></script>
+</BaseLayout>

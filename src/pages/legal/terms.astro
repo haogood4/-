@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// 骨架页：内容未通过法务审核前保持 noindex，审核通过后移除 noindex 并补全条款
+---
+
+<BaseLayout
+  title="用户协议"
+  description="计算器大全用户协议：服务说明、使用规范与责任边界。"
+  noindex
+>
+  <main id="main">
+    <h1>用户协议</h1>
+    <p class="lead">最近更新：2026-09-20（草稿）</p>
+    <p class="legal-notice">
+      ⚠️ 本页为占位草稿，尚未通过法务审核，正式上线前需由专业人员审定。
+    </p>
+
+    <section class="section">
+      <h2>一、服务说明</h2>
+      <p>
+        「计算器大全」提供免费、在线的实用计算工具。所有计算结果仅供参考，不构成金融、税务、
+        医疗、法律等专业建议，请以专业机构或专业人士的结论为准。
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>二、使用规范</h2>
+      <p>
+        您不得将本站服务用于任何违法用途，不得利用自动化工具恶意抓取或干扰本站正常运行。
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>三、服务变更与终止</h2>
+      <p>
+        本站保留对工具功能、界面与条款进行调整的权利；重要变更将在本页面更新说明。
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>四、责任限制</h2>
+      <p>
+        因使用本站计算结果而产生的任何直接或间接损失，本站不承担法律责任。具体条款待法务审核后补充。
+      </p>
+    </section>
+  </main>
+
+  <style>
+    .legal-notice {
+      padding: var(--space-3) var(--space-4);
+      border-left: 4px solid var(--color-warning, #d97706);
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-md);
+      color: var(--color-text-secondary);
+    }
+  </style>
+</BaseLayout>

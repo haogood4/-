@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [{ q: "保证金不足？", a: "需追加保证金或减仓，否则强制平仓。" }, { q: "什么是追加保证金？", a: "当账户权益低于维持保证金水平时，期货公司会要求限期补足资金，否则可能被强行平仓；规则以交易所与合同为准。" }, { q: "合约乘数在哪里查？", a: "各品种在期货合约中统一规定（如螺纹钢 10 吨/手）；保证金 = 合约价格 × 乘数 × 手数 × 保证金率。" }];
+---
+<BaseLayout title="期货保证金计算器 — 在线所需保证金与合约价值试算" description="免费在线期货保证金计算器：输入合约价格、手数、合约乘数与保证金率，即时计算所需保证金与持仓名义价值，商品期货与股指期货开仓前的风险管理工具。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"期货保证金计算器"}]} />
+    <h1>期货保证金计算器</h1>
+    <p class="lead">期货保证金计算</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="price">合约价格</label><input id="price" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="4000" /><p class="field-error" id="field-error-price" hidden></p></div>
+      <div class="field"><label for="lots">手数</label><input id="lots" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="1" /><p class="field-error" id="field-error-lots" hidden></p></div>
+      <div class="field"><label for="multiplier">合约乘数</label><input id="multiplier" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="10" /><p class="field-error" id="field-error-multiplier" hidden></p></div>
+      <div class="field"><label for="marginRate">保证金率（%）</label><input id="marginRate" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="12" /><p class="field-error" id="field-error-marginRate" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/investment/crypto-position-cn/">加密货币仓位计算器</a></li>
+  <li><a href="/investment/option-pricing-cn/">期权定价计算器</a></li>
+  <li><a href="/investment/turtle-position-cn/">海龟仓位计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="期货保证金计算器" description="免费在线期货保证金计算器：输入合约价格、手数、合约乘数与保证金率，即时计算所需保证金与持仓名义价值，商品期货与股指期货开仓前的风险管理工具。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/futures-margin-cn-page.js"></script>
+</BaseLayout>

@@ -1,0 +1,144 @@
+calculator_id: mortgage-cn
+name: 房贷计算器（中国大陆）
+name_en: Mortgage Calculator (Mainland China)
+category: finance
+jurisdiction: 中国大陆
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+effective_to:
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+inputs:
+  - name: loan_amount
+    label: 贷款金额
+    type: number
+    unit: CNY
+    required: true
+    min: 10000
+    max: 100000000
+    default: null
+    validation: 整数；最多 8 位
+  - name: annual_rate
+    label: 年利率（含 LPR + 加点）
+    type: number
+    unit: percent
+    required: true
+    min: 0
+    max: 30
+    default: 4.20
+    validation: 最多 4 位小数；支持 0
+  - name: loan_years
+    label: 贷款年限
+    type: number
+    unit: year
+    required: true
+    min: 1
+    max: 30
+    default: 30
+    validation: 整数
+  - name: repayment_method
+    label: 还款方式
+    type: select
+    required: true
+    options: [等额本息, 等额本金]
+    default: 等额本息
+
+formula: |
+  # 等额本息
+  if rate == 0:
+    monthly = principal / months
+  else:
+    r = rate / 12 / 100
+    monthly = principal * r * (1 + r) ** months / ((1 + r) ** months - 1)
+  total = monthly * months
+  interest_total = total - principal
+
+  # 等额本金
+  principal_each = principal / months
+  month_interest_first = principal * rate / 12 / 100
+
+formula_math: |
+  等额本息：M = P · r · (1+r)^n / ((1+r)^n − 1)
+  等额本金：每月本金 P/n，利息按剩余本金递减
+  其中 r = R/12/100, n = 年限 × 12
+
+edge_cases:
+  - loan_amount <= 0   → 提示
+  - annual_rate == 0   → 切换为线性分摊
+  - loan_years > 30    → 限制
+  - 提前还款金额 > 剩余本金 → 限制为剩余本金
+
+outputs:
+  - name: monthly_payment
+    label: 月供
+    unit: CNY
+    primary: true
+  - name: total_payment
+    label: 还款总额
+    unit: CNY
+    primary: false
+  - name: total_interest
+    label: 支付利息
+    unit: CNY
+    primary: true
+  - name: first_month_interest
+    label: 首月利息
+    unit: CNY
+    primary: false
+  - name: first_month_principal
+    label: 首月本金
+    unit: CNY
+    primary: false
+  - name: interest_ratio
+    label: 利息占本金比
+    unit: percent
+    primary: false
+
+rounding_rule: 展示层 round-half-up 保留 2 位小数，计算过程不提前舍入
+precision: 0.01
+
+test_vectors:
+  - input: {loan_amount: 1000000, annual_rate: 4.2, loan_years: 30, repayment_method: 等额本息}
+    expected_output: {monthly_payment: 4887.49, total_interest: 759496.49}
+    derivation: unverified
+    note: 基准案例（等额本息，100 万 30 年 4.2%）
+  - input: {loan_amount: 500000, annual_rate: 0, loan_years: 10, repayment_method: 等额本息}
+    expected_output: {monthly_payment: 4166.67, total_interest: 0}
+    derivation: unverified
+    note: 零利率边界
+  - input: {loan_amount: 0, annual_rate: 5, loan_years: 10, repayment_method: 等额本息}
+    expected_output: {monthly_payment: 0, total_interest: 0}
+    derivation: unverified
+    note: 零本金边界
+  - input: {loan_amount: 100000, annual_rate: 4.2, loan_years: 1, repayment_method: 等额本息}
+    expected_output: {monthly_payment: 8518.39, total_interest: 2220.68}
+    derivation: unverified
+    note: 短期限
+  - input: {loan_amount: 1000000, annual_rate: 4.2, loan_years: 30, repayment_method: 等额本金}
+    expected_output: {first_month_payment: 6277.78, monthly_decrease: ~11.57}
+    derivation: unverified
+    note: 等额本金首月
+
+sources:
+  - title: 中国人民银行 · 贷款市场报价利率（LPR）
+    url: https://www.pbc.gov.cn/zhengwugongkai/4081330/4081344/4081395/4081686/index.html
+    type: official
+    accessed_at: 2025-01-01
+  - title: 中国建设银行 · 个人住房贷款计算说明
+    url: https://www.ccb.com/chn/home/personal/loan/
+    type: institutional
+    accessed_at: 2025-01-01
+  - title: 维基百科 · 等额本息
+    url: https://zh.wikipedia.org/wiki/%E7%AD%89%E9%A2%9D%E6%9C%AC%E6%81%AF
+    type: reference
+    accessed_at: 2025-01-01
+
+notes_for_ai: |
+  - 默认年利率采用 4.20%（5 年期 LPR 示意值），页面需注明"利率可手动调整"。
+  - 一旦中国人民银行调整 LPR，必须在 effective_from 后 7 个工作日内更新 version + last_updated。
+  - 必须在结果页显示："本结果仅供参考，实际以银行审批为准。"
+---

@@ -1,0 +1,93 @@
+calculator_id: age
+name: 年龄计算器
+name_en: Age Calculator
+category: daily
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+inputs:
+  - name: birth_date
+    label: 出生日期
+    type: date
+    required: true
+  - name: target_date
+    label: 目标日期（可选，默认今天）
+    type: date
+    required: false
+
+formula: |
+  # 周岁按公历年月日逐级比较计算，禁止用"总天数 ÷ 平均年长"做近似
+  # 1. 年差：y = year(target) - year(birth)
+  # 2. 逐级比较月、日：(month(target), day(target)) 与 (month(birth), day(birth))
+  #    - 目标月日 < 出生月日：生日未到，周岁 = y - 1
+  #    - 目标月日 ≥ 出生月日（含生日当天）：周岁 = y
+  # 3. 2月29日出生者：在平年按 3 月 1 日视为生日已过
+  # 4. 若 target < birth：报错或返回无效
+  shuxu = year(target) - year(birth) + 1   # 虚岁
+
+formula_math: |
+  设出生日 b = (Y_b, M_b, D_b)，目标日 t = (Y_t, M_t, D_t)
+  生日已过 ⇔ (M_t, D_t) ≥ (M_b, D_b)；若 D_b = 2/29 且 Y_t 为平年，则按 (M_t, D_t) ≥ (3, 1) 判定
+  周岁 = Y_t − Y_b − 1（生日未到）；周岁 = Y_t − Y_b（生日已过，含当天）
+  虚岁 = Y_t − Y_b + 1
+  若 t < b：返回无效（报错）
+
+outputs:
+  - name: years
+    label: 周岁
+    unit: year
+    primary: true
+  - name: months
+    label: 总月数
+    unit: month
+  - name: days
+    label: 总天数
+    unit: day
+  - name: shuxu
+    label: 虚岁
+    unit: year
+  - name: next_birthday
+    label: 距下次生日
+    unit: day
+
+test_vectors:
+  - input: {birth_date: 2000-02-29, target_date: 2025-02-28}
+    expected_output: {ok: true, years: 24}
+    derivation: unit-test
+    note: 边界：平年 2 月 28 日生日未到（按 3 月 1 日视为已过），仍为 24 岁
+  - input: {birth_date: 2000-02-29, target_date: 2025-03-01}
+    expected_output: {ok: true, years: 25}
+    derivation: unit-test
+    note: 边界：平年 3 月 1 日视为生日已过，满 25 岁
+  - input: {birth_date: 2000-02-29, target_date: 2024-02-28}
+    expected_output: {ok: true, years: 23}
+    derivation: unit-test
+    note: 闰年生日前一天仍为 23 岁
+  - input: {birth_date: 2000-02-29, target_date: 2024-02-29}
+    expected_output: {ok: true, years: 24}
+    derivation: unit-test
+    note: 闰年生日当天算满周岁，岁数 +1
+  - input: {birth_date: 2000-01-01, target_date: 2025-01-01}
+    expected_output: {ok: true, years: 25}
+    derivation: unit-test
+    note: 生日当天算满周岁
+  - input: {birth_date: 2000-02-28, target_date: 2001-02-27}
+    expected_output: {ok: true, years: 0}
+    derivation: unit-test
+    note: 生日未到减一岁
+  - input: {birth_date: 2025-06-01, target_date: 2025-01-01}
+    expected_output: {ok: false, error: {code: TARGET_BEFORE_BIRTH, message: "目标日期早于出生日期"}}
+    derivation: unit-test
+    note: 目标日早于出生日应报错
+
+sources:
+  - title: 公历年龄计算 · 维基百科
+    url: https://en.wikipedia.org/wiki/Age
+    type: reference
+    accessed_at: 2025-01-01
+---

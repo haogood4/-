@@ -1,0 +1,132 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财", href: "/" },
+  { label: "房贷计算器" },
+];
+
+const faqItems = [
+  {
+    q: "等额本息和等额本金哪个更划算？",
+    a: "等额本息每月还款额固定，总利息较多但前期还款压力小；等额本金每月本金固定、利息递减，总利息较少但前期还款压力大。总利息差异取决于贷款年限与利率。",
+  },
+  {
+    q: "LPR 与固定利率如何选择？",
+    a: "LPR 浮动利率随市场调整，未来利率下行则节省利息、上行则增加利息。固定利率锁定当前利率水平，未来不受市场波动影响。用户应根据风险偏好与利率走势判断。",
+  },
+  {
+    q: "计算结果与实际还款有差异怎么办？",
+    a: "本计算基于用户输入的利率与年限，实际月供以贷款机构最终审批为准。常见差异来源：利率调整、提前还款、罚息、组合贷款等。",
+  },
+  {
+    q: "本计算器可以用于公积金贷款吗？",
+    a: "可以。公积金贷款利率通常低于商业贷款（首套 2.85% 左右），将年利率填入即可。组合贷款（公积金 + 商业）需分别计算后相加。",
+  },
+];
+---
+<BaseLayout
+  title="房贷计算器 — 在线等额本息/等额本金月供"
+  description="免费在线房贷计算器：支持等额本息与等额本金两种还款方式，自动计算月供、总利息；可参考 LPR 浮动利率，结果仅供参考。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>房贷计算器</h1>
+    <p class="lead">
+      输入贷款本金、年限与年利率，一键计算月供与总利息，支持等额本息与等额本金两种方式。
+    </p>
+    <p class="ymyl-notice">
+      ⚠️ 计算结果仅供参考，不构成任何贷款建议。实际月供以贷款机构最终审批为准。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="房贷计算表单">
+      <div class="field">
+        <label for="type">还款方式</label>
+        <select id="type" class="field-select">
+          <option value="equal-installment">等额本息（每月固定）</option>
+          <option value="equal-principal">等额本金（每月递减）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="principal">贷款本金（¥）</label>
+        <input id="principal" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 1000000" aria-describedby="field-error-principal" />
+        <p class="field-error" id="field-error-principal" hidden></p>
+      </div>
+      <div class="field">
+        <label for="years">贷款年限</label>
+        <input id="years" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 30（1-30 年）" aria-describedby="field-error-years" />
+        <p class="field-error" id="field-error-years" hidden></p>
+      </div>
+      <div class="field">
+        <label for="rate">年利率（%）</label>
+        <input id="rate" class="field-input" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 4.2（参考 LPR）" aria-describedby="field-error-rate" />
+        <p class="field-hint">当前 5 年期以上 LPR 约 3.95%（2025 年 10 月）</p>
+        <p class="field-error" id="field-error-rate" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">计算</button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">重置</button>
+      </div>
+    </form>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">填写上方字段后显示结果</p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption"></p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-detail1" class="result-process"></p>
+        <p id="result-detail2" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button>
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择还款方式：等额本息或等额本金。</li>
+        <li>填入贷款本金（人民币元）、年限（1-30）、年利率（%）。</li>
+        <li>点击「计算」按钮查看月供与总利息。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>等额本息</strong>：M = P × [r(1+r)^n] / [(1+r)^n - 1]</p>
+          <p>其中 M 为月供，P 为本金，r 为月利率，n 为总期数。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>等额本金</strong>：每月本金 = P / n；首月利息 = P × r；每月递减 = (P/n) × r</p>
+          <p>总利息 = P × r × (n+1) / 2</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/finance/loan-cn/">贷款计算器</a></li>
+        <li><a href="/finance/equal-installment-cn/">等额本息计算器</a></li>
+        <li><a href="/finance/prepayment-cn/">提前还款计算器</a></li>
+        <li><a href="/finance/income-tax-cn/">个税计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="房贷计算器" description="免费在线房贷计算器：支持等额本息与等额本金两种还款方式，自动计算月供、总利息；可参考 LPR 浮动利率，结果仅供参考。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/mortgage-cn-page.js"></script>
+</BaseLayout>

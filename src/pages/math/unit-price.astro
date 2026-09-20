@@ -1,0 +1,153 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "单价比较计算器" },
+];
+
+const faqItems = [
+  {
+    q: "什么叫「单价」？",
+    a: "单价 = 总价 ÷ 数量（例如每克、每毫升、每片）。不同包装的两件商品，单价更低者更划算。",
+  },
+  {
+    q: "为什么数量必须大于 0？",
+    a: "数量为 0 时单价无法计算（除以 0）；本工具会拒绝数量 0 或负数。",
+  },
+  {
+    q: "500 g 和 1000 g 怎么比？",
+    a: "请把两件商品各自的总价和数量都填进去。本工具会自动算出单价并提示哪一方更划算。",
+  },
+  {
+    q: "可以用来比较跨境商品吗？",
+    a: "可以，但请确保已换算到同一货币；本工具仅做数值比较，不包含运费、税费。",
+  },
+];
+---
+
+<BaseLayout
+  title="单价比较计算器 — 哪个包装更划算"
+  description="免费在线单价比较计算器：输入两组（总价/数量），自动算出每件单价并提示哪一方更划算。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>单价比较计算器</h1>
+    <p class="lead">
+      比较两种包装的商品哪个更划算：分别填入总价与数量，自动算出每件单价并标注更划算方。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="单价比较表单">
+      <fieldset class="field-group">
+        <legend>商品 A</legend>
+        <div class="field">
+          <label for="price-a">总价 A</label>
+          <input
+            id="price-a"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="例如 25"
+            aria-describedby="field-error-a"
+          />
+        </div>
+        <div class="field">
+          <label for="qty-a">数量 A</label>
+          <input
+            id="qty-a"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="例如 500"
+            aria-describedby="field-error-a"
+          />
+          <p class="field-error" id="field-error-a" hidden></p>
+        </div>
+      </fieldset>
+      <fieldset class="field-group">
+        <legend>商品 B</legend>
+        <div class="field">
+          <label for="price-b">总价 B</label>
+          <input
+            id="price-b"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="例如 45"
+            aria-describedby="field-error-b"
+          />
+        </div>
+        <div class="field">
+          <label for="qty-b">数量 B</label>
+          <input
+            id="qty-b"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="例如 1000"
+            aria-describedby="field-error-b"
+          />
+          <p class="field-error" id="field-error-b" hidden></p>
+        </div>
+      </fieldset>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          比较
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>把商品 A 的总价与数量填入上方第一组输入框。</li>
+        <li>把商品 B 的总价与数量填入第二组输入框。</li>
+        <li>点击「比较」后查看两组单价与哪一方更划算。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>单价</strong>：总价 ÷ 数量</p>
+          <p>例：<code>25 ÷ 500 = 0.05（每件 0.05）</code></p>
+        </li>
+        <li class="formula-item">
+          <p><strong>更划算方</strong>：比较两个单价，单价低者更划算；相等时标记为「相同」。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/math/discount/">折扣计算器</a></li>
+        <li><a href="/math/percentage/">百分比计算器</a></li>
+        <li><a href="/math/average/">平均数计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="单价比较计算器" description="免费在线单价比较计算器：输入两组（总价/数量），自动算出每件单价并提示哪一方更划算。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/unit-price-page.js"></script>
+</BaseLayout>

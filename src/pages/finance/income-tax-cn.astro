@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "什么是累计预扣预缴？", a: "工资薪金按月预扣预缴，年度汇算清缴。每个月的应纳税所得额需重新计算。" },
+  { q: "专项附加扣除包含哪些？", a: "子女教育、继续教育、大病医疗、住房贷款利息或住房租金、赡养老人、三岁以下婴幼儿照护、个人养老金。" },
+  { q: "年终奖如何计税？", a: "2027 年 12 月 31 日前，年终奖可选择单独计税或并入综合所得。单独计税通常更优。" },
+];
+---
+<BaseLayout title="个税计算器 — 2026 个人所得税工资薪金在线试算" description="免费在线个人所得税计算器：按累计预扣法计算工资薪金个税、税后到手与适用税率，支持专项附加扣除输入，同步五险一金个人缴纳部分，发薪测算一步到位。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"个税计算器"}]} />
+    <h1>工资个税计算器</h1>
+    <p class="lead">输入税前月薪、社保公积金、专项附加扣除，一键计算月度个税。</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考。实际申报以国家税务总局"个人所得税"APP 为准。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="monthlySalary">税前月薪（¥）</label><input id="monthlySalary" class="field-input" type="text" inputmode="decimal" placeholder="如 20000" /><p class="field-error" id="field-error-monthlySalary" hidden></p></div>
+      <div class="field"><label for="socialInsurance">社保公积金个人部分（¥）</label><input id="socialInsurance" class="field-input" type="text" inputmode="decimal" placeholder="如 2000" /><p class="field-error" id="field-error-socialInsurance" hidden></p></div>
+      <div class="field"><label for="specialDeduction">专项附加扣除合计（¥）</label><input id="specialDeduction" class="field-input" type="text" inputmode="decimal" placeholder="如 1000" /><p class="field-error" id="field-error-specialDeduction" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail1" class="result-process"></p><p id="result-detail2" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <section class="section"><h2>计算公式</h2><ul class="formula-list"><li class="formula-item"><p><strong>应纳税所得额</strong>：税前月薪 − 5000 起征点 − 社保公积金 − 专项附加扣除</p></li><li class="formula-item"><p><strong>月度个税</strong>：应纳税所得额 × 适用税率 − 速算扣除数</p></li></ul></section>
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/bonus-tax-cn/">年终奖个税计算器</a></li>
+  <li><a href="/finance/social-insurance-cn/">五险一金计算器</a></li>
+  <li><a href="/finance/pension-cn/">养老金计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="工资个税计算器" description="免费在线个人所得税计算器：按累计预扣法计算工资薪金个税、税后到手与适用税率，支持专项附加扣除输入，同步五险一金个人缴纳部分，发薪测算一步到位。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/income-tax-cn-page.js"></script>
+</BaseLayout>

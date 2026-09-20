@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+
+const breadcrumbItems = [{ label: "首页", href: "/" }, { label: "站内搜索" }];
+---
+
+<BaseLayout
+  title="站内搜索 — 查找计算工具与指南"
+  description="在计算器大全站内搜索 50+ 计算工具、知识库文章与场景指南，输入关键词即时匹配，如房贷、个税、BMI、时间戳。"
+  noindex
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>站内搜索</h1>
+    <p class="lead">
+      输入关键词查找计算工具、知识库文章与场景指南，例如「房贷」「个税」「BMI」「时间戳」。
+    </p>
+
+    <form id="search-form" class="card" aria-label="站内搜索表单">
+      <div class="field">
+        <label for="search-input">搜索</label>
+        <input
+          id="search-input"
+          class="field-input"
+          type="search"
+          autocomplete="off"
+          placeholder="输入工具名称或关键词…"
+          aria-describedby="search-status"
+        />
+      </div>
+      <p class="calc-hint" id="search-status" role="status" aria-live="polite">
+        索引加载中…
+      </p>
+    </form>
+
+    <ul id="search-results" class="article-grid" aria-label="搜索结果"></ul>
+  </main>
+</BaseLayout>
+
+<script is:inline type="module" src="/scripts/search-page.js"></script>

@@ -1,0 +1,129 @@
+calculator_id: income-tax-cn
+name: 个人所得税计算器（中国大陆）
+name_en: Individual Income Tax Calculator (Mainland China)
+category: finance
+jurisdiction: 中国大陆
+locale: zh-CN
+version: 0.9.0
+status: in-review
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 待定（税务师 / CPA）
+last_updated: 2025-01-01
+
+warning: |
+  ⚠️ 本公式为参考实现，正式上线前必须由 CPA / 税务师人工审核并替换 rate_table 为最新公告。
+  每年税率表与起征点可能调整，必须在每年 1 月重新进行专业人工审核。
+
+inputs:
+  - name: monthly_salary
+    label: 月工资
+    type: number
+    unit: CNY
+    required: true
+    min: 0
+  - name: social_insurance
+    label: 五险一金个人部分
+    type: number
+    unit: CNY
+    required: true
+    min: 0
+  - name: special_deduction
+    label: 专项附加扣除合计
+    type: number
+    unit: CNY
+    required: true
+    min: 0
+  - name: other_deduction
+    label: 其他扣除（企业年金 / 商业养老等）
+    type: number
+    unit: CNY
+    required: false
+    min: 0
+    default: 0
+
+formula: |
+  应纳税所得额 = (月工资 - 五险一金 - 起征点5000 - 专项附加扣除 - 其他扣除) * 12
+  然后按年度税率表查找税率与速算扣除数
+  年度税额 = 应纳税所得额 * 税率 - 速算扣除数
+  月度税额 = 年度税额 / 12
+
+formula_math: |
+  T_year = ( (S − SI − 5000 − D_extra − D_other) * 12 ) * r_k − q_k
+  T_month = T_year / 12
+
+# 综合所得年度税率表（示例 2024 前后，需每年确认）
+rate_table:
+  - level: 1
+    threshold: 0
+    upper: 36000
+    rate: 0.03
+    quick_deduction: 0
+  - level: 2
+    threshold: 36000
+    upper: 144000
+    rate: 0.10
+    quick_deduction: 2520
+  - level: 3
+    threshold: 144000
+    upper: 300000
+    rate: 0.20
+    quick_deduction: 16920
+  - level: 4
+    threshold: 300000
+    upper: 420000
+    rate: 0.25
+    quick_deduction: 31920
+  - level: 5
+    threshold: 420000
+    upper: 660000
+    rate: 0.30
+    quick_deduction: 52920
+  - level: 6
+    threshold: 660000
+    upper: 960000
+    rate: 0.35
+    quick_deduction: 85920
+  - level: 7
+    threshold: 960000
+    upper: null
+    rate: 0.45
+    quick_deduction: 181920
+
+outputs:
+  - name: annual_tax
+    label: 年度税额
+    unit: CNY
+    primary: true
+  - name: monthly_tax
+    label: 月度税额
+    unit: CNY
+    primary: true
+  - name: after_tax_income
+    label: 税后月收入
+    unit: CNY
+  - name: applied_rate
+    label: 适用税率
+    unit: percent
+
+test_vectors:
+  - input: {monthly_salary: 20000, social_insurance: 2000, special_deduction: 2000, other_deduction: 0}
+    expected_output: TODO_BY_CODE  # 模糊参考值已删除；monthly_tax 与 applied_rate 需按公式实现经单元测试推导后回填
+    derivation: unverified
+    note: 月薪 2 万，无附加扣除参考
+
+sources:
+  - title: 国家税务总局 · 个人所得税
+    url: https://www.chinatax.gov.cn/chinatax/c102519/common_list_szl.shtml
+    type: official
+    accessed_at: 2025-01-01
+  - title: 国务院 · 《个人所得税法实施条例》
+    url: http://www.gov.cn/zhengce/
+    type: official
+    accessed_at: 2025-01-01
+
+notes_for_ai: |
+  - 税率表每年可能调整，必须以最新公告为准。
+  - 必须显示："本结果仅供参考，实际以国家税务总局官方系统为准。"
+  - 不得宣传"避税"或"少缴"功能。
+---

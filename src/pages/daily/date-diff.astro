@@ -1,0 +1,116 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "日期间隔计算器" },
+];
+
+const faqItems = [
+  {
+    q: "天数怎么算？",
+    a: "结束日 − 开始日的天数差，不含首尾「双计」。例如 2025-01-01 → 2025-01-02 = 1 天；同日 = 0 天。",
+  },
+  {
+    q: "支持跨年、跨月吗？",
+    a: "支持。本工具以 UTC 0 点为基准按日相减，正确处理 28/29/30/31 天月与闰年。",
+  },
+  {
+    q: "为什么结束日期必须不早于开始日期？",
+    a: "负天数容易与签到 / 倒计时混淆；本工具在结束早于开始时直接拒绝输入。",
+  },
+  {
+    q: "可以用来算工期吗？",
+    a: "可以，结果为自然天数。法定节假日与周末请自行扣除。",
+  },
+];
+---
+
+<BaseLayout
+  title="日期计算器 — 在线计算两个日期相差天数与间隔"
+  description="免费在线日期天数计算器：计算任意两个日期之间相差的天数、周数与月数，支持倒计时、纪念日与工作日统计场景，自动处理闰年与月末日期。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>日期间隔计算器</h1>
+    <p class="lead">
+      输入开始日期与结束日期，按 UTC 日历算出相差天数（含闰年）。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="日期间隔计算表单">
+      <div class="field">
+        <label for="input-start">开始日期</label>
+        <input
+          id="input-start"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="YYYY-MM-DD"
+          aria-describedby="field-error-start"
+        />
+        <p class="field-error" id="field-error-start" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-end">结束日期</label>
+        <input
+          id="input-end"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="YYYY-MM-DD"
+          aria-describedby="field-error-end"
+        />
+        <p class="field-error" id="field-error-end" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>在「开始日期」与「结束日期」中填入 YYYY-MM-DD。</li>
+        <li>点击「计算」查看相差天数与公式代入过程。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>天数差</strong>：(结束日 − 开始日) ÷ 86,400,000（毫秒 / 天）</p>
+          <p>例：<code>2025-01-02 − 2025-01-01 = 1 天</code></p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/daily/age/">年龄计算器</a></li>
+  <li><a href="/dev/timestamp/">Unix 时间戳转换</a></li>
+  <li><a href="/daily/basic/">四则运算计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="日期间隔计算器" description="免费在线日期天数计算器：计算任意两个日期之间相差的天数、周数与月数，支持倒计时、纪念日与工作日统计场景，自动处理闰年与月末日期。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/date-diff-page.js"></script>
+</BaseLayout>

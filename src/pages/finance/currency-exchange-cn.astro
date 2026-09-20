@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import { CURRENCIES } from "../../lib/calculators/currency-exchange-cn";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "汇率如何获取？", a: "本工具不接入实时行情，用户需手动输入汇率。实时汇率可参考中国银行外汇牌价或新浪财经。" },
+  { q: "买入价与卖出价？", a: "买入价（银行买入外币）通常低于卖出价。本工具按用户输入统一汇率计算，不区分买卖。" },
+  { q: "跨境汇款手续费？", a: "除汇率差外，银行或第三方平台通常收取固定手续费 + 电报费。本工具不计算手续费。" },
+{ q: "中间价与银行成交价有何不同？", a: "中间价是银行间市场买卖均价；银行实际结售汇会加入点差，柜台成交价通常劣于中间价。" }];
+const opts = CURRENCIES.map(c => `<option value="${c.code}">${c.name} (${c.symbol})</option>`).join("");
+---
+<BaseLayout title="汇率换算计算器 — 人民币美元欧元等 8 种货币双向换算" description="免费在线汇率换算工具：支持人民币、美元、港币、欧元、日元、英镑、澳元、韩元 8 种货币双向换算，自定义输入参考汇率，适合跨境购物、旅行预算与外贸报价。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"汇率换算"}]} />
+    <h1>汇率换算计算器</h1>
+    <p class="lead">输入金额与汇率，一键换算目标货币金额。</p>
+    <p class="result-hint"><strong>⚠️ 换算结果仅供参考，实际成交价以银行或兑换机构实时报价为准。</strong></p>
+    <p class="result-hint"><strong>⚠️ 不接入实时行情，请用户参考中国银行外汇牌价手动输入。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="amount">金额</label><input id="amount" class="field-input" type="text" inputmode="decimal" placeholder="如 100" /><p class="field-error" id="field-error-amount" hidden></p></div>
+      <div class="field"><label for="from">原始货币</label><select id="from" class="field-select" set:html={opts}></select></div>
+      <div class="field"><label for="to">目标货币</label><select id="to" class="field-select" set:html={opts}></select></div>
+      <div class="field"><label for="rate">汇率（1 单位 from = ? 单位 to）</label><input id="rate" class="field-input" type="text" inputmode="decimal" placeholder="如 USD→CNY 填 7.25" /><p class="field-error" id="field-error-rate" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">换算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <section class="section"><h2>支持货币</h2><p>人民币 (CNY)、美元 (USD)、港币 (HKD)、欧元 (EUR)、日元 (JPY)、英镑 (GBP)、澳元 (AUD)、韩元 (KRW)。</p></section>
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/investment/cross-border-profit-cn/">跨境电商利润计算器</a></li>
+  <li><a href="/investment/amazon-fba-cn/">Amazon FBA 费用计算器</a></li>
+  <li><a href="/finance/compound-interest-cn/">复利计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="汇率换算计算器" description="免费在线汇率换算工具：支持人民币、美元、港币、欧元、日元、英镑、澳元、韩元 8 种货币双向换算，自定义输入参考汇率，适合跨境购物、旅行预算与外贸报价。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/currency-exchange-cn-page.js"></script>
+</BaseLayout>

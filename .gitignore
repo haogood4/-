@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+mcp-config/mcp.dev.json
+*.log

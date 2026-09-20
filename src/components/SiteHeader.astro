@@ -1,0 +1,133 @@
+---
+/**
+ * SiteHeader.astro — 全站顶部导航栏
+ *
+ * 用途：品牌 Logo（内联计算器图标，造型与 favicon 一致，主色跟随 currentColor，
+ *       由 CSS 侧 site-logo 设为品牌色 #0f766e）、六大分类锚点导航、移动端汉堡菜单。
+ * Props：无。当前激活分类由 Astro.url.pathname 首段自动推导。
+ *
+ * 无障碍设计：
+ * - 汉堡按钮携带 aria-expanded / aria-controls，与菜单列表（#site-nav-list）关联；
+ * - 当前分类链接添加 .is-active 与 aria-current="page"；
+ * - Logo 图标与汉堡线条均为装饰性元素（aria-hidden="true"），"菜单"文字用
+ *   .visually-hidden 仅供屏幕阅读器朗读；
+ * - 键盘/指针行为：Esc 关闭菜单并归还焦点、点击菜单外关闭、点击链接后关闭、
+ *   窗口 resize 超过 1024px 自动收起（见外链脚本 public/menu.js）。
+ */
+
+// 六大分类导航配置（数组顺序即展示顺序）
+const NAV_ITEMS = [
+  { key: "finance", label: "金融理财", href: "/#finance" },
+  { key: "health", label: "健康生活", href: "/#health" },
+  { key: "renovation", label: "装修家居", href: "/#renovation" },
+  { key: "investment", label: "投资专业", href: "/#investment" },
+  { key: "efficiency", label: "效率工具", href: "/#efficiency" },
+  { key: "daily", label: "日常工具", href: "/#daily" },
+] as const;
+
+// 内容中心入口（知识库 + 政策资讯 + 场景指南），位于工具分类之后
+const CONTENT_ITEMS = [
+  { key: "articles", label: "知识库", href: "/articles-list/#knowledge-base" },
+  {
+    key: "blog",
+    label: "政策资讯",
+    href: "/articles-list/#policy-news",
+  },
+  { key: "hub", label: "场景指南", href: "/hub/" },
+  { key: "search", label: "搜索", href: "/search/" },
+] as const;
+
+// URL 首段 → 导航分类映射：/finance/... → finance；/math/、/unit/、/dev/ 归入 efficiency
+const CATEGORY_MAP: Record<string, string | undefined> = {
+  finance: "finance",
+  health: "health",
+  renovation: "renovation",
+  investment: "investment",
+  daily: "daily",
+  math: "efficiency",
+  unit: "efficiency",
+  dev: "efficiency",
+};
+
+// URL 首段 → 内容分类映射：/articles → articles；/articles-list → articles；/hub → hub
+const CONTENT_MAP: Record<string, string | undefined> = {
+  articles: "articles",
+  "articles-list": "articles",
+  hub: "hub",
+  search: "search",
+};
+
+// 当前激活分类：首页（无路径段）或未映射路径 → undefined，不高亮任何链接
+const firstSegment = Astro.url.pathname.split("/").filter(Boolean)[0] ?? "";
+const activeCategory = CATEGORY_MAP[firstSegment] ?? CONTENT_MAP[firstSegment];
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-logo" href="/" aria-label="计算器大全 首页">
+      <!-- 内联计算器图标：圆角矩形 + 屏幕 + 按键，fill 用 currentColor 以继承品牌色 -->
+      <svg class="site-logo__mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <rect width="64" height="64" rx="12" fill="currentColor" />
+        <rect x="14" y="10" width="36" height="44" rx="4" fill="#ffffff" />
+        <rect x="18" y="14" width="28" height="10" rx="2" fill="currentColor" />
+        <g fill="currentColor">
+          <rect x="18" y="28" width="6" height="6" rx="1" />
+          <rect x="29" y="28" width="6" height="6" rx="1" />
+          <rect x="40" y="28" width="6" height="6" rx="1" />
+          <rect x="18" y="38" width="6" height="6" rx="1" />
+          <rect x="29" y="38" width="6" height="6" rx="1" />
+          <rect x="40" y="38" width="6" height="14" rx="1" />
+          <rect x="18" y="48" width="17" height="6" rx="1" />
+        </g>
+      </svg>
+      <span>计算器大全</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <!-- 汉堡按钮：单条 bar 元素，CSS 通过 ::before/::after 补齐三条线 -->
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-list">
+        <span class="visually-hidden">菜单</span>
+        <span class="nav-toggle__bar" aria-hidden="true"></span>
+      </button>
+      <ul class="site-nav__list" id="site-nav-list">
+        {
+          NAV_ITEMS.map(
+            (item) => (
+              <li>
+                <a
+                  class:list={["site-nav__link", { "is-active": activeCategory === item.key }]}
+                  href={item.href}
+                  aria-current={activeCategory === item.key ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            )
+          )
+        }
+        {
+          CONTENT_ITEMS.map(
+            (item) => (
+              <li>
+                <a
+                  class:list={[
+                    "site-nav__link",
+                    "site-nav__link--content",
+                    { "is-active": activeCategory === item.key },
+                  ]}
+                  href={item.href}
+                  aria-current={activeCategory === item.key ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            )
+          )
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- 汉堡菜单脚本：迁移为 public/menu.js 外链（CSP script-src 'self' 禁内联），
+     defer 保证 DOM 就绪后执行 -->
+<script is:inline defer src="/menu.js"></script>

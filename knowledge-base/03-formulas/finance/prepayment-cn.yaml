@@ -1,0 +1,104 @@
+calculator_id: prepayment-cn
+name: 提前还款计算器（中国大陆）
+name_en: Prepayment Calculator (Mainland China)
+category: finance
+jurisdiction: 中国大陆
+locale: zh-CN
+version: 1.0.0
+status: draft
+effective_from: 2025-01-01
+review_status: pending
+reviewer: 未指派
+last_updated: 2025-01-01
+
+inputs:
+  - name: loan_amount
+    label: 原贷款金额
+    type: number
+    unit: CNY
+    required: true
+    min: 10000
+  - name: annual_rate
+    label: 年利率
+    type: number
+    unit: percent
+    required: true
+    min: 0
+    max: 30
+  - name: loan_years
+    label: 原贷款年限
+    type: number
+    unit: year
+    required: true
+    min: 1
+    max: 30
+  - name: months_paid
+    label: 已还期数
+    type: number
+    unit: month
+    required: true
+    min: 0
+  - name: prepayment_amount
+    label: 提前还款金额
+    type: number
+    unit: CNY
+    required: true
+    min: 0
+  - name: prepayment_method
+    label: 提前还款方式
+    type: select
+    options: [缩短年限, 减少月供]
+    default: 缩短年限
+
+formula: |
+  # 1. 计算剩余本金
+  # 2. 模拟两种还款方式：
+  #    - 缩短年限：月供不变，重新计算年限
+  #    - 减少月供：年限不变，重新计算月供
+  # 3. 节省利息 = 原计划利息 - 新计划利息
+  ...
+
+formula_math: |
+  设原贷款剩余本金 R0，月利率 r = R/12/100，原剩余月数 n0
+  原剩余利息 I0 = Σ(i=1..n0) R_i * r
+  新方案：根据方式重新生成 R_i
+  节省 = I0 − I_new
+
+outputs:
+  - name: saved_interest
+    label: 节省利息
+    unit: CNY
+    primary: true
+  - name: new_monthly
+    label: 新月供
+    unit: CNY
+  - name: new_years
+    label: 新年限
+    unit: year
+  - name: breakeven_months
+    label: 回本月份
+    unit: month
+
+test_vectors:
+  - input: {loan_amount: 1000000, annual_rate: 4.2, loan_years: 30, months_paid: 12, prepayment_amount: 200000, prepayment_method: 缩短年限}
+    expected_output: TODO_BY_CODE  # 模糊参考值已删除；saved_interest 需按公式实现经单元测试推导后回填
+    derivation: unverified
+    note: 缩短年限节省利息参考
+  - input: {loan_amount: 500000, annual_rate: 4.2, loan_years: 20, months_paid: 24, prepayment_amount: 100000, prepayment_method: 减少月供}
+    expected_output: TODO_BY_CODE  # 模糊参考值已删除；new_monthly 需按公式实现经单元测试推导后回填
+    derivation: unverified
+    note: 减少月供场景
+
+sources:
+  - title: 中国人民银行 · 提前还款政策
+    url: https://www.pbc.gov.cn/
+    type: official
+    accessed_at: 2025-01-01
+  - title: 建设银行提前还款说明
+    url: https://www.ccb.com/
+    type: institutional
+    accessed_at: 2025-01-01
+
+notes_for_ai: |
+  银行通常对提前还款收取违约金（0–1% 不等），需在 UI 上提示"实际是否节省请考虑违约金"。
+---

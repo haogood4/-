@@ -1,0 +1,121 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "时间戳换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "什么叫时间戳？",
+    a: "时间戳是自 1970-01-01 00:00:00 UTC 起累计的秒数或毫秒数。本工具统一按 UTC+8（北京时间）显示。",
+  },
+  {
+    q: "支持秒和毫秒吗？",
+    a: "支持。时间戳方向可选「秒」或「毫秒」，日期方向会输出对应单位的数值。",
+  },
+  {
+    q: "范围限制？",
+    a: "本工具仅接受公元 3000 年附近以内的时间戳；负数与非法日期会被拒绝。",
+  },
+  {
+    q: "API 调试能用吗？",
+    a: "可以，用于排查后端返回的秒/毫秒时间戳或客户端日志。",
+  },
+];
+---
+
+<BaseLayout
+  title="时间戳转换器 — 在线 Unix 时间戳与日期互转"
+  description="免费在线 Unix 时间戳转换工具：秒/毫秒时间戳与年月日时分秒双向转换，支持本地时区与 UTC 对照、当前时间戳实时显示，适合开发调试与日志排查。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>时间戳换算计算器</h1>
+    <p class="lead">
+      在 Unix 秒/毫秒与 UTC+8 日期之间互转，便于 API 调试、日志分析。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="时间戳换算表单">
+      <div class="field">
+        <label for="direction">转换方向</label>
+        <select id="direction" class="field-select">
+          <option value="to-date">时间戳 → 日期</option>
+          <option value="to-timestamp">日期 → 时间戳</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="unit">单位</label>
+        <select id="unit" class="field-select">
+          <option value="s">秒</option>
+          <option value="ms">毫秒</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-raw">输入内容</label>
+        <input
+          id="input-raw"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="时间戳方向填数字；日期方向填 YYYY-MM-DD HH:mm"
+          aria-describedby="field-error-raw"
+        />
+        <p class="field-hint" id="input-hint">例如：1700000000</p>
+        <p class="field-error" id="field-error-raw" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择「转换方向」与「单位」。</li>
+        <li>「时间戳 → 日期」填入数字；「日期 → 时间戳」填入 YYYY-MM-DD HH:mm（视为 UTC+8）。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>「时间戳 → 日期」：ms = 数值（毫秒）或 数值 × 1000（秒），再以 UTC+8 渲染为 YYYY-MM-DD HH:mm:ss。</p>
+        </li>
+        <li class="formula-item">
+          <p>「日期 → 时间戳」：将 YYYY-MM-DD HH:mm 视作 UTC+8，换算为对应秒数或毫秒。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/daily/date-diff/">日期天数计算器</a></li>
+  <li><a href="/daily/age/">年龄计算器</a></li>
+  <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="时间戳换算计算器" description="免费在线 Unix 时间戳转换工具：秒/毫秒时间戳与年月日时分秒双向转换，支持本地时区与 UTC 对照、当前时间戳实时显示，适合开发调试与日志排查。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/timestamp-page.js"></script>
+</BaseLayout>

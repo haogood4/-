@@ -1,0 +1,118 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "年龄计算器" },
+];
+
+const faqItems = [
+  {
+    q: "周岁怎么算？",
+    a: "按公历年月日逐级比较：每年生日当天满周岁 +1；生日未到则不算满周岁。例如 2000-01-01 在 2025-01-01 = 25 岁。",
+  },
+  {
+    q: "2 月 29 日出生的人怎么算？",
+    a: "在非闰年，目标年为平年时按 3 月 1 日视为生日已到；这样保持每年至少过一次生日。",
+  },
+  {
+    q: "为什么不能用「总天数 ÷ 365」近似？",
+    a: "该近似存在 ±1 年的偏差；本工具按日历逐级比较，跨闰年、跨月同样准确。",
+  },
+  {
+    q: "目标日期必须不早于出生日期吗？",
+    a: "是的。本工具会拒绝目标早于出生的输入。",
+  },
+];
+---
+
+<BaseLayout
+  title="年龄计算器 — 在线测算周岁、虚岁与距下次生日天数"
+  description="免费在线年龄计算器：输入出生日期与目标日期，精确计算周岁、虚岁、已存活天数与距下次生日倒计时，支持闰年与月末边界，适合证件填报、保险投保与生日提醒。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>年龄计算器</h1>
+    <p class="lead">
+      输入出生日期与目标日期，按年/月/日逐级比较，精确算周岁（含闰年 2 月 29 日特例）。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="年龄计算表单">
+      <div class="field">
+        <label for="input-birth">出生日期</label>
+        <input
+          id="input-birth"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="YYYY-MM-DD"
+          aria-describedby="field-error-birth"
+        />
+        <p class="field-error" id="field-error-birth" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-target">目标日期</label>
+        <input
+          id="input-target"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="YYYY-MM-DD"
+          aria-describedby="field-error-target"
+        />
+        <p class="field-error" id="field-error-target" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>输入出生日期与目标日期（格式 YYYY-MM-DD）。</li>
+        <li>点击「计算」查看周岁结果与公式代入过程。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>周岁 = 目标年份 − 出生年份；若目标月日尚未到达本年生日，再 −1。</p>
+        </li>
+        <li class="formula-item">
+          <p>若出生于 2 月 29 日且目标年为平年，按 3 月 1 日视为生日已到。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/daily/date-diff/">日期天数计算器</a></li>
+  <li><a href="/daily/basic/">四则运算计算器</a></li>
+  <li><a href="/dev/timestamp/">Unix 时间戳转换</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="年龄计算器" description="免费在线年龄计算器：输入出生日期与目标日期，精确计算周岁、虚岁、已存活天数与距下次生日倒计时，支持闰年与月末边界，适合证件填报、保险投保与生日提醒。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/age-page.js"></script>
+</BaseLayout>

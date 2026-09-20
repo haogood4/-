@@ -1,0 +1,24 @@
+---
+// 结果区三态（空 / 已计算 / 待重算）由 src/scripts/percentage-page.ts 切换
+// role="status" + aria-live="polite"：结果变化时屏幕阅读器自动播报
+---
+
+<div id="result" class="result" role="status" aria-live="polite">
+  <p id="result-empty" class="result-empty">填写上方字段后显示结果</p>
+  <div id="result-content" hidden>
+    <p id="result-caption" class="result-caption"></p>
+    <p id="result-main" class="result-main"></p>
+    <p id="result-process" class="result-process"></p>
+    <p id="result-stale-hint" class="result-hint" hidden>
+      输入已变更，请重新计算
+    </p>
+    <div class="result-actions">
+      <button type="button" id="copy-btn" class="btn btn-secondary" disabled>
+        复制结果
+      </button>
+      <button type="button" id="share-btn" class="btn btn-secondary" disabled>
+        分享工具
+      </button>
+    </div>
+  </div>
+</div>

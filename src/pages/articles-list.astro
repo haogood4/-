@@ -1,0 +1,122 @@
+---
+/**
+ * src/pages/articles-list.astro — 知识库文章 + 政策资讯博客列表页（顶层路由）
+ * 按内容类型分组：知识库 article（按业务类目） + 政策资讯 blog（时间线）
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+import BreadcrumbJsonLd from "../components/BreadcrumbJsonLd.astro";
+import { ARTICLES } from "../data/articles";
+
+const dateLabel = (d: Date) =>
+  d.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" });
+
+// 拆分：知识库 article vs 政策资讯 blog
+const knowledgeArticles = ARTICLES.filter((a) => a.type === "article").sort(
+  (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime(),
+);
+const blogArticles = ARTICLES.filter((a) => a.type === "blog").sort(
+  (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime(),
+);
+
+const categories = [
+  { key: "finance", label: "金融理财" },
+  { key: "health", label: "健康生活" },
+  { key: "renovation", label: "装修家居" },
+  { key: "investment", label: "投资专业" },
+  { key: "efficiency", label: "效率工具" },
+  { key: "daily", label: "日常工具" },
+];
+
+const grouped = categories
+  .map((c) => ({
+    ...c,
+    items: knowledgeArticles.filter((a) => a.category === c.key),
+  }))
+  .filter((g) => g.items.length > 0);
+
+const totalArticles = knowledgeArticles.length;
+const totalBlogs = blogArticles.length;
+---
+
+<BaseLayout
+  title="知识库与政策资讯 — 计算器大全"
+  description="计算器大全内容中心：金融理财、健康生活、装修家居等领域的概念解释、公式推导、场景化决策建议，以及 LPR、个税、医保等政策资讯解读。免费、无需注册。"
+  keywords={["计算器知识库", "理财知识", "BMI 标准", "装修预算", "LPR", "个税年度汇算"]}
+>
+  <BreadcrumbJsonLd
+    items={[{ name: "首页", href: "/" }, { name: "知识库与政策资讯" }]}
+  />
+  <main id="main">
+    <h1>知识库与政策资讯</h1>
+    <p class="lead">
+      围绕 52 个计算工具的概念解释、公式推导与场景应用，以及最新政策资讯解读。当前已收录 <strong>{totalArticles}</strong> 篇知识库文章、<strong>{totalBlogs}</strong> 篇政策资讯。
+    </p>
+
+    <nav class="article-section-nav" aria-label="内容分类导航">
+      <a href="#knowledge-base">📚 知识库</a>
+      <a href="#policy-news">📢 政策资讯</a>
+    </nav>
+
+    <h2 id="knowledge-base">📚 知识库</h2>
+    {
+      grouped.map((group) => (
+        <section class={`cat-card cat-card--${group.key}`} id={`articles-${group.key}`}>
+          <header class="cat-card__head">
+            <span class="cat-card__dot" aria-hidden="true"></span>
+            <h3 class="cat-card__title">{group.label}</h3>
+            <span class="cat-card__count">{group.items.length} 篇</span>
+          </header>
+          <div class="article-grid">
+            {group.items.map((article) => (
+              <ArticleCard
+                title={article.title}
+                description={article.description}
+                category={article.category}
+                href={`/articles/${article.slug}/`}
+                readingTime={article.readingTime}
+                publishedAt={article.publishedAt}
+              />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+
+    {
+      totalArticles === 0 && (
+        <p class="result-empty">暂无内容，敬请期待。</p>
+      )
+    }
+
+    <section class="blog-section" id="policy-news" aria-labelledby="blog-section-title">
+      <header class="blog-section__header">
+        <h2 id="blog-section-title" class="blog-section__title">📢 政策资讯</h2>
+        <span class="blog-section__badge">NEW</span>
+      </header>
+      <p class="blog-section__note">
+        紧跟 LPR、个税、医保、房贷、个人养老金等最新政策。内容整理仅供参考，请以官方公告为准。
+      </p>
+      {
+        blogArticles.length > 0 ? (
+          <ol class="blog-timeline">
+            {blogArticles.map((blog) => (
+              <li class="blog-timeline__item">
+                <div class="blog-timeline__date">
+                  <time datetime={blog.publishedAt.toISOString()}>{dateLabel(blog.publishedAt)}</time>
+                </div>
+                <h3 class="blog-timeline__title">
+                  <a href={`/articles/${blog.slug}/`}>{blog.title}</a>
+                  <span class="blog-timeline__cat">· {blog.category}</span>
+                </h3>
+                <p class="article-card__excerpt">{blog.description}</p>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="result-empty">暂无政策资讯，敬请期待。</p>
+        )
+      }
+    </section>
+  </main>
+</BaseLayout>

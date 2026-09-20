@@ -1,0 +1,124 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "折扣计算器" },
+];
+
+const faqItems = [
+  {
+    q: "折扣百分比怎么算？",
+    a: "实付 = 原价 × (1 − 折扣百分比 ÷ 100)。例如原价 200、折扣 20%，实付 = 200 × (1 − 0.2) = 160。",
+  },
+  {
+    q: "0 折和 100% 减是什么意思？",
+    a: "0% 表示不减，原价即实付；100% 表示全免，实付为 0、省下等于原价的金额。",
+  },
+  {
+    q: "为什么原价必须大于 0？",
+    a: "原价小于等于 0 时折扣没有实际意义；本工具会提示「原价必须大于 0」，请输入正数。",
+  },
+  {
+    q: "结果可以用来报价吗？",
+    a: "可以用于日常估价，但请以实际结算金额为准；跨境购物还可能涉及税费、运费等附加费用。",
+  },
+];
+---
+
+<BaseLayout
+  title="折扣计算器 — 在线算打折后实付与省下金额"
+  description="免费在线折扣计算器：输入原价与折扣百分比，自动算出打折后实付金额与省下金额，附公式代入过程。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>折扣计算器</h1>
+    <p class="lead">
+      输入原价与折扣百分比（例如 8 折输入 20），一键算实付与省下金额。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="折扣计算表单">
+      <div class="field">
+        <label for="input-price">原价</label>
+        <input
+          id="input-price"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 200"
+          aria-describedby="field-error-price"
+        />
+        <p class="field-error" id="field-error-price" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-discount">折扣百分比（%）</label>
+        <input
+          id="input-discount"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 20（8 折则输入 20）"
+          aria-describedby="field-error-discount"
+        />
+        <p class="field-error" id="field-error-discount" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>在「原价」输入商品吊牌价或标价。</li>
+        <li>在「折扣百分比」输入折扣率；8 折请输入 20（表示减 20%）。</li>
+        <li>点击「计算」后，查看实付金额、省下金额与公式代入过程。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p><strong>实付金额</strong>：原价 × (1 − 折扣百分比 ÷ 100)</p>
+          <p>例：<code>200 × (1 − 20 ÷ 100) = 160</code></p>
+        </li>
+        <li class="formula-item">
+          <p><strong>省下金额</strong>：原价 − 实付金额</p>
+          <p>例：<code>200 − 160 = 40</code></p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section" aria-labelledby="related-heading">
+      <h2 id="related-heading">相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/math/percentage/">百分比计算器</a></li>
+        <li><a href="/math/unit-price/">单价比较计算器</a></li>
+        <li><a href="/math/average/">平均数计算器</a></li>
+      </ul>
+    </section>
+  
+    <CalcJsonLd name="折扣计算器" description="免费在线折扣计算器：输入原价与折扣百分比，自动算出打折后实付金额与省下金额，附公式代入过程。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/discount-page.js"></script>
+</BaseLayout>

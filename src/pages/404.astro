@@ -1,0 +1,122 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// 与首页「热门工具」保持一致的 6 个入口（P0-1：404 页面）
+const POPULAR_TOOLS = [
+  { href: "/finance/mortgage-cn/", label: "房贷计算器" },
+  { href: "/finance/income-tax-cn/", label: "个税计算器" },
+  { href: "/finance/social-insurance-cn/", label: "社保计算器" },
+  { href: "/health/bmi-cn/", label: "BMI 计算器" },
+  { href: "/finance/currency-exchange-cn/", label: "汇率换算" },
+  { href: "/daily/basic/", label: "基础计算器" },
+];
+
+// 分类聚合页不存在（无 /finance/ 等 index），统一指向首页分类锚点，避免死链
+const SECTIONS = [
+  { href: "/#finance", label: "金融工具" },
+  { href: "/#health", label: "健康工具" },
+  { href: "/#renovation", label: "装修工具" },
+  { href: "/#investment", label: "投资工具" },
+  { href: "/articles-list/", label: "知识库与政策资讯" },
+  { href: "/hub/", label: "场景指南" },
+];
+---
+
+<BaseLayout
+  title="404 页面未找到"
+  description="您访问的页面不存在或已被移动。返回计算器大全首页，或使用热门工具与分类导航继续浏览。"
+  noindex
+>
+  <main id="main" class="container notfound">
+    <p class="notfound__code" aria-hidden="true">404</p>
+    <h1>页面未找到</h1>
+    <p class="notfound__desc">您访问的页面不存在或已被移动。</p>
+
+    <div class="notfound__actions">
+      <a class="btn btn-primary" href="/">返回首页</a>
+      <a class="btn btn-secondary" href="/finance/mortgage-cn/">去算一笔房贷</a>
+    </div>
+
+    <section class="notfound__group" aria-labelledby="nf-popular">
+      <h2 id="nf-popular">热门工具</h2>
+      <ul class="notfound__list" role="list">
+        {POPULAR_TOOLS.map((t) => <li><a class="chip" href={t.href}>{t.label}</a></li>)}
+      </ul>
+    </section>
+
+    <section class="notfound__group" aria-labelledby="nf-sections">
+      <h2 id="nf-sections">按分类浏览</h2>
+      <ul class="notfound__list" role="list">
+        {SECTIONS.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+      </ul>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .notfound {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+    text-align: center;
+  }
+
+  .notfound__code {
+    font-size: 4.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-primary-soft);
+    margin: 0 0 var(--space-2);
+  }
+
+  .notfound__desc {
+    color: var(--color-text-secondary);
+    margin: var(--space-2) 0 var(--space-5);
+  }
+
+  .notfound__actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-7);
+  }
+
+  .notfound__group {
+    margin-top: var(--space-6);
+  }
+
+  .notfound__group h2 {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-3);
+  }
+
+  .notfound__list {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .notfound__list a {
+    display: inline-block;
+    min-height: 44px;
+    line-height: 1.5;
+  }
+
+  .notfound__group:last-child .notfound__list a {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-secondary);
+    background: var(--color-bg-surface);
+  }
+
+  .notfound__group:last-child .notfound__list a:hover {
+    border-color: var(--color-primary-deep);
+    color: var(--color-primary-deep);
+  }
+</style>

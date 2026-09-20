@@ -1,0 +1,189 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ARTICLES } from "../data/articles";
+import { HUBS } from "../data/hubs";
+import { NAV_CATEGORIES } from "../data/nav";
+
+// P2-13：计数构建期从数据源读取，禁止硬编码
+const articleCount = ARTICLES.filter((a) => a.type === "article").length;
+const hubCount = HUBS.length;
+
+// SEO 元数据（title ≤60 字符；description 150-160 字符；keywords 8 个不堆砌）
+const SITE_NAME = "计算器大全";
+const pageTitle = "计算器大全 — 50+ 免费在线计算工具：房贷、个税、汇率、BMI";
+const pageDescription =
+  "计算器大全提供 50+ 免费在线计算工具：房贷等额本息月供、个税与五险一金到手工资、汇率换算、BMI 体重、复利与基金定投收益、装修瓷砖乳胶漆用量、油耗、日期差与年龄计算，手机电脑通用，打开即用无需注册，输入即时出结果并附计算公式说明与常见问题解答。计算结果仅供参考，金融、税务、健康类请以官方口径为准。立即免费使用！";
+const pageKeywords = [
+  "计算器",
+  "在线计算器",
+  "免费计算器",
+  "房贷计算器",
+  "个税计算器",
+  "汇率换算",
+  "BMI计算器",
+  "计算工具大全",
+];
+
+// JSON-LD 结构化数据：WebSite + Organization + 精选工具 ItemList
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": new URL("/", Astro.site ?? Astro.url).href + "#website",
+      name: SITE_NAME,
+      alternateName: "计算器大全网站",
+      description: pageDescription,
+      url: new URL("/", Astro.site ?? Astro.url).href,
+      inLanguage: "zh-CN",
+      publisher: { "@id": "#organization" },
+    },
+    {
+      "@type": "Organization",
+      "@id": new URL("/", Astro.site ?? Astro.url).href + "#organization",
+      name: SITE_NAME,
+      url: new URL("/", Astro.site ?? Astro.url).href,
+      logo: new URL("/favicon.svg", Astro.site ?? Astro.url).href,
+    },
+    {
+      "@type": "ItemList",
+      name: "热门计算工具",
+      itemListElement: [
+        ["房贷计算器", "/finance/mortgage-cn/"],
+        ["个税计算器", "/finance/income-tax-cn/"],
+        ["五险一金计算器", "/finance/social-insurance-cn/"],
+        ["汇率换算计算器", "/finance/currency-exchange-cn/"],
+        ["BMI 计算器", "/health/bmi-cn/"],
+        ["基金定投计算器", "/finance/fund-dca-cn/"],
+        ["复利计算器", "/finance/compound-interest-cn/"],
+        ["四则运算计算器", "/daily/basic/"],
+      ].map(([name, url], i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name,
+        url: new URL(url, Astro.site ?? Astro.url).href,
+      })),
+    },
+  ],
+};
+
+// 大陆口径 6 类导航（唯一数据源 src/data/nav.ts，首页与站内搜索共用）
+const categories = NAV_CATEGORIES;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  ogType="website"
+>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(jsonLd)}
+  ></script>
+  <main id="main">
+    <h1 class="hero__title">计算器大全</h1>
+    <section class="hero">
+      <p class="hero__sub">
+        50+
+        免费在线计算工具，无需注册，打开即用，输入即时出结果并附计算公式说明。
+      </p>
+      <nav class="hero__chips" aria-label="热门工具快捷入口">
+        <a class="chip" href="/finance/mortgage-cn/">
+          房贷
+        </a>
+        <a class="chip" href="/finance/income-tax-cn/">
+          个税
+        </a>
+        <a class="chip" href="/finance/social-insurance-cn/">
+          五险一金
+        </a>
+        <a class="chip" href="/health/bmi-cn/">
+          BMI
+        </a>
+        <a class="chip" href="/finance/currency-exchange-cn/">
+          汇率换算
+        </a>
+        <a class="chip" href="/daily/basic/">
+          计算器
+        </a>
+      </nav>
+    </section>
+    <!-- P2-10 我的工具：最近使用 + 我的收藏（localStorage，无数据时保持隐藏） -->
+    <section class="cat-card" id="my-tools" hidden aria-label="我的工具">
+      <div class="cat-card__head">
+        <span class="cat-card__dot" aria-hidden="true" />
+        <h2 class="cat-card__title">我的工具</h2>
+      </div>
+      <div id="recent-block" hidden>
+        <h3 class="calc-hint">最近使用</h3>
+        <div class="my-tools__row" id="recent-list"></div>
+      </div>
+      <div id="fav-block" hidden>
+        <h3 class="calc-hint">我的收藏</h3>
+        <div class="my-tools__row" id="fav-list"></div>
+      </div>
+    </section>
+    <div class="cat-grid">
+      {categories.map((category) => (
+        <section class={`cat-card cat-card--${category.key}`} id={category.key}>
+          <div class="cat-card__head">
+            <span class="cat-card__dot" aria-hidden="true" />
+            <h2 class="cat-card__title">{category.name}</h2>
+            <span class="cat-card__count">{category.tools.length} 个工具</span>
+          </div>
+          <ul class="tool-list">
+            {category.tools.map((tool) => (
+              <li>
+                <a href={tool.href}>{tool.label}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <section class="cat-card" id="articles">
+        <div class="cat-card__head">
+          <span class="cat-card__dot" aria-hidden="true" />
+          <h2 class="cat-card__title">知识库</h2>
+          <span class="cat-card__count">{articleCount} 篇</span>
+        </div>
+        <p class="cat-card__sub">
+          概念解释、公式推导、政策解读。配套工具内链，月度更新。
+        </p>
+        <ul class="tool-list">
+          <li><a href="/articles-list/">全部文章</a></li>
+          <li><a href="/articles/equal-installment-vs-equal-principal/">等额本息 vs 等额本金</a></li>
+          <li><a href="/articles/personal-income-tax-deductions-2026/">个税专项附加扣除 2026</a></li>
+          <li><a href="/articles/social-insurance-explained/">五险一金缴费比例</a></li>
+          <li><a href="/articles/bmi-standards-cn-vs-who/">BMI 标准双对照</a></li>
+          <li><a href="/articles/tile-quantity-calculation/">瓷砖用量计算</a></li>
+        </ul>
+      </section>
+      <section class="cat-card" id="hub">
+        <div class="cat-card__head">
+          <span class="cat-card__dot" aria-hidden="true" />
+          <h2 class="cat-card__title">场景指南</h2>
+          <span class="cat-card__count">{hubCount} 个场景</span>
+        </div>
+        <p class="cat-card__sub">
+          真实场景串联 3-7 个工具，按步骤使用，无需组合思考。
+        </p>
+        <ul class="tool-list">
+          <li><a href="/hub/">全部场景</a></li>
+          <li><a href="/hub/first-home-buying/">首次买房决策</a></li>
+          <li><a href="/hub/renovation-100k/">10 万装修预算</a></li>
+          <li><a href="/hub/retirement-30/">30 岁养老金规划</a></li>
+          <li><a href="/hub/tax-annual-filing/">个税年度申报</a></li>
+          <li><a href="/hub/fitness-fat-loss/">健身减脂</a></li>
+        </ul>
+      </section>
+    </div>
+    <p>
+      <strong>计算结果仅供参考</strong>
+      ，金融、税务、健康类工具不构成任何专业建议，请以官方口径为准。
+    </p>
+  </main>
+</BaseLayout>
+
+<script is:inline type="module" src="/scripts/home-page.js"></script>

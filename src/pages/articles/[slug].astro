@@ -1,0 +1,213 @@
+---
+/**
+ * src/pages/articles/[slug].astro — 知识库文章与政策资讯博客详情页（sync 数据模式）
+ * 兼容 A 方向 article 与 D 方向 blog 两种内容类型
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import { ARTICLES, isArticleExpired } from "../../data/articles";
+import { marked } from "marked";
+import { sanitizeHtml } from "../../lib/sanitize";
+
+export function getStaticPaths() {
+  return ARTICLES.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+// 关键：用 process.cwd() 而非 import.meta.url；Astro prerender 时 import.meta.url 指向 dist
+const rawBody = readFileSync(join(process.cwd(), "src/content/articles", `${article.slug}.md`), "utf-8");
+// 剥离 frontmatter（首段 ---...--- 之间的内容）
+const body = rawBody.replace(/^---[\s\S]*?---\n/, "");
+// 构建期 DOMPurify 白名单清洗（P0-2）：杜绝 markdown 中混入的脚本/事件属性/危险协议
+const html = sanitizeHtml(await marked.parse(body));
+
+const dateLabel = (d: Date) =>
+  d.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" });
+
+const {
+  title,
+  description,
+  category,
+  type,
+  tools,
+  publishedAt,
+  updatedAt,
+  author,
+  keywords,
+  faq,
+  readingTime,
+  expiresAt,
+  sources,
+  relatedArticles,
+} = article;
+
+const relatedTools = tools.map((href) => {
+  const slug = href.replace(/^\//, "").replace(/\/$/, "");
+  const name = slug.split("/").pop()?.replace(/-cn$|-/g, " ");
+  return { name: name ?? slug, href };
+});
+
+const relatedKbArticles = (relatedArticles ?? [])
+  .map((slug) => ARTICLES.find((a) => a.slug === slug && a.type === "article"))
+  .filter((a): a is NonNullable<typeof a> => a !== undefined);
+
+const isExpired = isArticleExpired(article);
+
+const prev = (() => {
+  const sorted = [...ARTICLES].sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime());
+  const idx = sorted.findIndex((a) => a.slug === article.slug);
+  return idx > 0 ? sorted[idx - 1] : null;
+})();
+const next = (() => {
+  const sorted = [...ARTICLES].sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime());
+  const idx = sorted.findIndex((a) => a.slug === article.slug);
+  return idx < sorted.length - 1 ? sorted[idx + 1] : null;
+})();
+
+const articleUrl = new URL(`/articles/${article.slug}/`, Astro.site ?? Astro.url).href;
+const articleJsonLd = (() => {
+  const base = {
+    "@context": "https://schema.org",
+    headline: title,
+    description,
+    image: new URL("/og-image.png", Astro.site ?? Astro.url).href,
+    datePublished: publishedAt.toISOString(),
+    dateModified: updatedAt.toISOString(),
+    author: { "@type": "Organization", name: author },
+    publisher: {
+      "@type": "Organization",
+      name: "计算器大全",
+      logo: { "@type": "ImageObject", url: new URL("/favicon.svg", Astro.site ?? Astro.url).href },
+    },
+    keywords: keywords.join(", "),
+    mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
+  };
+  if (type === "blog") {
+    return {
+      ...base,
+      "@type": "BlogPosting",
+      articleSection: "policy-news",
+      ...(expiresAt ? { expires: expiresAt.toISOString() } : {}),
+    };
+  }
+  return { ...base, "@type": "Article", articleSection: category };
+})();
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: type === "blog" ? "政策资讯" : "知识库", href: "/articles-list" },
+  { label: title },
+];
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "首页",
+      item: new URL("/", Astro.site ?? Astro.url).href,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: type === "blog" ? "政策资讯" : "知识库",
+      item: new URL("/articles-list/", Astro.site ?? Astro.url).href,
+    },
+    { "@type": "ListItem", position: 3, name: title, item: articleUrl },
+  ],
+};
+
+const pageTitle = type === "blog" ? `${title} | 计算器大全部落` : `${title} | 计算器大全知识库`;
+const ogType = type === "blog" ? "article" : "article";
+---
+
+<BaseLayout title={pageTitle} description={description} keywords={keywords} ogType={ogType}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <article class={`article article--${category} article--${type}`}>
+      {type === "blog" && (
+        isExpired ? (
+          <aside class="ymyl-banner ymyl-banner--expired" role="note">
+            <span class="ymyl-banner__icon" aria-hidden="true">⚠️</span>
+            <div class="ymyl-banner__body">
+              <strong>本文为历史资讯，政策可能已更新。</strong>
+              请以最新官方公告为准；建议查看最新政策资讯或咨询专业人士。
+            </div>
+          </aside>
+        ) : (
+          <aside class="ymyl-banner ymyl-banner--policy" role="note">
+            <span class="ymyl-banner__icon" aria-hidden="true">📢</span>
+            <div class="ymyl-banner__body">
+              <strong>政策资讯 · 仅供参考，不构成专业建议。</strong>
+              本文为政策资讯整理，请以官方公告为准；具体决策请结合个人实际情况并咨询专业人士。
+            </div>
+          </aside>
+        )
+      )}
+      <header class="article__header">
+        <div class="article__meta">
+          <time datetime={publishedAt.toISOString()}>发布于 {dateLabel(publishedAt)}</time>
+          {updatedAt.getTime() > publishedAt.getTime() && <time datetime={updatedAt.toISOString()}> · 更新于 {dateLabel(updatedAt)}</time>}
+          <span> · 阅读约 {readingTime} 分钟</span>
+          <span> · {author}</span>
+          {type === "blog" && <span class="article__meta-tag"> · 政策资讯</span>}
+        </div>
+        <h1>{title}</h1>
+        <p class="lead">{description}</p>
+      </header>
+      <div class="article__body prose" set:html={html} />
+      {relatedKbArticles.length > 0 && (
+        <aside class="related-articles" aria-labelledby="related-articles">
+          <h2 id="related-articles">📖 延伸阅读（相关知识库文章）</h2>
+          <ul>
+            {relatedKbArticles.map((rel) => (
+              <li>
+                <a href={`/articles/${rel.slug}/`}>{rel.title}</a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )}
+      {sources && sources.length > 0 && (
+        <section class="article__sources" aria-labelledby="article-sources">
+          <h2 id="article-sources">📚 政策来源</h2>
+          <ul>
+            {sources.map((s) => (<li><a href={s.href} rel="noopener noreferrer external" target="_blank">{s.label}</a></li>))}
+          </ul>
+        </section>
+      )}
+      <section class="article__tools" aria-labelledby="related-tools">
+        <h2 id="related-tools">相关工具</h2>
+        <p>读完本文，建议使用以下工具快速测算你的实际情况：</p>
+        <ul class="tool-list">
+          {relatedTools.map((tool) => (<li><a href={tool.href}>{tool.name}</a></li>))}
+        </ul>
+      </section>
+      {faq.length > 0 && (
+        <section class="article__faq" aria-labelledby="article-faq">
+          <h2 id="article-faq">常见问题</h2>
+          {faq.map((item) => (<details class="faq-item"><summary>{item.q}</summary><p>{item.a}</p></details>))}
+        </section>
+      )}
+      {type === "blog" && expiresAt && (
+        <div class="article__expiry">
+          🕒 本资讯政策有效期至 <strong>{dateLabel(expiresAt)}</strong>，逾期请关注最新公告。
+        </div>
+      )}
+      <nav class="article__nav" aria-label="文章导航">
+        {prev && <a class="article__nav-link article__nav-link--prev" href={`/articles/${prev.slug}/`}>← 上一篇：{prev.title}</a>}
+        {next && <a class="article__nav-link article__nav-link--next" href={`/articles/${next.slug}/`}>下一篇：{next.title} →</a>}
+      </nav>
+      <aside class="ymyl-notice">⚠️ 本文仅供参考，不构成任何专业建议。具体决策请结合个人实际情况并咨询专业人士。</aside>
+    </article>
+  </main>
+</BaseLayout>

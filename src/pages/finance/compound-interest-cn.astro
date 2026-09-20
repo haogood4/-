@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+const faqItems = [
+  { q: "复利与单利的区别？", a: "单利仅本金产生利息；复利将每期利息加入下期本金。长期投资复利效应显著。" },
+  { q: "复利公式是什么？", a: "FV = PV × (1 + r)^n。其中 FV 为终值，PV 为本金，r 为年利率，n 为年限。" },
+  { q: "年化收益率如何换算月利率？", a: "月利率 ≈ 年利率 / 12；日利率 ≈ 年利率 / 365。月复利与年复利终值略有差异。" },
+];
+---
+<BaseLayout title="复利计算器 — 在线复利本利增长与终值试算" description="免费在线复利计算器：设置本金、年利率、复利频次与年限，即时查看本利增长明细与终值，直观感受复利效应，支持按年/月/季/日计息对比，储蓄规划基础工具。" >
+  <main id="main">
+    <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"复利计算器"}]} />
+    <h1>复利计算器</h1>
+    <p class="lead">支持复利终值、现值、反推年化三种模式，覆盖存款、债券、基金等场景。</p>
+    <p class="result-hint"><strong>⚠️ 计算结果仅供参考。</strong></p>
+    <form id="calc-form" class="card" novalidate>
+      <div class="field"><label for="mode">计算模式</label><select id="mode" class="field-select"><option value="fv">求终值 FV</option><option value="pv">求现值 PV</option><option value="rate">反推年化</option></select></div>
+      <div class="field"><label for="principal">本金 PV（¥）</label><input id="principal" class="field-input" type="text" inputmode="decimal" placeholder="如 10000" /><p class="field-error" id="field-error-principal" hidden></p></div>
+      <div class="field"><label for="fv">终值 FV（¥）</label><input id="fv" class="field-input" type="text" inputmode="decimal" placeholder="如 19672" /><p class="field-error" id="field-error-fv" hidden></p></div>
+      <div class="field"><label for="rate">年利率（%）</label><input id="rate" class="field-input" type="text" inputmode="decimal" placeholder="如 7" /><p class="field-error" id="field-error-rate" hidden></p></div>
+      <div class="field"><label for="years">年限</label><input id="years" class="field-input" type="text" inputmode="decimal" placeholder="如 10（0-100 年）" /><p class="field-error" id="field-error-years" hidden></p></div>
+      <div class="form-actions"><button id="calc-btn" type="submit" class="btn btn-primary">计算</button><button id="reset-btn" type="button" class="btn btn-secondary">重置</button></div>
+    </form>
+    <div id="result" class="result" role="status" aria-live="polite"><p id="result-empty" class="result-empty">填写上方字段后显示结果</p><div id="result-content" hidden><p id="result-caption" class="result-caption"></p><p id="result-main" class="result-main"></p><p id="result-detail" class="result-process"></p><p id="result-stale-hint" class="result-hint" hidden>输入已变更，请重新计算</p><div class="result-actions"><button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button></div></div></div>
+    <AdContainer />
+    <section class="section"><h2>计算公式</h2><ul class="formula-list"><li class="formula-item"><p><strong>终值</strong>：FV = PV × (1 + r)^n</p></li><li class="formula-item"><p><strong>现值</strong>：PV = FV / (1 + r)^n</p></li><li class="formula-item"><p><strong>反推年化</strong>：r = ((FV / PV)^(1/n) − 1) × 100</p></li></ul></section>
+    <FaqSection items={faqItems} />
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/finance/deposit-interest-cn/">存款利息计算器</a></li>
+  <li><a href="/finance/annualized-return-cn/">年化收益率计算器</a></li>
+  <li><a href="/finance/fund-dca-cn/">基金定投计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="复利计算器" description="免费在线复利计算器：设置本金、年利率、复利频次与年限，即时查看本利增长明细与终值，直观感受复利效应，支持按年/月/季/日计息对比，储蓄规划基础工具。" faqItems={faqItems} />
+  </main>
+  <script is:inline type="module" src="/scripts/compound-interest-cn-page.js"></script>
+</BaseLayout>
