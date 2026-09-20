@@ -11,6 +11,7 @@ export type BmiResult = {
   bmi: number; // 保留 1 位小数
   categoryCn: string; // 中国标准分类
   categoryWho: string; // WHO 标准分类
+  categorySimple: string; // 简化 4 分类（外部实现口径：偏瘦/正常/超重/肥胖）
   healthyMinCn: number; // 中国标准健康体重下限 kg（BMI 18.5）
   healthyMaxCn: number; // 中国标准健康体重上限 kg（BMI 23.9）
   healthyMinWho: number; // WHO 标准健康体重下限 kg（BMI 18.5）
@@ -41,6 +42,14 @@ function classify(bmi: number, who: boolean): string {
   return "肥胖";
 }
 
+// 外部实现口径：偏瘦/正常/超重/肥胖（阈值 18.5/24/28，与中国标准一致）
+function classifySimple(bmi: number): string {
+  if (bmi < 18.5) return "偏瘦";
+  if (bmi < 24) return "正常";
+  if (bmi < 28) return "超重";
+  return "肥胖";
+}
+
 export function calculateBmi(input: BmiInput): BmiResult2 {
   const h = validateNumber(input.height);
   if (!h.ok) return h;
@@ -66,6 +75,7 @@ export function calculateBmi(input: BmiInput): BmiResult2 {
       bmi,
       categoryCn: classify(bmi, false),
       categoryWho: classify(bmi, true),
+      categorySimple: classifySimple(bmi),
       healthyMinCn: round1(18.5 * meters * meters),
       healthyMaxCn: round1(23.9 * meters * meters),
       healthyMinWho: round1(18.5 * meters * meters),
@@ -78,14 +88,22 @@ export function formatBmi(value: BmiResult): {
   bmi: string;
   categoryCn: string;
   categoryWho: string;
+  categorySimple: string;
   healthyRangeCn: string;
   healthyRangeWho: string;
+  healthyWeightSimple: string; // 外部实现口径：18.5 ~ 24
 } {
+  // 外部实现：minW = 18.5*h*h, maxW = 24*h*h（保留 1 位）
+  const m = value.healthyMinCn / 18.5; // meters² from healthyMinCn = 18.5*m²
+  const simpleMin = (18.5 * m).toFixed(1);
+  const simpleMax = (24 * m).toFixed(1);
   return {
     bmi: value.bmi.toFixed(1),
     categoryCn: value.categoryCn,
     categoryWho: value.categoryWho,
+    categorySimple: value.categorySimple,
     healthyRangeCn: `${value.healthyMinCn.toFixed(1)} – ${value.healthyMaxCn.toFixed(1)} kg`,
     healthyRangeWho: `${value.healthyMinWho.toFixed(1)} – ${value.healthyMaxWho.toFixed(1)} kg`,
+    healthyWeightSimple: `${simpleMin} – ${simpleMax} kg`,
   };
 }

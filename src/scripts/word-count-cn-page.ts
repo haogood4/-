@@ -37,9 +37,9 @@ form.addEventListener("submit", (ev) => {
   }
   const f = formatWordCount(r.value);
   resultCaption.textContent = "字数统计计算器";
-  resultMain.textContent = String(f.chars ?? "");
-  resultDetail.textContent = JSON.stringify(f).slice(0, 200);
-  lastCopy = resultMain.textContent ?? "";
+  resultMain.textContent = `${r.value.chars} 字符（含空格）`;
+  resultDetail.textContent = `${r.value.charsNoSpace} 字符（不含空格） · ${r.value.han} 汉字 · ${r.value.punct} 标点 · ${r.value.words} 词 · ${r.value.lines} 行 · ${r.value.paragraphs} 段`;
+  lastCopy = JSON.stringify(f, null, 2);
   setState("computed");
 });
 resetBtn.addEventListener("click", () => {

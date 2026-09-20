@@ -25,6 +25,8 @@ const resultDetail1 = el<HTMLParagraphElement>("#result-detail1");
 const resultDetail2 = el<HTMLParagraphElement>("#result-detail2");
 const copyBtn = el<HTMLButtonElement>("#copy-btn");
 const resetBtn = el<HTMLButtonElement>("#reset-btn");
+const scheduleWrap = el<HTMLDetailsElement>("#schedule-wrap");
+const scheduleTbody = el<HTMLTableSectionElement>("#schedule-tbody");
 
 const { setState, goStaleIfComputed } = createResultState({
   resultEmpty: el("#result-empty"),
@@ -63,6 +65,14 @@ form.addEventListener("submit", (ev) => {
   if (type === "equal-principal" && fmt.monthlyDecrease) {
     resultDetail2.textContent += `，每月递减 ${fmt.monthlyDecrease}`;
   }
+  // 渲染前 12 期月供明细表（合并自外部实现）
+  scheduleTbody.innerHTML = r.value.schedule
+    .map(
+      (row) =>
+        `<tr><td>${row.month}</td><td>¥${row.payment.toFixed(2)}</td><td>¥${row.principal.toFixed(2)}</td><td>¥${row.interest.toFixed(2)}</td><td>¥${row.balance.toFixed(2)}</td></tr>`,
+    )
+    .join("");
+  scheduleWrap.hidden = r.value.schedule.length === 0;
   lastCopy = `${typeLabel} 月供 ${fmt.monthlyFirst}，总利息 ${fmt.totalInterest}`;
   setState("computed");
 });
@@ -75,6 +85,8 @@ resetBtn.addEventListener("click", () => {
   clearError(principalInput, errP);
   clearError(yearsInput, errY);
   clearError(rateInput, errR);
+  scheduleTbody.innerHTML = "";
+  scheduleWrap.hidden = true;
   lastCopy = "";
   setState("empty");
 });

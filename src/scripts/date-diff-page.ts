@@ -63,8 +63,21 @@ function handleSubmit(event: Event): void {
   const caption = `从 ${startTrim} 到 ${endTrim}`;
   resultCaption.textContent = caption;
   resultMain.textContent = `${result.days} 天`;
-  resultProcess.textContent = `${endTrim} − ${startTrim} = ${result.days} 天`;
-  lastCopyText = `${caption}：${resultMain.textContent}`;
+  // 聚合显示：周/月/年 + 倒计时（外部实现要求）
+  const parts: string[] = [];
+  if (result.weeks > 0) parts.push(`${result.weeks} 周`);
+  parts.push(`${result.months} 月`);
+  if (result.years > 0) parts.push(`${result.years} 年`);
+  const aggregate = parts.join(" + ");
+  const cd = result.countDownToTarget;
+  const cdText =
+    cd === 0
+      ? "今天就是目标日"
+      : cd > 0
+        ? `距离 ${endTrim} 还有 ${cd} 天`
+        : `${endTrim} 已过去 ${Math.abs(cd)} 天`;
+  resultProcess.textContent = `${aggregate}｜${cdText}`;
+  lastCopyText = `${caption}：${resultMain.textContent}（${aggregate}）｜${cdText}`;
   setState("computed");
 }
 

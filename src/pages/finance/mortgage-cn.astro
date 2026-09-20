@@ -85,6 +85,15 @@ const faqItems = [
         <div class="result-actions">
           <button type="button" id="copy-btn" class="btn btn-secondary" disabled>复制结果</button>
         </div>
+        <details id="schedule-wrap" class="schedule-wrap" hidden>
+          <summary>查看前 12 期月供明细</summary>
+          <div class="schedule-table-scroll">
+            <table id="schedule-table" class="schedule-table">
+              <thead><tr><th>期数</th><th>月供</th><th>本金</th><th>利息</th><th>剩余本金</th></tr></thead>
+              <tbody id="schedule-tbody"></tbody>
+            </table>
+          </div>
+        </details>
       </div>
     </div>
 

@@ -4,6 +4,14 @@ import { validateNumber, formatResult, type SharedErrorCode } from "./_shared";
 
 export type RepayType = "equal-installment" | "equal-principal";
 
+export type MortgageScheduleRow = {
+  month: number;
+  payment: number; // 月供（含本金+利息）
+  principal: number; // 当月还本金
+  interest: number; // 当月还利息
+  balance: number; // 当月末剩余本金
+};
+
 export type MortgageInput = {
   principal: string;
   years: string;
@@ -17,6 +25,7 @@ export type MortgageResult = {
   totalPayment: number;
   totalInterest: number;
   totalMonths: number;
+  schedule: MortgageScheduleRow[]; // 外部实现：月供明细（默认前 12 期）
 };
 
 export type MortgageError = {
@@ -25,6 +34,9 @@ export type MortgageError = {
 };
 export type MortgageResult2 =
   { ok: true; value: MortgageResult } | { ok: false; error: MortgageError };
+
+// schedule 默认行数：12 期（外部实现展示前 12 期表格）
+const SCHEDULE_PREVIEW_ROWS = 12;
 
 export function calculateMortgage(input: MortgageInput): MortgageResult2 {
   const p = validateNumber(input.principal);
@@ -57,29 +69,58 @@ export function calculateMortgage(input: MortgageInput): MortgageResult2 {
   let totalPayment: number;
   let totalInterest: number;
   let monthlyDecrease: number | undefined;
+  const schedule: MortgageScheduleRow[] = [];
+
   if (input.type === "equal-installment") {
     // 等额本息：M = P * [r(1+r)^n] / [(1+r)^n - 1]
+    let mp: number;
     if (monthlyRate === 0) {
-      monthlyFirst = p.value / months;
+      mp = p.value / months;
     } else {
       const factor = Math.pow(1 + monthlyRate, months);
-      monthlyFirst = (p.value * monthlyRate * factor) / (factor - 1);
+      mp = (p.value * monthlyRate * factor) / (factor - 1);
     }
-    totalPayment = monthlyFirst * months;
+    monthlyFirst = mp;
+    totalPayment = mp * months;
     totalInterest = totalPayment - p.value;
+    let bal = p.value;
+    for (let m = 1; m <= months; m++) {
+      const interest = bal * monthlyRate;
+      const payP = mp - interest;
+      bal -= payP;
+      if (m <= SCHEDULE_PREVIEW_ROWS) {
+        schedule.push({
+          month: m,
+          payment: mp,
+          principal: payP,
+          interest,
+          balance: Math.max(bal, 0),
+        });
+      }
+    }
   } else {
     // 等额本金：每月本金固定，利息按剩余本金计算
     const principalPerMonth = p.value / months;
-    // 首月利息 = P * 月利率
     const firstInterest = p.value * monthlyRate;
     monthlyFirst = principalPerMonth + firstInterest;
-    // 每月递减 = 本金/月份 * 月利率
     monthlyDecrease = principalPerMonth * monthlyRate;
-    // 总利息 = (P / n) * [2P + (n-1)P*r/12] / 2 = P*n/2 * 月利率 + (n-1)*P/2 * 月利率/n
-    // 标准公式：总利息 = (P / n) * [n*r + 1] / 2 * (n+1)? 简化：每期利息之和
-    // 等额本金总利息 = P * 月利率 * (n+1) / 2
     totalInterest = (p.value * monthlyRate * (months + 1)) / 2;
     totalPayment = p.value + totalInterest;
+    let bal = p.value;
+    for (let m = 1; m <= months; m++) {
+      const interest = bal * monthlyRate;
+      const mp = principalPerMonth + interest;
+      bal -= principalPerMonth;
+      if (m <= SCHEDULE_PREVIEW_ROWS) {
+        schedule.push({
+          month: m,
+          payment: mp,
+          principal: principalPerMonth,
+          interest,
+          balance: Math.max(bal, 0),
+        });
+      }
+    }
   }
   return {
     ok: true,
@@ -89,6 +130,7 @@ export function calculateMortgage(input: MortgageInput): MortgageResult2 {
       totalPayment,
       totalInterest,
       totalMonths: months,
+      schedule,
     },
   };
 }
