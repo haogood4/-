@@ -15,11 +15,11 @@ export default defineConfig({
   build: {
     inlineStylesheets: "never",
   },
-  // legal 三页为 noindex 草稿（P1-10 法务审核后移除 noindex 时同步去掉 filter 排除）；
+  // legal 三页已通过法务审核（DS-202609-08），正常收录；/search/ 仍为 noindex 功能页；
   // /search/ 为 noindex 功能页（薄内容），同样排除
   integrations: [
     sitemap({
-      filter: (page) => !page.includes("/legal/") && !page.includes("/search/"),
+      filter: (page) => !page.includes("/search/"),
     }),
   ],
   hooks: {
