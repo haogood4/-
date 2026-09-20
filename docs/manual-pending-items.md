@@ -23,8 +23,10 @@ review_cycle: 每周复核
 | M-01b | 项目负责人按 [docs/legal-submission-ready-pack.md](legal-submission-ready-pack.md) 手动转发法务部（替换占位符 → 复制邮件/飞书模板 → 发送 → 回填 dual-sign-todo） | 外部通讯 | 5 步自检 → 3 场景模板选一 → 发送 → 反馈回填；AI **不**代发任何邮件/飞书/微信 | 法务部未实际收到资料包前无法正式流转 DS-202609-08 | 2026-09-20 当日 | ⏳ |
 | M-02 | GitHub 推送与 CI 首跑 | 外部凭据 | `git remote add origin <repo-url> && git push -u origin main`；确认 Actions 首跑全绿 | CI 防护网未生效，本地改动无远程备份 | 本周 | ✅ 推送 ✅ |
 | M-02b | CI 首跑确认（GitHub Actions → workflow `CI` 跑完，失败则把日志发回） | 外部验证 | 用户在 Actions tab 核验 → 反馈结果 → 若失败 AI 排查 | CI 防护网未生效 | 本周 | ✅ 全绿 |
-| M-03 | 域名购买与 DNS 配置 | 成本支出 | 购买域名 → Cloudflare 托管 → `export PUBLIC_SITE_URL=https://<正式域名>` 后执行 `pnpm deploy`；predeploy 守卫会拦截占位符 | 阻塞部署与上线（当前 site 为占位符 example-calculator.cn） | 上线前 | ⏳ |
-| M-04 | Cloudflare Pages 项目创建 | 外部账号 | `wrangler login`（或配 API Token）→ 首次 `pnpm deploy` 创建 project calculator-site | 阻塞部署 | 上线前 | ⏳ |
+| M-03 | 域名购买与 DNS 配置 | 成本支出 | 购买域名（推荐 `jisuanqi.cn`，详见 [docs/m03-domain-feasibility.md](m03-domain-feasibility.md)）→ Cloudflare 托管（NS 切换）→ `export PUBLIC_SITE_URL=https://<正式域名>` 后执行 `bash scripts/deploy-cf-pages.sh --execute`（predeploy 守卫会拦截占位符）；可选覆盖 `CF_PAGES_PROJECT_NAME`；wrangler.toml 已就绪 | 阻塞部署与上线（当前 site 为占位符 example-calculator.cn） | 上线前 | ⏳ |
+| M-03b | 项目负责人按 [docs/gsc-submission-sop.md](gsc-submission-sop.md) 手动提交 sitemap 至 Google Search Console + 百度站长平台（5+2 步） | 外部操作 | 站点部署成功后立即执行；AI 不登录任何搜索引擎账号 | SEO 收录启动依赖项 | 部署后首日 | ⏳ |
+| M-04 | Cloudflare Pages 项目创建 | 外部账号 | 项目负责人执行 `wrangler login`（或配 CF_API_TOKEN 环境变量）→ 首次 `bash scripts/deploy-cf-pages.sh --execute` 创建 project `calculator-site`（命名可经 CF_PAGES_PROJECT_NAME 覆盖）；自定义域名绑定在 Dashboard 完成 | 阻塞部署 | 上线前 | ⏳ |
+| M-04b | 项目负责人在 Cloudflare Dashboard → Pages → calculator-site → Custom domains 添加 `jisuanqi.cn`（apex + www 二级） | 外部操作 | DNS 自动配置 CNAME；含 SSL/TLS 自动签发（5–10 分钟）；AI 不操作 Dashboard | apex 域 + www 子域同步生效 | 部署后当日 | ⏳ |
 | M-05 | 暗色模式二期手动开关方案批复（P1-7②） | 设计决策 | 评估 localStorage + 外置 theme-init.js 的 FOUC 窗口接受度（不能内联脚本，违反 CSP）；批复后 AI 可实现（按钮 ≥44px、aria-pressed、可覆盖系统偏好） | 非上线阻塞，仅体验项 | 择机 | ⏳ |
 | M-06 | 第三方统计脚本接入决策（GA4/Sentry） | 隐私决策 | 选择工具 → 评估与 CSP/隐私政策一致性 → 提供度量 ID 后 AI 可接线（负面清单规定统计脚本决策留人工） | 数据驱动运营无法启动；非上线阻塞 | 上线后首周 | ⏳ |
 | M-07 | GSC 域名验证与 sitemap 提交 | 外部账号 | 域名 M-03 完成后：Search Console 验证 → 提交 sitemap.xml → 监控收录 | SEO 收录启动依赖项 | 上线后首周 | ⏳ |

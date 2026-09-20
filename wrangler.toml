@@ -1,0 +1,11 @@
+name = "calculator-site"
+compatibility_date = "2026-09-01"
+pages_build_output_dir = "dist"
+
+# Cloudflare Pages 项目配置
+# 说明：此文件由项目负责人手动维护；Cloudflare 项目名首次部署后即锁定
+# 推荐命名：calculator-site 或 calculator-quan（若全局名冲突）
+# 多域名绑定：在 Cloudflare Dashboard → Pages → Custom domains 添加，
+# example: api-key 用环境变量注入
+# [vars]
+# PUBLIC_SITE_URL = "https://example.com"
