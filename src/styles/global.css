@@ -95,13 +95,15 @@
 }
 
 /* ------------------------------------------------------------
-   1b) dark scheme — @media (prefers-color-scheme: dark)
-   P1-7① 纯 CSS 暗色跟随：零 JS、零 CSP 影响、无 FOUC
+   1b) dark scheme — 系统跟随 + 手动开关（P1-7①②）
+   P1-7① 纯 CSS 暗色跟随：@media 覆盖 :root token，无 FOUC
+   P1-7② 明暗开关：public/theme.js 在 <html> 写 data-theme（light|dark），
+         localStorage 持久化；data-theme="dark" 块与媒体查询块 token 值必须保持一致。
    仅覆盖正文与交互 token；分类/品牌语义保持一致。
    验收：9 组对比度均 ≥4.5:1（详见 CHANGELOG/交付说明）
    ------------------------------------------------------------ */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     /* 品牌：primary 提亮（teal-400 系），保证深底链接对比度 */
     --color-primary: #2dd4bf;
     --color-primary-strong: #5eead4;
@@ -145,6 +147,52 @@
 
     color-scheme: dark;
   }
+}
+
+/* 手动暗色覆盖（与上方媒体查询块 token 值逐行一致） */
+:root[data-theme="dark"] {
+  --color-primary: #2dd4bf;
+  --color-primary-strong: #5eead4;
+  --color-primary-deep: #99f6e4;
+  --color-primary-soft: #134e4a;
+  --color-primary-faint: #0f2d2a;
+
+  --color-accent-warm: #fbbf24;
+  --color-accent-warm-soft: #422006;
+
+  --color-bg-page: #0c0a09;
+  --color-bg-surface: #1c1917;
+  --color-bg-subtle: #292524;
+  --color-text-primary: #f5f5f4;
+  --color-text-secondary: #d6d3d1;
+  --color-text-muted: #a8a29e;
+  --color-border: #3f3f3f;
+  --color-border-strong: #57534e;
+  --color-error: #fca5a5;
+  --color-success: #86efac;
+
+  --color-danger: #f87171;
+  --color-danger-bg: #2a1212;
+  --color-danger-text: #fecaca;
+  --color-danger-text-strong: #fee2e2;
+  --color-warning: #fbbf24;
+  --color-warning-bg: #2a1f08;
+  --color-warning-border: #92400e;
+  --color-warning-text: #fde68a;
+  --color-warning-text-strong: #fef3c7;
+  --color-bg-muted: #1c1917;
+  --color-text-on-primary: #0c0a09;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
+/* 手动亮色覆盖（系统暗色偏好下强制亮 token + UA 控件） */
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 /* ------------------------------------------------------------
@@ -766,6 +814,8 @@ textarea[aria-invalid="true"] {
 /* 移动端：导航默认收起为全宽下拉面板 */
 .site-nav {
   display: none;
+  /* 桌面端（static）把 nav+theme-toggle 推到右侧；移动端 absolute 时该属性无效 */
+  margin-left: auto;
   position: absolute;
   top: 100%;
   left: 0;
@@ -853,6 +903,58 @@ textarea[aria-invalid="true"] {
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3),
 .nav-toggle.is-open .nav-toggle__bar:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---------- P1-7②：明暗主题切换按钮 ---------- */
+/* 尺寸与汉堡按钮一致（44×44 触控目标）；图标 currentColor 跟随文字色 */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-primary);
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* 图标显隐：亮色态显示太阳、暗色态显示月亮。
+   有效暗色 = (系统暗色 且 未手动锁亮) 或 手动锁暗 */
+.theme-toggle__icon-moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle__icon-sun {
+    display: none;
+  }
+
+  :root:not([data-theme="light"]) .theme-toggle__icon-moon {
+    display: block;
+  }
+}
+
+:root[data-theme="dark"] .theme-toggle__icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle__icon-moon {
+  display: block;
 }
 
 /* ---------- 首页 hero 与分类胶囊 ---------- */

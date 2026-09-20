@@ -7,6 +7,7 @@ import {
   applyPercent,
   type BasicOperator,
 } from "../lib/calculators/basic";
+import { copyText, flashButton, requireEl } from "./_page-kit";
 
 type State = "building" | "computed" | "error";
 
@@ -58,14 +59,6 @@ const KEYS: KeyDef[] = [
 
 // 表达式串内部使用半角字符；展示层把 "−" 渲染为全角减号 "−"
 const MAX_INPUT_LEN = 32;
-
-function requireEl<T extends HTMLElement>(selector: string): T {
-  const el = document.querySelector<T>(selector);
-  if (!el) {
-    throw new Error(`页面缺少元素：${selector}`);
-  }
-  return el;
-}
 
 const display = requireEl<HTMLOutputElement>("#calc-display");
 const liveRegion = requireEl<HTMLDivElement>("#calc-live");
@@ -442,44 +435,6 @@ function wireKeyboard(): void {
       return;
     }
   });
-}
-
-async function copyText(text: string): Promise<boolean> {
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-  } catch {
-    // 走回退
-  }
-  const helper = document.createElement("textarea");
-  helper.value = text;
-  helper.className = "clipboard-helper";
-  helper.setAttribute("readonly", "");
-  document.body.appendChild(helper);
-  helper.select();
-  let ok: boolean;
-  try {
-    helper.setSelectionRange(0, text.length);
-  } catch {
-    // 忽略
-  }
-  try {
-    ok = document.execCommand("copy");
-  } catch {
-    ok = false;
-  }
-  document.body.removeChild(helper);
-  return ok;
-}
-
-function flashButton(btn: HTMLButtonElement, text: string): void {
-  const original = btn.textContent ?? "";
-  btn.textContent = text;
-  window.setTimeout(() => {
-    btn.textContent = original;
-  }, 2000);
 }
 
 function wireCopy(): void {

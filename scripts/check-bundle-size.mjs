@@ -1,8 +1,10 @@
-// 检查 dist/ 产物体积：JS gzip 后 ≤ 100KB，CSS gzip 后 ≤ 30KB
+// 检查 dist/ 产物体积：JS brotli 后 ≤ 100KB，CSS brotli 后 ≤ 30KB（同时报告 gzip 参考值）
 // dist/ 不存在时跳过（Task 10 将升级为强制检查）
+// 口径说明：生产部署（Cloudflare Pages）默认下发 brotli，gzip 会高估约 15~18%；
+// 门禁以 brotli 为准，AI-IMPROVEMENT-PROMPT.md 的 65KB 软红线同口径。
 import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { gzipSync } from "node:zlib";
+import { brotliCompressSync, gzipSync } from "node:zlib";
 
 const JS_LIMIT = 100 * 1024; // 100 KB
 const CSS_LIMIT = 30 * 1024; // 30 KB
@@ -25,6 +27,10 @@ function collectFiles(dir, ext, acc = []) {
   return acc;
 }
 
+function brotliSize(file) {
+  return brotliCompressSync(readFileSync(file)).length;
+}
+
 function gzipSize(file) {
   return gzipSync(readFileSync(file)).length;
 }
@@ -36,12 +42,14 @@ for (const [ext, limit, label] of [
 ]) {
   const files = collectFiles(distDir, ext);
   if (files.length === 0) continue;
-  const total = files.reduce((sum, f) => sum + gzipSize(f), 0);
+  const total = files.reduce((sum, f) => sum + brotliSize(f), 0);
+  const gzipTotal = files.reduce((sum, f) => sum + gzipSize(f), 0);
   const totalKB = (total / 1024).toFixed(2);
+  const gzipKB = (gzipTotal / 1024).toFixed(2);
   const limitKB = (limit / 1024).toFixed(0);
   const ok = total <= limit;
   console.log(
-    `${label} gzip total: ${totalKB} KB / ${limitKB} KB ${ok ? "OK" : "EXCEEDS LIMIT"}`,
+    `${label} brotli total: ${totalKB} KB / ${limitKB} KB (gzip ref: ${gzipKB} KB) ${ok ? "OK" : "EXCEEDS LIMIT"}`,
   );
   if (!ok) failed = true;
 }

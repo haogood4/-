@@ -420,15 +420,14 @@ console.log("冒烟断言（12 组）：");
       if (!/\balt=/.test(m[0])) imgNoAlt++;
     }
     const cleaned = h.replace(/<svg[\s\S]*?<\/svg>/g, "");
-    for (const m of cleaned.matchAll(
-      /<(input|select|textarea)\b[^>]*>/g,
-    )) {
+    for (const m of cleaned.matchAll(/<(input|select|textarea)\b[^>]*>/g)) {
       const t = m[0];
       const type = (t.match(/\btype="([^"]+)"/) ?? [])[1];
       if (type === "hidden") continue;
       const id = (t.match(/\bid="([^"]+)"/) ?? [])[1];
       const hasAria = /aria-label=|aria-labelledby=/.test(t);
-      const hasLabel = id && new RegExp(`<label[^>]{0,120}\\bfor="${id}"`).test(h);
+      const hasLabel =
+        id && new RegExp(`<label[^>]{0,120}\\bfor="${id}"`).test(h);
       if (!hasAria && !hasLabel) formNoLabel++;
     }
     for (const m of cleaned.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g)) {
@@ -512,9 +511,11 @@ console.log("冒烟断言（12 组）：");
   }
 }
 
-// ── 12. P1-7① 暗色跟随：媒体查询存在 + BaseLayout 双 theme-color + 暗色对比度 ─
-// 零 JS/零 CSP：仅靠 @media (prefers-color-scheme: dark) 覆盖 :root 变量。
-// 验收：暗色下 9 组 token 对比度 ≥4.5:1；HTML 不增内联脚本。
+// ── 12. P1-7①② 暗色跟随 + 手动开关：媒体查询/双 theme-color/对比度/data-theme 一致性 ─
+// ①系统跟随：@media dark 覆盖 :root:not([data-theme="light"]) token；
+// ②手动开关：public/theme.js（外链经典脚本，非内联，兼容 CSP）写 data-theme，
+//   :root[data-theme="dark"] 块 token 必须与媒体查询块逐条一致。
+// 验收：暗色下 9 组 token 对比度 ≥4.5:1；HTML 无内联主题脚本。
 {
   const fs2 = read(join(DIST, "index.html"));
   // 扫描全部 CSS 文件（暗色规则可能位于 BaseLayout.css 而非首页同 chunk）
@@ -522,15 +523,34 @@ console.log("冒烟断言（12 组）：");
     (f) => f.includes("/_astro/") && f.endsWith(".css"),
   );
   const css = cssFiles.map((f) => read(f)).join("\n");
-  const hasDarkQuery =
-    /@media\s*\(prefers-color-scheme:\s*dark\)\s*\{:root\s*\{[^}]*--color-primary\s*:/s.test(
-      css,
-    ) ||
-    // 兼容 Astro 构建后 CSS 压缩为单行（无空格）的形态
-    /@media\(prefers-color-scheme:dark\)\{:root\{[^}]*--color-primary:/s.test(css);
+  const darkMediaRe =
+    /@media\s*\(\s*prefers-color-scheme:\s*dark\s*\)\s*\{\s*:root:not\(\[data-theme=["']?light["']?\]\)\s*\{([^}]*)\}/s;
+  const manualDarkRe = /:root\[data-theme=["']?dark["']?\]\s*\{([^}]*)\}/s;
+  const hasDarkQuery = darkMediaRe.test(css);
+  const hasManualDark = manualDarkRe.test(css);
+  // 两块 token 逐条一致性：声明集合（规范化空白后）排序必须相等
+  let tokenMismatch = [];
+  if (hasDarkQuery && hasManualDark) {
+    const norm = (block) =>
+      block
+        .split(";")
+        .map((d) => d.replace(/\s+/g, " ").trim().toLowerCase())
+        .filter(Boolean)
+        .sort();
+    const a = norm(css.match(darkMediaRe)[1]);
+    const b = norm(css.match(manualDarkRe)[1]);
+    tokenMismatch = a
+      .filter((d) => !b.includes(d))
+      .concat(b.filter((d) => !a.includes(d)));
+  }
+  // 主题开关接线：theme.js 外链 + 按钮存在（无内联主题脚本）
+  const hasThemeScript = /<script src="\/theme\.js">/.test(fs2);
+  const hasToggleButton = /id="theme-toggle"/.test(fs2);
   const hasDarkScheme = /media="\(prefers-color-scheme:\s*dark\)"/.test(fs2);
   const hasLightScheme = /media="\(prefers-color-scheme:\s*light\)"/.test(fs2);
-  const hasColorScheme = /name="color-scheme"\s+content="light\s+dark"/.test(fs2);
+  const hasColorScheme = /name="color-scheme"\s+content="light\s+dark"/.test(
+    fs2,
+  );
   // 暗色 token 对比度复算（与断言 11 同样 9 组，按暗色映射）
   // ratio/lum 与断言 11 同实现（独立定义避开 no-undef 跨块作用域）
   function lum(hex) {
@@ -579,16 +599,31 @@ console.log("冒烟断言（12 组）：");
       darkFails.push(`${f}/${b}=${ratio(dark[f], dark[b]).toFixed(2)}`);
   }
   if (!hasDarkQuery)
-    fail("12. 暗色 CSS 媒体查询缺失", "未在 CSS 中找到 prefers-color-scheme:dark 覆盖 :root");
+    fail(
+      "12. 暗色 CSS 媒体查询缺失",
+      "未找到 @media dark { :root:not([data-theme=light]) }",
+    );
+  else if (!hasManualDark)
+    fail("12. 手动暗色块缺失", "未找到 :root[data-theme=dark] token 块");
+  else if (tokenMismatch.length)
+    fail("12. data-theme 与媒体查询 token 不一致", tokenMismatch.join(" | "));
+  else if (!hasThemeScript || !hasToggleButton)
+    fail(
+      "12. 主题开关接线缺失",
+      `theme.js:${hasThemeScript} #theme-toggle:${hasToggleButton}`,
+    );
   else if (!hasDarkScheme || !hasLightScheme)
-    fail("12. BaseLayout theme-color 双变体缺失", `dark:${hasDarkScheme} light:${hasLightScheme}`);
+    fail(
+      "12. BaseLayout theme-color 双变体缺失",
+      `dark:${hasDarkScheme} light:${hasLightScheme}`,
+    );
   else if (!hasColorScheme)
     fail("12. color-scheme 未声明 light dark", "仅单值声明");
   else if (darkFails.length)
     fail("12. 暗色 token 对比度不达标", darkFails.join(", "));
   else
     pass(
-      `12. P1-7① 暗色跟随（媒体查询 + 双 theme-color + color-scheme light dark + 9 组 ≥4.5:1）`,
+      `12. P1-7①② 暗色跟随+手动开关（媒体查询/data-theme 双块一致 + theme.js 外链 + 9 组 ≥4.5:1）`,
     );
 }
 

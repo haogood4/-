@@ -44,6 +44,9 @@ const pageCategory = CATEGORY_MAP[firstSegment];
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- P1-7②：主题开关。外部经典脚本（无 defer/module）在 head 阻塞执行，
+         早于 body 绘制设置 data-theme，规避 FOUC；CSP script-src 'self' 禁内联 -->
+    <script is:inline src="/theme.js"></script>
     <title>{title}</title>
     <meta name="description" content={description} />
     {keywords.length > 0 && <meta name="keywords" content={keywords.join(",")} />}
