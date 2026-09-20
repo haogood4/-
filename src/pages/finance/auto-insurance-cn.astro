@@ -1,0 +1,198 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "车险保费计算器" },
+];
+
+const faqItems = [
+  {
+    q: "2026 年交强险新规有什么变化？",
+    a: "自 2026-06-01 起全国统一实施交强险新浮动机制，告别 950 元一口价：基础保费仍为 6 座以下 950 元、6 座及以上 1100 元，但无赔款优待折扣加大——连续无有责出险 1 年 9 折、2 年 8 折、3 年及以上按地区最低 5 折（A 类）至 7 折（E 类）；有责出险则上浮 1.0~2.0 倍。",
+  },
+  {
+    q: "无责出险会影响优惠吗？",
+    a: "不影响。交强险浮动看的是「有责出险」次数：事故中你无责任（无责赔付）不计入出险次数，也不影响无赔款优待折扣。本工具的上浮系数同样只按有责出险次数计算。",
+  },
+  {
+    q: "严重交通违法会额外上浮吗？",
+    a: "会，但未纳入本工具。部分地区对酒驾、醉驾、无证驾驶等严重交通违法记录的车辆在交强险基础上额外上浮 15%~30%，由承保时按当地规定核定，请以保单为准。",
+  },
+  {
+    q: "出险后商业险折扣怎么算？",
+    a: "商业险 NCD 系数按连续未出险年数取值：0 年 1.0、1 年 0.85、2 年 0.7、3 年及以上 0.6。出险后 NCD 回到 1.0，且出险导致的保费上浮由承保公司核保规则确定，本引擎不计算上浮部分，实际报价以保险公司核保为准。",
+  },
+];
+
+const description =
+  "免费在线车险保费计算器：按 2026-06-01 交强险浮动新规计算无出险折扣与出险上浮（含 A-E 地区分类），叠加商业险 NCD 折扣测算合计保费，附系数代入过程。";
+---
+
+<BaseLayout
+  title="车险保费计算器 — 2026 交强险浮动新规与商业险 NCD 折扣计算"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>车险保费计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      按 2026-06-01 起全国统一的交强险新浮动机制计算折扣或上浮系数，叠加商业险
+      NCD 无赔款优待折扣，一键测算车险合计保费。
+    </p>
+
+    <p class="result-hint">
+      <strong
+        >⚠️ 计算结果仅供参考，实际保费以保险公司报价与承保核保为准。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="车险保费计算表单">
+      <div class="field">
+        <label for="input-seat">座位数</label>
+        <select id="input-seat" class="field-select">
+          <option value="under6">家庭自用 6 座以下（基础保费 950 元）</option>
+          <option value="over6">家庭自用 6 座及以上（基础保费 1100 元）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-noclaim">连续无有责出险年数</label>
+        <select id="input-noclaim" class="field-select">
+          <option value="0">0 年（无优惠记录）</option>
+          <option value="1">1 年（交强 9 折 / 商业险 85 折）</option>
+          <option value="2">2 年（交强 8 折 / 商业险 7 折）</option>
+          <option value="3"
+            >3 年及以上（交强按地区 5~7 折 / 商业险 6 折）</option
+          >
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-claims">上年有责出险次数</label>
+        <select id="input-claims" class="field-select">
+          <option value="0">0 次（享受无出险折扣）</option>
+          <option value="1">1 次（系数 1.0）</option>
+          <option value="2">2 次（系数 1.2）</option>
+          <option value="3">3 次（系数 1.5）</option>
+          <option value="5plus">5 次及以上（系数 2.0）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-region">所在地区类别（3 年及以上无出险适用）</label>
+        <select id="input-region" class="field-select">
+          <option value="A">
+            A 类：内蒙古 / 海南 / 青海 / 西藏（最低 5 折）
+          </option>
+          <option value="B">B 类：陕西 / 云南 / 广西（5.5 折）</option>
+          <option value="C">
+            C 类：甘肃 / 吉林 / 山西 / 黑龙江 / 新疆（6 折）
+          </option>
+          <option value="D">D 类：北京 / 天津 / 河北 / 宁夏（6.5 折）</option>
+          <option value="E" selected>
+            E 类：其余省份（上海 / 广东 / 江苏等，7 折）
+          </option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-commercial">商业险基准保费（元，选填）</label>
+        <input
+          id="input-commercial"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 3000（留空则只算交强险；范围 100 ~ 500000）"
+          aria-describedby="field-error-commercial"
+        />
+        <p class="field-error" id="field-error-commercial" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算保费
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          选择座位数、连续无有责出险年数与上年有责出险次数：出险次数大于 0
+          时上浮系数覆盖无出险折扣（本工具自动忽略无出险年数）。
+        </li>
+        <li>
+          地区类别仅影响「连续 3
+          年及以上无有责出险」的交强险折扣档位；出险上浮为全国统一系数。
+        </li>
+        <li>
+          商业险基准保费选填：留空只算交强险；出险后商业险按 NCD 1.0
+          计算，出险上浮以承保公司核保为准，未纳入本工具。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            交强险保费 = 基础保费（950 / 1100 元）× 浮动系数：无有责出险 0 年
+            1.0、1 年 0.9、2 年 0.8、3 年及以上按地区 A=0.5 / B=0.55 / C=0.6 /
+            D=0.65 / E=0.7；有责出险 1 次 1.0、2 次 1.2、3 次 1.5、5 次及以上
+            2.0（覆盖折扣）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            商业险保费 = 基准保费 × NCD 系数（0 年 1.0、1 年 0.85、2 年 0.7、3
+            年+ 0.6；出险后 NCD=1.0，上浮不纳入引擎）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            合计保费 = 交强险保费 + 商业险保费。例：6 座以下连续 2 年无出险 =
+            950×0.8 = 760 元；若基准商业险 3000×0.7 = 2100 元，合计 2860 元。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/daily/fuel-consumption-cn/">油耗计算器</a></li>
+        <li><a href="/finance/auto-loan-cn/">车贷计算器</a></li>
+        <li><a href="/finance/housing-fund-loan-cn/">公积金贷款计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，实际保费以保险公司报价与核保为准；严重交通违法上浮（15%~30%）、代步车/特种车等费率规则未纳入本工具。
+    </p>
+
+    <CalcJsonLd
+      name="车险保费计算器"
+      description={description}
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/auto-insurance-page.js"
+  ></script>
+</BaseLayout>

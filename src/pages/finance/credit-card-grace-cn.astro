@@ -1,0 +1,221 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "信用卡免息期计算器" },
+];
+
+const description =
+  "免费在线信用卡免息期计算器：输入消费日期与账单日，按主流银行口径自动判定计入本期或下期账单，推算到期还款日与免息期自然日天数，支持自定义还款宽限天数 N（主流银行 20~26 天）。";
+
+const faqItems = [
+  {
+    q: "免息期适用于取现吗？",
+    a: "不适用。免息期只适用于刷卡消费（含线上支付）；ATM 取现、转账类交易自记账日起按日息万分之五计息，并可能另收取现手续费，没有免息期待遇。",
+  },
+  {
+    q: "账单日当天消费算本期还是下期？",
+    a: "本工具按建行/中行等主流口径：消费日 ≤ 账单日计入本期账单（账单日当天消费计入当期，免息期最短）；消费日 > 账单日计入下期账单。少数银行规定账单日当天消费计入下期，请以发卡行章程为准。",
+  },
+  {
+    q: "如何把免息期拉到最长？",
+    a: "两个办法：一是在账单日次日消费，此时消费计入下期账单，免息期最长（约 N+29 天）；二是致电发卡行把账单日调整到发薪日之后，让到期还款日落在工资到账后，还款更从容。",
+  },
+  {
+    q: "到期还款日没还上怎么办？",
+    a: "多数银行提供 2~3 天还款宽限期（容时服务），宽限期内到账视同按时还款；确实无法全额还清时可先还最低还款额，但未还部分将自记账日起按日息万分之五计息。结果仅供参考，以发卡行规则为准。",
+  },
+];
+---
+
+<BaseLayout
+  title="信用卡免息期计算器 — 账单日还款日免息天数在线计算"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>信用卡免息期计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入消费日期、账单日与还款宽限天数 N，按主流银行口径（到期还款日 =
+      账单日后第 N
+      天）自动判定计入本期或下期账单，并给出到期还款日与免息期自然日天数。
+    </p>
+
+    <form
+      id="calc-form"
+      class="card"
+      novalidate
+      aria-label="信用卡免息期计算表单"
+    >
+      <div class="field">
+        <label for="input-year">消费年份</label>
+        <input
+          id="input-year"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="例如 2026"
+          aria-describedby="field-error-year"
+        />
+        <p class="field-error" id="field-error-year" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-month">消费月份</label>
+        <input
+          id="input-month"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="1~12"
+          aria-describedby="field-error-month"
+        />
+        <p class="field-error" id="field-error-month" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-day">消费日</label>
+        <input
+          id="input-day"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="1~31"
+          aria-describedby="field-error-day"
+        />
+        <p class="field-error" id="field-error-day" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-statement">账单日（每月几号出账）</label>
+        <input
+          id="input-statement"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          value="10"
+          placeholder="1~28，默认 10"
+          aria-describedby="field-error-statement"
+        />
+        <p class="field-error" id="field-error-statement" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-grace">还款宽限天数 N</label>
+        <input
+          id="input-grace"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          value="20"
+          placeholder="10~30，默认 20（主流银行 20~26）"
+          aria-describedby="field-error-grace"
+        />
+        <p class="field-error" id="field-error-grace" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算免息期
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <p class="result-hint">
+      <strong
+        >⚠️
+        计算结果仅供参考，各发卡行账单日、还款日口径略有差异，以银行章程与账单为准。</strong
+      >
+    </p>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          填写消费日期（年/月/日）、账单日（每月几号出账，1~28）与还款宽限天数
+          N（10~30，默认 20，主流银行 20~26 天）。
+        </li>
+        <li>
+          点击「计算免息期」查看计入本期还是下期账单、到期还款日与免息期自然日天数（消费日至还款日的自然日差）。
+        </li>
+        <li>
+          结果仅供参考；部分银行账单日当天消费计入下期、或到期还款日遇节假日顺延，请以发卡行章程为准。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算口径</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            账单周期判定：消费日 ≤
+            账单日→计入本期账单（账单日当天消费计入当期）；消费日
+            &gt;账单日→计入下期账单（下月账单日出账）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            到期还款日 = 消费所在账单周期的账单日 + N 天（N
+            为还款宽限天数，主流银行 20~26 天，如建行 20 天、中行 20~26 天）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            免息期 =
+            消费日到到期还款日的自然日差（与建行等主流银行口径一致）；账单日次日消费最长，约
+            N+29 天；账单日当天消费最短，约 N 天。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：账单日 10 日、N=20——9 月 10 日消费 → 本期账单，还款日 9 月 30
+            日，免息期 20 天；9 月 11 日消费 → 下期账单（10 月 10
+            日出账），还款日 10 月 30 日，免息期 49 天。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/credit-installment-cn/">信用卡分期计算器</a></li>
+        <li>
+          <a href="/finance/interbank-transfer-fee-cn/">跨行转账手续费计算器</a>
+        </li>
+        <li><a href="/daily/date-diff/">日期间隔计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，以发卡行章程与实际账单为准；容时容差服务、节假日顺延、外币账单等口径各行不同。
+    </p>
+
+    <CalcJsonLd
+      name="信用卡免息期计算器"
+      description={description}
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/credit-card-grace-page.js"
+  ></script>
+</BaseLayout>

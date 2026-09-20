@@ -1,0 +1,195 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+import { REWARD_PRESETS } from "../../lib/calculators/maternity-leave-pay";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "产假工资计算器" },
+];
+
+const faqItems = [
+  {
+    q: "产假工资和生育津贴重复吗？",
+    a: "不重复，按「就高」原则衔接：生育津贴即产假期间的工资性补偿，由医保基金按单位上年度月平均缴费工资计发。津贴高于本人工资的，高出部分归职工；津贴低于本人工资的，差额由用人单位补足。已按本页测算出产假工资的，可与生育津贴比对取高者，两者不能同时全额享受。",
+  },
+  {
+    q: "各省奖励假天数为什么不一样？",
+    a: "98 天基础产假全国统一，奖励假（延长产假）由各省人口与计划生育条例分别规定：广东奖励假 80 天（产假合计 178 天），北京、上海、浙江、山东等多数省份为 60 天（合计 158 天口径）。本工具收录 2026 年已核实的省级口径，具体以参保地现行条例为准，也可选「自定义」手动填写。",
+  },
+  {
+    q: "98 天基础产假的依据是什么？",
+    a: "《女职工劳动保护特别规定》（国务院令第 619 号）第七条：女职工生育享受 98 天产假，其中产前可以休假 15 天；难产的，增加产假 15 天；生育多胞胎的，每多生育 1 个婴儿，增加产假 15 天。",
+  },
+  {
+    q: "产假期间工资怎么折算？",
+    a: "产假期间工资照发。本工具按「月薪 ÷ 21.75 × 产假总天数」折算（21.75 为月计薪天数 =（365 − 104）÷ 12），用于估算产假期间应得工资，再与生育津贴按就高原则衔接；实际发放方式（单位先垫付后申领津贴等）以单位与参保地规定为准。",
+  },
+];
+---
+
+<BaseLayout
+  title="产假工资计算器 — 98天基础产假+各省奖励假工资在线计算"
+  description="免费在线产假工资计算器：按 98 天基础产假自动加算难产 15 天、多胞胎每婴 15 天与各省奖励假（广东 80 天、多数省份 60 天），按月薪 ÷ 21.75 × 总天数测算产假期间工资，并说明与生育津贴就高衔接的规则。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>产假工资计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入月薪，选择省份奖励假预设、顺产/难产与婴儿数，按「月薪 ÷ 21.75 ×
+      产假总天数」测算产假期间工资。
+    </p>
+    <p class="result-hint">
+      <strong
+        >⚠️ 计算结果仅供参考，产假天数与工资发放口径以参保地条例及单位规定为准。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="产假工资计算表单">
+      <div class="field">
+        <label for="input-salary">月工资（元）</label>
+        <input
+          id="input-salary"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 8000"
+          aria-describedby="field-error-salary"
+        />
+        <p class="field-error" id="field-error-salary" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-reward">省份 / 奖励假天数（2026 口径）</label>
+        <select
+          id="input-reward"
+          class="field-select"
+          aria-describedby="field-error-reward"
+        >
+          {REWARD_PRESETS.map((p) => <option value={p.key}>{p.label}</option>)}
+        </select>
+        <p class="field-error" id="field-error-reward" hidden></p>
+      </div>
+      <div class="field" id="custom-reward-field" hidden>
+        <label for="input-reward-days">自定义奖励假天数（0~300 整数）</label>
+        <input
+          id="input-reward-days"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="例如 90"
+          aria-describedby="field-error-reward-days"
+        />
+        <p class="field-error" id="field-error-reward-days" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-birth">生育方式</label>
+        <select
+          id="input-birth"
+          class="field-select"
+          aria-describedby="field-error-birth"
+        >
+          <option value="normal">顺产</option>
+          <option value="difficult">难产（+15 天）</option>
+        </select>
+        <p class="field-error" id="field-error-birth" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-babies">婴儿数（多胞胎每多 1 婴 +15 天）</label>
+        <input
+          id="input-babies"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          value="1"
+          aria-describedby="field-error-babies"
+        />
+        <p class="field-error" id="field-error-babies" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算产假工资
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          填写产假前月工资；选择参保省份对应的奖励假预设（广东 80
+          天，北京/上海/浙江/山东等多数省份 60 天），口径不同可选「自定义」。
+        </li>
+        <li>
+          选择顺产/难产并填写婴儿数，点击「计算产假工资」查看总天数、日工资与产假工资。
+        </li>
+        <li>结果可与生育津贴计算器比对，按就高原则衔接；结果仅供参考。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算明细</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            产假总天数 = 98 天（基础）+ 15 天（难产，可选）+ 15 天 ×（婴儿数 −
+            1）（多胞胎）+ 奖励假天数（各省条例）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            产假工资 = 月薪 ÷ 21.75 × 产假总天数（21.75 为月计薪天数 =（365 −
+            104）÷ 12，产假期间工资照发的折算口径）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：月薪 8000 元、其他多数省份 158 天（98 + 60）→ 日工资 ≈ 367.82 元
+            × 158 ≈ 58114.94 元。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/maternity-allowance-cn/">生育津贴计算器</a></li>
+        <li><a href="/finance/overtime-pay-cn/">加班费计算器</a></li>
+        <li><a href="/finance/heat-subsidy-cn/">高温津贴计算器</a></li>
+        <li><a href="/finance/social-insurance-cn/">五险一金计算器</a></li>
+        <li><a href="/finance/retirement-age-cn/">退休年龄计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，产假天数、奖励假与就高补差规则以参保地人口与计划生育条例及单位执行口径为准。
+    </p>
+
+    <CalcJsonLd
+      name="产假工资计算器"
+      description="免费在线产假工资计算器：按 98 天基础产假自动加算难产 15 天、多胞胎每婴 15 天与各省奖励假（广东 80 天、多数省份 60 天），按月薪 ÷ 21.75 × 总天数测算产假期间工资，并说明与生育津贴就高衔接的规则。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/maternity-leave-pay-page.js"
+  ></script>
+</BaseLayout>

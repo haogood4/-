@@ -1,0 +1,188 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "生育津贴计算器" },
+];
+
+const faqItems = [
+  {
+    q: "生育津贴和产假工资可以同时领吗？",
+    a: "不重复享受。生育津贴即女职工产假期间的工资性补偿，由医保经办机构按单位上年度职工月平均缴费工资计发。单位已正常发放产假工资的，津贴拨付单位后按「就高」原则处理：津贴高于已发工资的差额归职工（或由单位补足），低于已发工资的不再补发，两者不得重复领取。",
+  },
+  {
+    q: "为什么除以 30 而不是 21.75？",
+    a: "生育津贴按自然日计发：计发天数是自然日（含休息日与节假日），因此日标准 = 月平均缴费工资 ÷ 30。而加班费、产假工资折算用的 21.75 是「月计薪天数」口径，对应的是工作日报酬折算。两者用途不同，不能混用。",
+  },
+  {
+    q: "各省 158 天是怎么回事？本工具默认 98 天对吗？",
+    a: "98 天是《女职工劳动保护特别规定》规定的全国基础产假，各省人口与计划生育条例在此基础上另设奖励假/延长产假 30~90 天——如江苏顺产合计 158 天、广东合计 178 天。生育津贴计发天数以参保地规定为准，可用「自定义计发天数」填入当地口径（60~400 天）覆盖默认值。",
+  },
+  {
+    q: "难产、多胞胎怎么加天数？",
+    a: "依据《女职工劳动保护特别规定》第七条：难产的增加 15 天（剖宫产是否按难产口径以当地规定为准）；多胞胎生育的，每多生育 1 个婴儿增加 15 天。本工具按选择自动累加到基础 98 天上。",
+  },
+];
+---
+
+<BaseLayout
+  title="生育津贴计算器 — 生育保险津贴天数与金额在线计算"
+  description="免费在线生育津贴计算器：按《女职工劳动保护特别规定》98 天基础产假自动加算难产 15 天与多胞胎每婴 15 天，支持自定义各省计发天数（如江苏 158 天），按单位月均缴费工资 ÷ 30 × 天数测算津贴金额并给出公式过程。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>生育津贴计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入单位上年度职工月平均缴费工资，选择顺产/难产与婴儿数（可自定义计发天数），按「月均缴费工资
+      ÷ 30 × 计发天数」测算生育津贴。
+    </p>
+    <p class="result-hint">
+      <strong
+        >⚠️ 计算结果仅供参考，计发天数与基数以参保地医保经办机构核定为准。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="生育津贴计算表单">
+      <div class="field">
+        <label for="input-wage">单位上年度职工月平均缴费工资（元）</label>
+        <input
+          id="input-wage"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 6000"
+          aria-describedby="field-error-wage"
+        />
+        <p class="field-error" id="field-error-wage" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-birth">生育方式</label>
+        <select
+          id="input-birth"
+          class="field-select"
+          aria-describedby="field-error-birth"
+        >
+          <option value="normal">顺产</option>
+          <option value="difficult">难产（+15 天）</option>
+        </select>
+        <p class="field-error" id="field-error-birth" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-babies">婴儿数（多胞胎每多 1 婴 +15 天）</label>
+        <input
+          id="input-babies"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          value="1"
+          aria-describedby="field-error-babies"
+        />
+        <p class="field-error" id="field-error-babies" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-days-override"
+          >自定义计发天数（可选，60~400 整数）</label
+        >
+        <input
+          id="input-days-override"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="可选：如 158（江苏顺产口径）"
+          aria-describedby="field-error-days-override"
+        />
+        <p class="field-error" id="field-error-days-override" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算津贴
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          填写单位上年度职工月平均缴费工资（可在单位人事或医保 APP
+          查询缴费基数）。
+        </li>
+        <li>
+          选择顺产/难产、填写婴儿数；各省奖励假口径不同时，用「自定义计发天数」直接填入当地天数（如江苏顺产
+          158 天）。
+        </li>
+        <li>
+          点击「计算津贴」查看计发天数、日均基数与津贴金额；生育津贴与产假工资不重复享受，结果仅供参考。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算明细</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            计发天数 = 98 天（基础产假）+ 15 天（难产，可选）+ 15 天 ×（婴儿数 −
+            1）（多胞胎）；各省奖励假口径可用自定义天数覆盖。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            生育津贴 = 单位上年度职工月平均缴费工资 ÷ 30 ×
+            计发天数（按自然日计发，故除以 30）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：月均缴费工资 6000 元，顺产、计发 158 天 → 6000 ÷ 30 × 158 =
+            31600.00 元。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/maternity-leave-pay-cn/">产假工资计算器</a></li>
+        <li><a href="/finance/overtime-pay-cn/">加班费计算器</a></li>
+        <li><a href="/finance/heat-subsidy-cn/">高温津贴计算器</a></li>
+        <li><a href="/finance/social-insurance-cn/">五险一金计算器</a></li>
+        <li><a href="/finance/income-tax-cn/">个税计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，生育津贴的计发天数、基数上下限与就高补差规则以参保地医保经办机构核定为准。
+    </p>
+
+    <CalcJsonLd
+      name="生育津贴计算器"
+      description="免费在线生育津贴计算器：按《女职工劳动保护特别规定》98 天基础产假自动加算难产 15 天与多胞胎每婴 15 天，支持自定义各省计发天数（如江苏 158 天），按单位月均缴费工资 ÷ 30 × 天数测算津贴金额并给出公式过程。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/maternity-allowance-page.js"
+  ></script>
+</BaseLayout>

@@ -6,6 +6,7 @@
 
 ### 新增
 
+- P6 批次 9 个劳动法/福利类工具（全部 /finance/ 下，站点 85→94 个）：加班费计算器（overtime-pay-cn，劳动法第 44 条 150%/200%/300%、月计薪天数 21.75）、高温津贴计算器（heat-subsidy-cn，内置 12 省 2026 公开标准预设 + 自定义）、生育津贴计算器（maternity-allowance-cn，月均缴费工资÷30×计发天数、98+难产15+多胞胎15/婴、天数可覆盖各省）、产假工资计算器（maternity-leave-pay-cn，98 天基础 + 各省奖励假预设广东 80/鲁京沪浙 60）、公积金贷款计算器（housing-fund-loan-cn，央行 2025-05-08 利率 首套 2.1%/2.6%、二套 2.525%/3.075%，等额本息）、车险保费计算器（auto-insurance-cn，2026-06-01 交强险新浮动机制 A~E 地区 + 商业险 NCD）、跨行转账手续费计算器（interbank-transfer-fee-cn，发改价格〔2014〕268 号柜台五档 + 电子渠道对照）、信用卡免息期计算器（credit-card-grace-cn，账单日+N 天、闰年跨年精确）、年终奖计税方式对比（bonus-tax-compare-cn，财政部 税务总局公告 2023 年第 30 号单独 vs 并入双口径，政策至 2027-12-31）；新增 9 引擎 + 155 个单测用例（全站 1028 用例）+ 9 份政策核对档案 + 双签登记 DS-202609-11~19
 - P5 批次 2 个高敏感度工具：退休年龄计算器（/finance/retirement-age-cn/，依据全国人大常委会 2024-09-13《关于实施渐进式延迟法定退休年龄的决定》+国务院办法附件 1/2/3 对照表，男 60→63、原 55 周岁女→58、原 50 周岁女→55，按每 4/4/2 个月延迟 1 个月节奏渐进；同步返回最低缴费年限 15~20 年）、股票佣金计算器（/finance/stock-commission-cn/，用户输入券商佣金费率与最低起收，按上交所公示 0.01‰ 双向过户费 + 0.5‰ 单边卖方印花税自动测算买卖方向费用与净资金流）；新增 2 个引擎（retirement-age 25 用例 + stock-commission 11 用例）+ 2 个政策核对档案（retirement-age-cn-verification.md / stock-commission-cn-verification.md）+ 双签登记（DS-202609-09 / DS-202609-10）
 - P4 批次 5 个换算工具
 - 暗色模式第一期（P1-7①）：纯 CSS `@media (prefers-color-scheme: dark)` 覆盖 25 个 token；零 JS、零 CSP 影响、无 FOUC；BaseLayout `<meta theme-color>` 拆为 light/dark 双变体、`color-scheme: light dark`；smoke 断言 12 守 9 组暗色 token 对比度 ≥4.5:1，CSS gzip +0.21KB（6.19 → 6.40KB）。第二期（手动切换开关）仍待人工批复 FOUC + CSP 方案

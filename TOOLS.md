@@ -1,8 +1,8 @@
-# 计算器大全 — 全部工具清单（85 个）
+# 计算器大全 — 全部工具清单（94 个）
 
 按 6 大分类整理，每行复制即用（站点路径相对于部署根域名）。
 
-## 金融理财（19）
+## 金融理财（28）
 
 - 房贷计算器 — /finance/mortgage-cn/
 - 贷款计算器 — /finance/loan-cn/
@@ -23,6 +23,15 @@
 - 人民币大写转换 — /finance/rmb-uppercase-cn/
 - 退休年龄计算器 — /finance/retirement-age-cn/
 - 股票佣金计算器 — /finance/stock-commission-cn/
+- 加班费计算器 — /finance/overtime-pay-cn/
+- 高温津贴计算器 — /finance/heat-subsidy-cn/
+- 生育津贴计算器 — /finance/maternity-allowance-cn/
+- 产假工资计算器 — /finance/maternity-leave-pay-cn/
+- 公积金贷款计算器 — /finance/housing-fund-loan-cn/
+- 车险保费计算器 — /finance/auto-insurance-cn/
+- 跨行转账手续费 — /finance/interbank-transfer-fee-cn/
+- 信用卡免息期 — /finance/credit-card-grace-cn/
+- 年终奖计税对比 — /finance/bonus-tax-compare-cn/
 
 ## 健康生活（5）
 
@@ -115,15 +124,15 @@
 - 用户协议 — /legal/terms/
 - 免责声明 — /legal/disclaimer/
 
-合计 85 个计算工具 + 7 个信息页。
+合计 94 个计算工具 + 7 个信息页。
 
 ## 打包复制格式（如需 JSON）
 
 ```json
 {
-  "total": 85,
+  "total": 94,
   "categories": [
-    {"key": "finance", "name": "金融理财", "count": 19, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
+    {"key": "finance", "name": "金融理财", "count": 28, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
     {"key": "health", "name": "健康生活", "count": 5, "tools": [...]},
     {"key": "renovation", "name": "装修家居", "count": 5, "tools": [...]},
     {"key": "investment", "name": "投资专业", "count": 10, "tools": [...]},

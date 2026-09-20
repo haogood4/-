@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "跨行转账手续费计算器" },
+];
+
+const faqItems = [
+  {
+    q: "手机银行跨行转账真的全免吗？",
+    a: "主流国有大行与全国性股份制银行（工行、建行、农行、中行、招行等）均对手机银行转账实行全免手续费政策，本工具按 0 元计算。个别银行或特定业务类型可能调整政策，请以银行最新公告为准。",
+  },
+  {
+    q: "跨行 ATM 转账免手续费吗？有限额吗？",
+    a: "自 2021-07-25 起银行卡跨行 ATM 取现手续费暂免，跨行 ATM 转账同样暂免（本工具按 0 元计算）。但需注意 ATM 转账单日限额一般为 5 万元，且多数银行对 ATM 转账实行 24 小时后到账（可撤销），大额转账建议走手机银行或柜台。",
+  },
+  {
+    q: "5000 元以下网银转账不是免费的吗？",
+    a: "不少银行对网上银行 5000 元以下转账推出免费优惠（高于政府指导价 4 折口径的让利），部分银行甚至全免电子渠道手续费。本工具按「柜台指导价 4 折、最高 20 元」的通用口径计算，实际收费可能更低，以银行公示价目表为准。",
+  },
+  {
+    q: "柜台跨行转账的政府指导价是多少？",
+    a: "依据发改委《政府定价的经营服务性收费目录》（发改价格〔2014〕268 号）：每笔 2000 元以内（含）2 元、2000~5000 元（含）5 元、5000~10000 元（含）10 元、10000~50000 元（含）15 元、50000 元以上按 0.03% 收取，最高 50 元/笔。政府指导价范围内银行不得上浮。",
+  },
+];
+
+const description =
+  "免费在线跨行转账手续费计算器：按发改价格〔2014〕268 号柜台政府指导价分档计算，对照网上银行 4 折、手机银行全免与跨行 ATM 暂免三种渠道费用，附政策依据说明。";
+---
+
+<BaseLayout
+  title="跨行转账手续费计算器 — 柜台网银手机银行ATM费用对照"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>跨行转账手续费计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入转账金额并选择渠道，按柜台政府指导价分档计算手续费，同时对照网上银行、手机银行与
+      ATM 三种渠道的费用差异。
+    </p>
+
+    <p class="result-hint">
+      <strong
+        >⚠️ 计算结果仅供参考，实际手续费以各银行公示价目表与公告为准。</strong
+      >
+    </p>
+
+    <form
+      id="calc-form"
+      class="card"
+      novalidate
+      aria-label="跨行转账手续费计算表单"
+    >
+      <div class="field">
+        <label for="input-amount">转账金额（元）</label>
+        <input
+          id="input-amount"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 3000（范围 0.01 ~ 1000 万元，最多 2 位小数）"
+          aria-describedby="field-error-amount"
+        />
+        <p class="field-error" id="field-error-amount" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-channel">转账渠道</label>
+        <select id="input-channel" class="field-select">
+          <option value="counter"> 柜台转账（政府指导价原价，最贵） </option>
+          <option value="netbank">
+            网上银行（柜台价 4 折，最高 20 元/笔）
+          </option>
+          <option value="mobile" selected>
+            手机银行（主流银行全免，0 元）
+          </option>
+          <option value="atm"> 跨行 ATM（暂免手续费，单日限额 5 万元） </option>
+        </select>
+        <p class="field-error" id="field-error-channel" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算手续费
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          填写转账金额（0.01 ~ 1000 万元、最多 2 位小数），选择柜台 / 网上银行 /
+          手机银行 / ATM 任一渠道。
+        </li>
+        <li>
+          点击「计算手续费」：结果给出所选渠道费用与柜台指导价对照，方便比较省费空间。
+        </li>
+        <li>
+          结果仅供参考：多数银行电子渠道有免费优惠、个别银行政策可能调整，以银行最新公示为准。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            柜台政府指导价（发改价格〔2014〕268 号）：≤2000 元 2
+            元/笔；2000~5000（含）5 元/笔；5000~10000（含）10
+            元/笔；10000~50000（含）15 元/笔；&gt;50000 元按 0.03% 收取、最高 50
+            元/笔。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            渠道折算：柜台 = 指导价原价；网上银行 = 柜台价 × 40%（最高 20
+            元/笔，部分银行口径）；手机银行 = 0 元（主流银行全免）；跨行 ATM = 0
+            元（2021-07-25 起暂免）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：转账 3000 元：柜台 5 元 → 网银 5×40% = 2 元 → 手机银行 / ATM 0
+            元，最省 5 元。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/finance/stock-commission-cn/">股票佣金计算器</a></li>
+        <li><a href="/finance/credit-installment-cn/">信用卡分期计算器</a></li>
+        <li><a href="/finance/deposit-interest-cn/">存款利息计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，以各银行公示价目表为准；对公转账、外币汇款、超限额实时到账加急费等场景未纳入本工具。
+    </p>
+
+    <CalcJsonLd
+      name="跨行转账手续费计算器"
+      description={description}
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/interbank-transfer-fee-page.js"
+  ></script>
+</BaseLayout>

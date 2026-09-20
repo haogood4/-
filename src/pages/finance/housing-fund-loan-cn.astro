@@ -1,0 +1,183 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "公积金贷款计算器" },
+];
+
+const faqItems = [
+  {
+    q: "现行公积金贷款利率是多少？何时生效？",
+    a: "依据中国人民银行 2025 年 5 月 7 日通知，自 2025-05-08 起下调个人住房公积金贷款利率 0.25 个百分点：首套 5 年以下（含）2.1%、5 年以上 2.6%；二套 5 年以下（含）2.525%、5 年以上 3.075%。存量公积金贷款自 2026-01-01 起同步下调 25BP。",
+  },
+  {
+    q: "和商业住房贷款比能省多少利息？",
+    a: "以 100 万元 30 年为例：公积金首套 2.6% 月供约 4003.40 元、利息总额约 44.12 万元；若按同期商贷利率 3.05%（LPR-60BP 口径示例）计算，利息总额约 52.2 万元，公积金贷款可省利息约 8 万元。实际商贷利率以银行报价为准，可用本工具与房贷计算器对比测算。",
+  },
+  {
+    q: "公积金贷款有最高额度限制吗？",
+    a: "有，且各地公积金中心规定不同。例如中山市单人最高 80 万元、双人最高 160 万元；多数城市单人 40~80 万元不等，部分城市对多孩家庭、高层次人才有上浮政策。本工具不限额度仅做月供测算，可贷额度请以当地公积金中心核定为准。",
+  },
+  {
+    q: "本工具按什么还款方式计算？",
+    a: "本工具按等额本息计算：月供固定，月利率 i = 年利率/12，月供 = P×i×(1+i)^n÷((1+i)^n−1)，n 为总月数。如需等额本金（月供逐月递减）方式，请使用房贷计算器对比两种方式的总利息差异。",
+  },
+];
+
+const description =
+  "免费在线公积金贷款计算器：按央行 2025-05-08 最新利率（首套 2.1%/2.6%、二套 2.525%/3.075%）自动匹配档位，等额本息计算月供、利息总额与还款总额，附完整公式代入过程。";
+---
+
+<BaseLayout
+  title="公积金贷款计算器 — 首套二套最新利率月供在线计算"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>公积金贷款计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入贷款金额与年限、选择首套或二套，按央行 2025-05-08
+      起施行的最新公积金贷款利率自动匹配档位，等额本息计算月供、利息总额与还款总额。
+    </p>
+
+    <p class="result-hint">
+      <strong
+        >⚠️
+        计算结果仅供参考，实际利率与可贷额度以当地公积金中心及受托银行核定为准。</strong
+      >
+    </p>
+
+    <form
+      id="calc-form"
+      class="card"
+      novalidate
+      aria-label="公积金贷款计算表单"
+    >
+      <div class="field">
+        <label for="input-amount">贷款金额（元）</label>
+        <input
+          id="input-amount"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1000000（范围 1 万 ~ 500 万元，最多 2 位小数）"
+          aria-describedby="field-error-amount"
+        />
+        <p class="field-error" id="field-error-amount" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-years">贷款年限（年）</label>
+        <input
+          id="input-years"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          value="30"
+          placeholder="1-30 的整数，默认 30"
+          aria-describedby="field-error-years"
+        />
+        <p class="field-error" id="field-error-years" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-house">房屋套数</label>
+        <select id="input-house" class="field-select">
+          <option value="first">首套（5 年以下 2.1% / 5 年以上 2.6%）</option>
+          <option value="second"
+            >二套（5 年以下 2.525% / 5 年以上 3.075%）</option
+          >
+        </select>
+        <p class="field-error" id="field-error-house" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算月供
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          贷款金额以「元」为单位填写（如 100 万填 1000000），范围 1 万 ~ 500
+          万元、最多 2 位小数；贷款年限为 1-30 的整数，默认 30 年。
+        </li>
+        <li>
+          选择首套或二套后点击「计算月供」：5 年（含）以下与 5
+          年以上适用不同利率档位，引擎自动匹配央行 2025-05-08 起施行的最新利率。
+        </li>
+        <li>
+          结果包含月供、利息总额与还款总额；结果仅供参考，实际以公积金中心审批与借款合同为准。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            等额本息月供：M = P × i × (1+i)^n ÷ ((1+i)^n − 1)，其中 P
+            为贷款本金，i = 年利率 ÷ 12 为月利率，n = 年限 × 12 为总期数。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            还款总额 = 月供 × n；利息总额 = 还款总额 − 贷款本金。5
+            年（含）以下与 5 年以上适用不同利率档位，本工具按年限自动匹配。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：首套 100 万元 30 年（2.6%）：i = 0.026/12，n = 360，月供 ≈
+            4003.40 元，还款总额 ≈ 1441222.96 元，利息总额 ≈ 441222.96 元。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2>
+      <ul class="tool-list">
+        <li><a href="/finance/mortgage-cn/">房贷计算器</a></li>
+        <li><a href="/finance/loan-cn/">贷款计算器</a></li>
+        <li><a href="/finance/equal-installment-cn/">等额本息计算器</a></li>
+        <li><a href="/finance/prepayment-cn/">提前还款计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，公积金贷款利率、额度与还款方式以当地公积金中心及借款合同为准；存量贷款利率调整自
+      2026-01-01 起执行。
+    </p>
+
+    <CalcJsonLd
+      name="公积金贷款计算器"
+      description={description}
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/housing-fund-loan-page.js"
+  ></script>
+</BaseLayout>

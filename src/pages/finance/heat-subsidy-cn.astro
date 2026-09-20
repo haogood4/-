@@ -1,0 +1,188 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+import { HEAT_PRESETS } from "../../lib/calculators/heat-subsidy";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "高温津贴计算器" },
+];
+
+const faqItems = [
+  {
+    q: "什么条件下用人单位必须发放高温津贴？",
+    a: "依据《防暑降温措施管理办法》：用人单位安排劳动者在 35℃ 以上高温天气从事室外露天作业，以及不能采取有效措施将工作场所温度降低到 33℃ 以下的，应当向劳动者发放高温津贴，并纳入工资总额。具体标准由省级人社部门制定，本页预设收录 2026 年公开报道口径，以当地最新通知为准。",
+  },
+  {
+    q: "能否用清凉饮料、防暑用品冲抵高温津贴？",
+    a: "不得。用人单位应当为高温作业、高温天气作业的劳动者提供清凉饮料和防暑降温物品，但不得以防暑降温饮料充抵高温津贴。高温津贴应以货币形式随工资按月（或按实际出勤）发放，属于劳动者工资的组成部分。",
+  },
+  {
+    q: "高温津贴要缴个人所得税吗？",
+    a: "要。高温津贴属于工资总额的组成部分，应并入当月工资薪金所得计征个人所得税。需区分的是：单位发放的集体享受、不可分割的防暑降温用品（如绿豆汤、藿香正气水等）属于福利，不并入工资计税。",
+  },
+  {
+    q: "河南、安徽、陕西等按日发放的省份，天数 88 是怎么估的？",
+    a: "按日标准的省份通常按实际高温天气出勤天数计发。本工具对河南（15 元/日）、安徽（25 元/日）、陕西（25 元/日）按「发放月数 × 21.75 个工作日」估算约 88 日；海南（10 元/日）按 4-10 月 7 × 30 天历日估算 212 日。实际金额以当地通知与你的实际出勤天数为准，可在「自定义」中直接填写实际天数。",
+  },
+];
+---
+
+<BaseLayout
+  title="高温津贴计算器 — 2026 各省高温补贴标准一览与金额计算"
+  description="免费在线高温津贴计算器：收录上海、江苏、浙江、山东、广东、广西、河南、安徽、海南、河北、贵州、陕西等省 2026 年高温补贴标准（按月/按日），一键填充标准与时长，自动计算高温津贴总额并附发放条件说明。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>高温津贴计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      选择省份自动填充当地计发方式、标准与发放时长，也可切换「自定义」手动填写；一键测算高温津贴总额。
+    </p>
+    <p class="result-hint">
+      <strong
+        >⚠️ 计算结果仅供参考，各省标准与发放月份以当地人社部门最新通知为准。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="高温津贴计算表单">
+      <div class="field">
+        <label for="input-province">省份预设（2026 口径）</label>
+        <select id="input-province" class="field-select">
+          {
+            HEAT_PRESETS.map((p) => (
+              <option value={p.province}>
+                {`${p.province} — ${p.rate} 元/${p.mode === "monthly" ? "月" : "日"} × ${p.duration}${p.mode === "monthly" ? " 个月" : " 天"}`}
+              </option>
+            ))
+          }
+          <option value="custom">自定义…</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-mode">计发方式</label>
+        <select
+          id="input-mode"
+          class="field-select"
+          aria-describedby="field-error-mode"
+        >
+          <option value="monthly">按月发放（元/月）</option>
+          <option value="daily">按日发放（元/日）</option>
+        </select>
+        <p class="field-error" id="field-error-mode" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-rate">发放标准（元）</label>
+        <input
+          id="input-rate"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 300"
+          aria-describedby="field-error-rate"
+        />
+        <p class="field-error" id="field-error-rate" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-duration"
+          >发放时长（月数 1~12 或天数 1~366，整数）</label
+        >
+        <input
+          id="input-duration"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="例如 4"
+          aria-describedby="field-error-duration"
+        />
+        <p class="field-error" id="field-error-duration" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算津贴
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          选择省份后自动填充该省计发方式（按月/按日）、发放标准与时长；按日省份的天数为估算口径，可按实际出勤修改。
+        </li>
+        <li>
+          也可选「自定义」手动填写标准与时长；点击「计算津贴」查看总额（总额 =
+          标准 × 时长）。
+        </li>
+        <li>
+          结果仅供参考：高温津贴与防暑降温饮料费不得互相冲抵，津贴应纳入工资总额，具体以当地最新通知为准。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算明细</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            按月发放：高温津贴总额 = 当地月标准（元/月）×
+            发放月数；按日发放：总额 = 当地日标准（元/日）× 实际出勤天数。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：上海 300 元/月 × 4 个月（6-9 月）= 1200.00 元；河南 15 元/日 ×
+            88 日（估算）= 1320.00 元；广东 300 元/月 × 5 个月（6-10 月）=
+            1500.00 元。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            室外露天作业与 33℃ 以下室内作业标准可能不同（如浙江室外 300 / 室内
+            200 元/月，河北室外 210 / 室内 155
+            元/月），请按实际作业环境选择标准。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/overtime-pay-cn/">加班费计算器</a></li>
+        <li><a href="/finance/social-insurance-cn/">五险一金计算器</a></li>
+        <li><a href="/finance/income-tax-cn/">个税计算器</a></li>
+        <li><a href="/finance/maternity-allowance-cn/">生育津贴计算器</a></li>
+        <li><a href="/finance/maternity-leave-pay-cn/">产假工资计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，各省高温津贴标准、发放月份与按日估算天数以当地人社部门最新通知及实际出勤为准。
+    </p>
+
+    <CalcJsonLd
+      name="高温津贴计算器"
+      description="免费在线高温津贴计算器：收录上海、江苏、浙江、山东、广东、广西、河南、安徽、海南、河北、贵州、陕西等省 2026 年高温补贴标准（按月/按日），一键填充标准与时长，自动计算高温津贴总额并附发放条件说明。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/heat-subsidy-page.js"></script>
+</BaseLayout>

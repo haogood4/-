@@ -1,0 +1,187 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "加班费计算器" },
+];
+
+const faqItems = [
+  {
+    q: "法定节假日加班 3 倍工资，含不含当天原本的工资？",
+    a: "不含。《劳动法》第四十四条规定的法定休假日 300% 是「另行支付」的加班费，当天原本的正常工资照发——即当天合计可拿到 100% 正常工资 + 300% 加班费，合计相当于约 4 倍日工资的口径。而休息日加班安排补休后不再另发 200% 工资，因为休息日本来不计薪。",
+  },
+  {
+    q: "休息日加班安排了补休，还要发 2 倍工资吗？",
+    a: "不用。《劳动法》第四十四条规定：休息日安排劳动者工作又不能安排补休的，支付不低于工资的 200% 的工资报酬。即休息日加班可优先安排补休；只有无法安排补休时才支付 200% 加班费。而工作日延时加班的 150% 与法定节假日加班的 300% 不能以补休代替，必须支付加班费。",
+  },
+  {
+    q: "月计薪天数 21.75 天是怎么来的？",
+    a: "21.75 =（365 - 104）÷ 12。一年 365 天减去 104 个休息日（52 周 × 2），再除以 12 个月得到月平均计薪天数（劳社部发〔2008〕3 号口径）。法定节假日虽不上班但属于带薪日，因此不从 365 中扣除。日工资 = 月薪 ÷ 21.75，小时工资 = 日工资 ÷ 8。",
+  },
+  {
+    q: "加班费基数按基本工资还是按月薪算？",
+    a: "加班费计算基数原则上按劳动合同约定的月工资标准确定，且不得低于当地最低工资标准；合同约定不明确的，实践中多按劳动者正常出勤月的应得工资（含基本工资、奖金、津贴补贴等）折算。本工具按输入的「月工资」统一折算，实际基数以合同约定与当地人社部门规定为准。",
+  },
+];
+---
+
+<BaseLayout
+  title="加班费计算器 — 在线加班工资 1.5倍 2倍 3倍计算"
+  description="免费在线加班费计算器：按《劳动法》第 44 条与 21.75 月计薪天数折算小时工资，自动按 150%（工作日延时）、200%（休息日未补休）、300%（法定节假日）三档倍数计算加班工资，给出公式代入过程与合计金额。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>加班费计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入月工资与三类加班小时数（工作日延时、休息日未补休、法定节假日），按 1.5
+      倍 / 2 倍 / 3 倍自动测算加班费合计与计算过程。
+    </p>
+    <p class="result-hint">
+      <strong
+        >⚠️
+        计算结果仅供参考，加班费基数与倍数执行以劳动合同约定及当地人社部门规定为准。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="加班费计算表单">
+      <div class="field">
+        <label for="input-salary">月工资（元）</label>
+        <input
+          id="input-salary"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 8000"
+          aria-describedby="field-error-salary"
+        />
+        <p class="field-error" id="field-error-salary" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-h1">工作日延时加班小时数（1.5 倍）</label>
+        <input
+          id="input-h1"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="0"
+          aria-describedby="field-error-h1"
+        />
+        <p class="field-error" id="field-error-h1" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-h2">休息日加班小时数（未补休，2 倍）</label>
+        <input
+          id="input-h2"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="0"
+          aria-describedby="field-error-h2"
+        />
+        <p class="field-error" id="field-error-h2" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-h3">法定节假日加班小时数（3 倍）</label>
+        <input
+          id="input-h3"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="0"
+          aria-describedby="field-error-h3"
+        />
+        <p class="field-error" id="field-error-h3" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算加班费
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填写月工资（默认按劳动合同约定的月工资标准折算基数）。</li>
+        <li>
+          分档填写加班小时数：工作日延时（1.5 倍）、休息日（未补休，2
+          倍）、法定节假日（3 倍）；某档未发生可留空，按 0 计算。
+        </li>
+        <li>
+          点击「计算加班费」查看小时工资、各档加班费与合计；结果仅供参考。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算明细</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            日工资 = 月薪 ÷ 21.75（月计薪天数 =（365 − 104）÷ 12 = 21.75
+            天）；小时工资 = 日工资 ÷ 8。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            工作日延时加班费 = 小时工资 × 150% ×
+            延时小时；休息日加班费（未补休）= 小时工资 × 200% ×
+            小时；法定节假日加班费 = 小时工资 × 300% ×
+            小时；三档合计为加班费总额。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：月薪 8000 元 → 日工资 ≈ 367.82 元，小时工资 ≈ 45.98 元；延时 10
+            小时 ≈ 689.66 元 + 休息日 8 小时 ≈ 735.63 元 + 节假日 8 小时 ≈
+            1103.45 元，合计 ≈ 2528.74 元。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/social-insurance-cn/">五险一金计算器</a></li>
+        <li><a href="/finance/income-tax-cn/">个税计算器</a></li>
+        <li><a href="/finance/heat-subsidy-cn/">高温津贴计算器</a></li>
+        <li><a href="/finance/maternity-allowance-cn/">生育津贴计算器</a></li>
+        <li><a href="/finance/maternity-leave-pay-cn/">产假工资计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，实际加班工资以用人单位执行口径与当地人社部门规定为准；实行特殊工时制度的岗位另有规则。
+    </p>
+
+    <CalcJsonLd
+      name="加班费计算器"
+      description="免费在线加班费计算器：按《劳动法》第 44 条与 21.75 月计薪天数折算小时工资，自动按 150%（工作日延时）、200%（休息日未补休）、300%（法定节假日）三档倍数计算加班工资，给出公式代入过程与合计金额。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/overtime-pay-page.js"></script>
+</BaseLayout>

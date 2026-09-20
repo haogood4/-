@@ -1,0 +1,188 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "年终奖计税方式对比计算器" },
+];
+
+const description =
+  "免费在线年终奖计税方式对比计算器：依据财政部 税务总局公告 2023 年第 30 号（单独计税延续至 2027-12-31），一键对比全年一次性奖金单独计税与并入综合所得计税的税额差异，给出推荐方案、可省金额与两张税率表代入明细。";
+
+const faqItems = [
+  {
+    q: "年终奖单独计税政策执行到什么时候？",
+    a: "依据财政部 税务总局公告 2023 年第 30 号，全年一次性奖金单独计税政策延续执行至 2027 年 12 月 31 日；在此期间纳税人可按年选择单独计税或并入综合所得，到期后以新政策为准。",
+  },
+  {
+    q: "为何并入综合所得有时更划算？",
+    a: "当综合所得应纳税所得额较低（甚至为 0 或负数，即扣除 6 万元基本减除费用与专项扣除、专项附加扣除后无需缴税）时，并入后奖金从 3% 起步的年度税率表计税，往往低于单独计税按月度表跳档后的税额；高收入人群则通常单独计税更优。",
+  },
+  {
+    q: "单独计税的「税率跳档」陷阱是什么？",
+    a: "单独计税按年终奖 ÷ 12 定档、速算扣除数只减一次，存在临界点多发一元到手反而变少：年终奖 36000 元税 1080 元，36001 元跳入 10% 档税 3390.10 元，多发 1 元多缴 2310.10 元；同理 144000/144001、300000/300001 等临界点附近应避开。",
+  },
+  {
+    q: "综合所得应纳税所得额怎么填？",
+    a: "= 年收入 − 6 万元基本减除费用 − 三险一金等专项扣除 − 专项附加扣除 − 其他扣除后的余额。不确定可先按 0 试算（表示综合所得无需缴税），再按实际数调整；填 0 时并入计税通常更划算。",
+  },
+];
+---
+
+<BaseLayout
+  title="年终奖计税方式对比 — 单独计税与并入综合所得哪个划算"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>年终奖计税方式对比计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入年终奖金额与综合所得应纳税所得额，一键对比「单独计税」（财政部
+      税务总局公告 2023 年第 30 号，延续至
+      2027-12-31）与「并入综合所得」两种方式的税额差异，给出推荐方案与可省金额。
+    </p>
+
+    <form
+      id="calc-form"
+      class="card"
+      novalidate
+      aria-label="年终奖计税方式对比表单"
+    >
+      <div class="field">
+        <label for="input-bonus">年终奖金额（¥）</label>
+        <input
+          id="input-bonus"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 36000"
+          aria-describedby="field-error-bonus"
+        />
+        <p class="field-error" id="field-error-bonus" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-taxable">综合所得应纳税所得额（¥）</label>
+        <input
+          id="input-taxable"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="如 50000"
+          aria-describedby="field-error-taxable"
+        />
+        <p class="field-hint">
+          = 年收入 − 6 万起征点 − 专项扣除（三险一金）− 专项附加扣除等；填 0
+          表示综合所得无需缴税。
+        </p>
+        <p class="field-error" id="field-error-taxable" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          对比计税方式
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <p class="result-hint">
+      <strong
+        >⚠️
+        计算结果仅供参考，不构成税务建议；实际申报以国家税务总局「个人所得税」APP
+        汇算清缴结果为准。</strong
+      >
+    </p>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          填写年终奖金额（0.01~1000 万元，最多 2
+          位小数）与综合所得应纳税所得额（可为 0）。
+        </li>
+        <li>
+          点击「对比计税方式」查看单独计税税额、并入综合所得的实际增量税额、推荐方案与可省金额。
+        </li>
+        <li>
+          结果仅供参考；两处税率表均为现行口径，政策调整或个人扣除变化后请重新测算。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">两张税率表关键档位与公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            <strong
+              >单独计税（月度表，按年终奖 ÷ 12 查档，速算扣除数只减一次）</strong
+            >：≤3000→3%；≤12000→10%（速算 210）；≤25000→20%（速算
+            1410）；≤35000→25%（速算 2660）；≤55000→30%（速算
+            4410）；≤80000→35%（速算 7160）；&gt;80000→45%（速算 15160）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            <strong>并入综合所得（年度表）</strong
+            >：≤36000→3%；≤144000→10%（速算 2520）；≤300000→20%（速算
+            16920）；≤420000→25%（速算 31920）；≤660000→30%（速算
+            52920）；≤960000→35%（速算 85920）；&gt;960000→45%（速算 181920）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            单独计税税额 = 年终奖 × 月度表税率 − 速算扣除数（只减一次，不乘
+            12）；并入实际多缴 =（综合所得 + 年终奖）按年度表税额 −
+            综合所得单独按年度表税额。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：年终奖 36000、综合所得应纳税所得额 50000——单独计税 36000 × 3% =
+            ¥1080.00；并入多缴 86000 × 10% − 2520 −（50000 × 10% − 2520）=
+            ¥3600.00 → 建议单独计税，可省 ¥2520.00。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/bonus-tax-cn/">年终奖个税计算器</a></li>
+        <li><a href="/finance/income-tax-cn/">工资个税计算器</a></li>
+        <li><a href="/finance/annualized-return-cn/">年化收益率计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，不构成税务建议；政策依据财政部 税务总局公告 2023 年第 30
+      号（执行至 2027-12-31），以税务机关实际口径为准。
+    </p>
+
+    <CalcJsonLd
+      name="年终奖计税方式对比计算器"
+      description={description}
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/bonus-tax-compare-page.js"
+  ></script>
+</BaseLayout>
