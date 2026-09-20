@@ -1,0 +1,135 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "体积换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些单位？",
+    a: "毫升 / 升 / 立方米 / 立方厘米 / 立方英寸 / 立方英尺 / 美制加仑 / 英制加仑；共 8 个体积（容积）单位互转。",
+  },
+  {
+    q: "1 立方厘米和 1 毫升一样吗？",
+    a: "完全一样。1 cm³ = 1 mL 是精确等值关系，所以 1 立方米 = 1000 升、1 升 = 1000 毫升。",
+  },
+  {
+    q: "美制加仑和英制加仑有什么区别？",
+    a: "1 美制加仑 = 3.785411784 升、1 英制加仑 = 4.54609 升，英制比美制约大 20%。海淘或看海外油耗表时务必先确认口径。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，超出部分以「约」标注；输入数值须在 0 ~ 1e15 之间。鱼缸水体、混凝土方量等日常场景精度完全够用。",
+  },
+];
+---
+
+<BaseLayout
+  title="体积换算计算器 — 升毫升立方米加仑在线互转"
+  description="免费在线体积容积单位换算器：毫升、升、立方米、立方厘米、立方英尺、美制英制加仑一键互转，鱼缸水体、混凝土方量、海淘容量核对都用得上。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>体积换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      8 个体积（容积）单位互转：毫升 / 升 / 立方米 / 立方厘米 / 立方英寸 / 立方英尺 / 美制加仑 / 英制加仑。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="体积换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="m3">立方米 (m³)</option>
+          <option value="ml">毫升 (mL)</option>
+          <option value="l">升 (L)</option>
+          <option value="cm3">立方厘米 (cm³)</option>
+          <option value="in3">立方英寸 (in³)</option>
+          <option value="ft3">立方英尺 (ft³)</option>
+          <option value="usgal">美制加仑 (gal US)</option>
+          <option value="ukgal">英制加仑 (gal UK)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="l">升 (L)</option>
+          <option value="ml">毫升 (mL)</option>
+          <option value="m3">立方米 (m³)</option>
+          <option value="cm3">立方厘米 (cm³)</option>
+          <option value="in3">立方英寸 (in³)</option>
+          <option value="ft3">立方英尺 (ft³)</option>
+          <option value="usgal">美制加仑 (gal US)</option>
+          <option value="ukgal">英制加仑 (gal UK)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>换算结果仅供参考，贸易结算与工程计量请以法定计量器具检定结果为准。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>以「升」为基准：1 毫升 = 0.001 L、1 立方米 = 1000 L、1 立方厘米 = 0.001 L、1 立方英寸 = 0.016387064 L、1 立方英尺 = 28.316846592 L、1 美制加仑 = 3.785411784 L、1 英制加仑 = 4.54609 L。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子</p>
+          <p>例：<code>1 × 3.785411784 ÷ 1 = 约 3.785412</code>（1 美制加仑 → 升）</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/unit/area/">面积换算计算器</a></li>
+  <li><a href="/unit/weight/">重量换算计算器</a></li>
+  <li><a href="/unit/temperature/">温度单位换算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="体积换算计算器" description="免费在线体积容积单位换算器：毫升、升、立方米、立方厘米、立方英尺、美制英制加仑一键互转，鱼缸水体、混凝土方量、海淘容量核对都用得上。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/volume-page.js"></script>
+</BaseLayout>

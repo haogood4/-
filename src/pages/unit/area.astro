@@ -1,0 +1,136 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "面积换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些单位？",
+    a: "公制：平方毫米 / 平方厘米 / 平方米 / 平方公里；市制：亩；以及公顷、平方英寸 / 平方英尺；共 8 个面积单位互转。",
+  },
+  {
+    q: "1 亩等于多少平方米？",
+    a: "1 亩 = 2000/3 平方米 ≈ 666.666667 平方米；1 公顷 = 10000 平方米 = 15 亩。本工具按精确分数换算，不是取 666.7 的近似值。",
+  },
+  {
+    q: "平方英尺和平方米怎么换算？",
+    a: "1 平方英尺 = 0.09290304 平方米、1 平方英寸 = 0.00064516 平方米，均基于国际英寸（25.4 mm）的精确定义。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，超出部分以「约」标注；输入数值须在 0 ~ 1e15 之间。日常看房、量地、装修场景精度完全够用。",
+  },
+];
+---
+
+<BaseLayout
+  title="面积换算计算器 — 平方米亩公顷平方英尺在线互转"
+  description="免费在线面积单位换算器：平方米、亩、公顷、平方公里、平方英尺、平方英寸一键互转，公制、市制、英制全覆盖，买房看房、土地流转、装修量房都用得上。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>面积换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      公制、市制、英制 8 个面积单位互转：平方毫米 / 平方厘米 / 平方米 / 平方公里 / 亩 / 公顷 / 平方英寸 / 平方英尺。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="面积换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="m2">平方米 (m²)</option>
+          <option value="mm2">平方毫米 (mm²)</option>
+          <option value="cm2">平方厘米 (cm²)</option>
+          <option value="mu">亩</option>
+          <option value="ha">公顷</option>
+          <option value="km2">平方公里 (km²)</option>
+          <option value="in2">平方英寸 (in²)</option>
+          <option value="ft2">平方英尺 (ft²)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="mu">亩</option>
+          <option value="m2">平方米 (m²)</option>
+          <option value="mm2">平方毫米 (mm²)</option>
+          <option value="cm2">平方厘米 (cm²)</option>
+          <option value="ha">公顷</option>
+          <option value="km2">平方公里 (km²)</option>
+          <option value="in2">平方英寸 (in²)</option>
+          <option value="ft2">平方英尺 (ft²)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>换算结果仅供参考，土地面积请以官方测绘与不动产登记结果为准。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>以「平方米」为基准：1 平方毫米 = 0.000001 m²、1 平方厘米 = 0.0001 m²、1 亩 = 2000/3 m²（约 666.666667）、1 公顷 = 10000 m²、1 平方公里 = 1000000 m²、1 平方英寸 = 0.00064516 m²、1 平方英尺 = 0.09290304 m²。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子</p>
+          <p>例：<code>100 × 1 ÷ 666.666667 = 约 0.15</code>（100 平方米 → 亩）</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/unit/length/">长度单位换算器</a></li>
+  <li><a href="/unit/volume/">体积换算计算器</a></li>
+  <li><a href="/renovation/floor-area-cn/">房屋面积计算器</a></li>
+  <li><a href="/unit/weight/">重量换算计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="面积换算计算器" description="免费在线面积单位换算器：平方米、亩、公顷、平方公里、平方英尺、平方英寸一键互转，公制、市制、英制全覆盖，买房看房、土地流转、装修量房都用得上。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/area-page.js"></script>
+</BaseLayout>

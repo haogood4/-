@@ -1,0 +1,135 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "时间换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些单位？",
+    a: "毫秒 / 秒 / 分钟 / 小时 / 天 / 周 / 月 / 年；共 8 个时间单位互转。",
+  },
+  {
+    q: "1 个月、1 年按多少天算？",
+    a: "按格里高利历平均值：1 年 = 365.2425 天、1 月 = 30.436875 天（即 1/12 年）。适合长期时长的平均换算；精确到具体日期请改用「日期差计算器」。",
+  },
+  {
+    q: "为什么 1 年不是 365 天？",
+    a: "公历每 4 年一闰、百年不闰、四百年再闰，平均年长为 365.2425 天。若按 365 天平年换算，每 4 年会累计约 1 天误差。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，超出部分以「约」标注；输入数值须在 0 ~ 1e15 之间。工时统计、存储时长、课时折算等场景精度完全够用。",
+  },
+];
+---
+
+<BaseLayout
+  title="时间换算计算器 — 时分天周年秒在线互转"
+  description="免费在线时间单位换算器：毫秒、秒、分钟、小时、天、周、月、年一键互转，月年按格里高利历平均值计算，工时统计、存储时长、课时折算都用得上。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>时间换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      8 个时间单位互转：毫秒 / 秒 / 分钟 / 小时 / 天 / 周 / 月 / 年（月、年按格里高利历平均值）。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="时间换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="h">小时 (h)</option>
+          <option value="ms">毫秒 (ms)</option>
+          <option value="s">秒 (s)</option>
+          <option value="min">分钟 (min)</option>
+          <option value="d">天</option>
+          <option value="wk">周</option>
+          <option value="month">月（平均）</option>
+          <option value="yr">年（平均）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="min">分钟 (min)</option>
+          <option value="ms">毫秒 (ms)</option>
+          <option value="s">秒 (s)</option>
+          <option value="h">小时 (h)</option>
+          <option value="d">天</option>
+          <option value="wk">周</option>
+          <option value="month">月（平均）</option>
+          <option value="yr">年（平均）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>月、年为历法平均值，合同租期、妊娠周期等请按具体日历日期核算，结果仅供参考。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>以「秒」为基准：1 毫秒 = 0.001 s、1 分钟 = 60 s、1 小时 = 3600 s、1 天 = 86400 s、1 周 = 604800 s、1 月 = 2629746 s、1 年 = 31556952 s。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子</p>
+          <p>例：<code>100 × 3600 ÷ 86400 = 约 4.166667</code>（100 小时 → 天）</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/dev/timestamp/">时间戳转换</a></li>
+  <li><a href="/daily/date-diff/">日期差计算器</a></li>
+  <li><a href="/unit/speed/">速度换算计算器</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="时间换算计算器" description="免费在线时间单位换算器：毫秒、秒、分钟、小时、天、周、月、年一键互转，月年按格里高利历平均值计算，工时统计、存储时长、课时折算都用得上。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/time-page.js"></script>
+</BaseLayout>

@@ -1,0 +1,139 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "存储容量换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "为什么 1TB 硬盘只显示约 931GB？",
+    a: "厂商按十进制标称（1 TB = 10¹² 字节），而 Windows 按二进制 GiB 显示（1 GiB = 2³⁰ 字节）。1 TB ≈ 931.322575 GiB，并非硬盘缩水。",
+  },
+  {
+    q: "KB 和 KiB 有什么区别？",
+    a: "1 KB = 1000 字节（十进制 SI），1 KiB = 1024 字节（二进制 IEC）；MB 与 MiB、GB 与 GiB 同理。本工具两种口径都支持，可互转核对。",
+  },
+  {
+    q: "比特和字节怎么换算？",
+    a: "1 字节 = 8 比特（bit）。网络带宽常用 Mbps（兆比特每秒），文件传输速度常用 MB/s（兆字节每秒），100 Mbps 理论上限约 12.5 MB/s。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，超出部分以「约」标注；输入数值须在 0 ~ 1e15 之间，覆盖从比特到 TB/TiB 的常见场景。",
+  },
+];
+---
+
+<BaseLayout
+  title="存储容量换算计算器 — GB GiB TB KB字节在线互转"
+  description="免费在线存储容量换算器：比特、字节、KB、MB、GB、TB、KiB、MiB、GiB、TiB 一键互转，十进制与二进制双口径，解答硬盘与手机存储容量差异。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>存储容量换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      10 个存储单位互转：比特 / 字节 / KB / MB / GB / TB / KiB / MiB / GiB / TiB，十进制与二进制口径全覆盖。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="存储容量换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="gb">GB（十进制）</option>
+          <option value="bit">比特 (bit)</option>
+          <option value="b">字节 (B)</option>
+          <option value="kb">KB</option>
+          <option value="mb">MB</option>
+          <option value="tb">TB</option>
+          <option value="kib">KiB（二进制）</option>
+          <option value="mib">MiB（二进制）</option>
+          <option value="gib">GiB（二进制）</option>
+          <option value="tib">TiB（二进制）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="gib">GiB（二进制）</option>
+          <option value="bit">比特 (bit)</option>
+          <option value="b">字节 (B)</option>
+          <option value="kb">KB</option>
+          <option value="mb">MB</option>
+          <option value="tb">TB</option>
+          <option value="kib">KiB（二进制）</option>
+          <option value="mib">MiB（二进制）</option>
+          <option value="gb">GB（十进制）</option>
+          <option value="tib">TiB（二进制）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>换算结果仅供参考，云存储与流量套餐计费口径请以服务商协议为准。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>以「字节」为基准：1 比特 = 0.125 B；十进制 1 KB = 10³ B、1 MB = 10⁶ B、1 GB = 10⁹ B、1 TB = 10¹² B；二进制 1 KiB = 2¹⁰ B、1 MiB = 2²⁰ B、1 GiB = 2³⁰ B、1 TiB = 2⁴⁰ B。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子</p>
+          <p>例：<code>1 × 1000000000 ÷ 1073741824 = 约 0.931323</code>（1 GB → GiB）</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/dev/base64/">Base64 编码解码</a></li>
+  <li><a href="/dev/json-formatter/">JSON 格式化</a></li>
+  <li><a href="/efficiency/word-count-cn/">字数统计</a></li>
+      </ul></section>
+  
+    <CalcJsonLd name="存储容量换算计算器" description="免费在线存储容量换算器：比特、字节、KB、MB、GB、TB、KiB、MiB、GiB、TiB 一键互转，十进制与二进制双口径，解答硬盘与手机存储容量差异。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/data-storage-page.js"></script>
+</BaseLayout>

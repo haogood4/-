@@ -6,6 +6,7 @@
 
 ### 新增
 
+- P4 批次 5 个换算工具：面积换算计算器（/unit/area/，8 单位含市制亩）、体积换算计算器（/unit/volume/，8 单位含美制/英制加仑）、速度换算计算器（/unit/speed/，6 单位含节与马赫）、时间换算计算器（/unit/time/，8 单位含月/年按格里高利历平均）、存储容量换算计算器（/unit/data-storage/，10 单位含十进制 KB/MB/GB/TB 与二进制 KiB/MiB/GiB/TiB）；新增通用因子换算引擎 `src/lib/calculators/factor-convert.ts` 复用校验与格式化（+5 工具引擎 +56 单测），后续同类工具可仅提供因子表即可上线
 - 暗色模式第一期（P1-7①）：纯 CSS `@media (prefers-color-scheme: dark)` 覆盖 25 个 token；零 JS、零 CSP 影响、无 FOUC；BaseLayout `<meta theme-color>` 拆为 light/dark 双变体、`color-scheme: light dark`；smoke 断言 12 守 9 组暗色 token 对比度 ≥4.5:1，CSS gzip +0.21KB（6.19 → 6.40KB）。第二期（手动切换开关）仍待人工批复 FOUC + CSP 方案
 - P1-7② 手动切换开关技术方案（`docs/dark-mode-toggle-plan.md`，12 节 / 含三态模型 + 三层架构 + CSP/FOUC 分析 + 性能预算 + 风险登记 + DoD + 业内对比），待项目负责人确认 FOUC 与三态决策点后开工
 - P1-10 法务审核资料包（`docs/legal-review-package.md`，7 节 / 三页骨架 + 数据流图 + Go/No-Go 清单 + 风险登记 + 上线流程），登记为 DS-202609-08 双签项（P1，2026-09-26 截止）
