@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [
   { q: "中文分词准确吗？", a: "本工具采用「滑动窗口 + 频次聚合」的轻量级近似分词策略，会把所有相邻 2~6 字的中文组合都纳入统计；它不是 jieba 等字典分词器，但在 SEO 场景下足以粗筛高频关键词。如需精确分词请使用专业 NLP 工具。" },
   { q: "关键词密度最佳范围是多少？", a: "主流 SEO 经验值为 1% - 3%。低于 1% 可能主题信号不足；高于 3% 易被判为关键词堆砌。建议关注核心关键词密度在 1.5% - 2.5%，同时配合长尾关键词自然分布。" },
@@ -16,6 +17,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"关键字密度分析"}]} />
     <h1>关键字密度分析</h1>
+    <UsageGuide />
     <p class="lead">SEO 内容关键词频率检测 · TOP N 词频与密度百分比</p>
 
     <form id="calc-form" class="card" novalidate>

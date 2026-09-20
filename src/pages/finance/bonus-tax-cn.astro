@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "单独 vs 并入？", a: "2027 年底前可单独计税，通常更优。" }, { q: "年终奖单独计税政策执行到什么时候？", a: "全年一次性奖金单独计税政策已延续至 2027 年 12 月 31 日，申报时请以最新政策为准。" }, { q: "什么是年终奖临界点区间？", a: "按除以 12 确定税率的级距下，存在多发 1 元奖金、到手反而减少的区间，发放时可避开这些跳档点。" }];
 ---
 <BaseLayout title="年终奖个税计算器 — 在线单独计税到手与临界点查询" description="免费在线年终奖个税计算器：按全年一次性奖金单独计税方法自动计算税额与到手金额，支持单独计税与并入综合所得两种方案对比，提示年终奖跳档临界区间。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"年终奖个税计算器"}]} />
     <h1>年终奖个税计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线年终奖个税（单独计税）</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

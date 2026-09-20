@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "盈亏平衡公式？", a: "销量 = 固定成本 / (单价 − 单位变动成本)。" }, { q: "盈亏平衡分析有哪些假设？", a: "假设单价与单位变动成本恒定、固定成本在相关范围内不变；多产品企业应按综合边际贡献率计算。" }, { q: "边际贡献率有什么用？", a: "边际贡献率 =（单价 − 单位变动成本）÷ 单价，表示每 1 元销售额中可用于覆盖固定成本与形成利润的比例。" }];
 ---
 <BaseLayout title="盈亏平衡点计算器 — 在线保本销量与销售额试算" description="免费在线盈亏平衡计算器：输入固定成本、单价与单位变动成本，即时算出保本销量、保本销售额与安全边际，开店预算、新品立项与定价决策的必备测算工具。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"盈亏平衡点计算器"}]} />
     <h1>盈亏平衡点计算器</h1>
+    <UsageGuide />
     <p class="lead">盈亏平衡销量 / 销售额</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

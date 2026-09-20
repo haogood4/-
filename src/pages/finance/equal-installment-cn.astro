@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "等额本息总利息如何计算？", a: "总利息 = 月供 × 总期数 - 贷款本金。" },
     { q: "等额本息 vs 等额本金？", a: "等额本息每月固定，等额本金每月递减，总利息等额本金更少但前期压力大。" }, { q: "等额本息月供公式如何推导？", a: "由年金现值公式得出：月供 = 本金 × 月利率 × (1+月利率)^期数 ÷ [(1+月利率)^期数 − 1]。" }, { q: "等额本息和等额本金哪个划算？", a: "等额本金总利息更少但前期月供高；等额本息月供固定、压力均匀，按现金流状况选择即可。" }];
 ---
@@ -11,6 +12,7 @@ const faqItems = [{ q: "等额本息总利息如何计算？", a: "总利息 = �
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"等额本息计算器"}]} />
     <h1>等额本息计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线等额本息月供计算器</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

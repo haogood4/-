@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "实际年化如何换算？", a: "信用卡分期月费率 0.6% ≈ 实际年化 13% 以上。" }, { q: "为什么实际年化约是名义手续费率的两倍？", a: "手续费按全额本金逐月收取，但实际占用本金逐月递减；按 IRR 折算的实际年化约为名义年费的 1.8 倍上下。" }, { q: "提前还清分期划算吗？", a: "多数银行提前结清仍需支付剩余期数手续费或一次性违约金，办理前请先向发卡行确认结清规则。" }];
 ---
 <BaseLayout title="信用卡分期计算器 — 在线分期月供与实际年化利率换算" description="免费在线信用卡分期计算器：输入分期本金、月手续费率与期数，即时得出月供与总手续费，并按 IRR 口径折算实际年化利率，帮你看清低月费背后的真实资金成本。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"信用卡分期计算器"}]} />
     <h1>信用卡分期计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线信用卡分期月供与实际年化</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

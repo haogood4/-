@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [
   { q: "这个标题字数检测工具能做什么？", a: "输入网站标题或社交媒体文案标题，即时统计 Unicode 字符数、UTF-8 字节数与显示宽度，并对照百度、谷歌、微博、知乎四个平台的标题长度建议给出 OK/WARN/OVER 评级与优化建议。" },
   { q: "字符数、字节数、显示宽度有什么区别？", a: "字符数按 Unicode 码点计（一个汉字或一个 emoji 都算 1）；字节数是 UTF-8 编码占用空间（汉字通常 3 字节、emoji 4 字节）；显示宽度按 CJK/全角字符占 2 格、其余占 1 格估算，更接近屏幕上的实际视觉长度。" },
@@ -16,6 +17,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"标题字数检测"}]} />
     <h1>在线标题字数检测工具</h1>
+    <UsageGuide />
     <p class="lead">字符 / 字节 / 显示宽度统计 · 百度/谷歌/微博/知乎标题长度建议</p>
 
     <form id="calc-form" class="card" novalidate>

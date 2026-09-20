@@ -5,6 +5,7 @@ import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import { CURRENCIES } from "../../lib/calculators/currency-exchange-cn";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [
   { q: "汇率如何获取？", a: "本工具不接入实时行情，用户需手动输入汇率。实时汇率可参考中国银行外汇牌价或新浪财经。" },
   { q: "买入价与卖出价？", a: "买入价（银行买入外币）通常低于卖出价。本工具按用户输入统一汇率计算，不区分买卖。" },
@@ -16,6 +17,7 @@ const opts = CURRENCIES.map(c => `<option value="${c.code}">${c.name} (${c.symbo
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"汇率换算"}]} />
     <h1>汇率换算计算器</h1>
+    <UsageGuide />
     <p class="lead">输入金额与汇率，一键换算目标货币金额。</p>
     <p class="result-hint"><strong>⚠️ 换算结果仅供参考，实际成交价以银行或兑换机构实时报价为准。</strong></p>
     <p class="result-hint"><strong>⚠️ 不接入实时行情，请用户参考中国银行外汇牌价手动输入。</strong></p>

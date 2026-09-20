@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "毛利率公式？", a: "(营收 − 营业成本) / 营收 × 100。" }, { q: "毛利率和净利率有何区别？", a: "毛利率只扣除营业成本；净利率还需扣除期间费用、税金与利息，跨期比较应以同行业口径为准。" }, { q: "哪些因素会拉低毛利率？", a: "原材料涨价、降价促销、产品组合中低毛利品占比上升、产能利用率不足导致的单位成本上升等。" }];
 ---
 <BaseLayout title="毛利率计算器 — 在线毛利润与毛利率快速核算" description="免费在线毛利率计算器：输入营业收入与营业成本，即时算出毛利润与毛利率，支持定价方案快速试算与产品毛利横向对比，财务分析与经营决策的基础工具。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"毛利率计算器"}]} />
     <h1>毛利率计算器</h1>
+    <UsageGuide />
     <p class="lead">毛利率</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

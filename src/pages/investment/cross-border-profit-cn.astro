@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "净利率？", a: "扣除所有成本与平台费后的利润率。" }, { q: "估算未包含哪些成本？", a: "广告费、退货处理费、VAT/关税、汇损与库存滞销未计入，定价决策时建议额外预留缓冲。" }, { q: "如何管理汇率风险？", a: "常见做法包括远期锁汇、及时结汇与多币种账户收支对冲；具体方案请咨询专业机构。" }];
 ---
 <BaseLayout title="跨境电商利润计算器 — 在线单件净利与净利率估算" description="免费在线跨境电商利润计算器：输入售价、采购成本、运费、平台费率与汇率，即时估算单件毛利与净利率，覆盖美元售价人民币成本的主流核算场景，助力选品定价。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"跨境电商利润计算器"}]} />
     <h1>跨境电商利润计算器</h1>
+    <UsageGuide />
     <p class="lead">跨境电商利润估算</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

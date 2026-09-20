@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "硬装 vs 软装？", a: "硬装：水电、墙地、吊顶；软装：家具、家电、装饰。" }, { q: "硬装预算包含哪些项目？", a: "拆改、水电、防水、瓦工、木工、油工及瓷砖地板卫浴门窗等主材；家具家电属于软装范畴。" }, { q: "预算应该预留多少余量？", a: "建议预留总额的 10%–20% 作为备用金；水电改造与隐蔽工程是常见的增项来源。" }];
 ---
 <BaseLayout title="装修预算计算器 — 在线硬装软装费用分配估算" description="免费在线装修预算计算器：按建筑面积与装修单价估算总预算，给出硬装 60% 软装 40% 的分配建议与各阶段费用参考，帮助业主控制预算、对比装修公司报价。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"装修家居"},{label:"装修预算计算器"}]} />
     <h1>装修预算计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线装修预算（硬装 60% + 软装 40%）</p>
     
     <form id="calc-form" class="card" novalidate>

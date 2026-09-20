@@ -5,6 +5,7 @@ import ResultArea from "../../components/ResultArea.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 
 const breadcrumbItems = [
   { label: "首页", href: "/" },
@@ -38,6 +39,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={breadcrumbItems} />
     <h1>日期间隔计算器</h1>
+    <UsageGuide />
     <p class="lead">
       输入开始日期与结束日期，按 UTC 日历算出相差天数（含闰年）。
     </p>

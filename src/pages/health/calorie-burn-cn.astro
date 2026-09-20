@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "MET 是什么？", a: "代谢当量；跑步 9.8 / 走路 3.5 / 骑车 7.5。" }, { q: "估算包含基础代谢吗？", a: "不包含。本工具仅估算运动额外消耗；基础代谢因人而异，减重需结合全天总摄入与总消耗。" }, { q: "力量训练也用 MET 估算吗？", a: "MET 表主要基于有氧运动；力量训练实际消耗受组数、间歇与负荷影响大，估算值仅作粗略参考。" }];
 ---
 <BaseLayout title="卡路里消耗计算器 — 在线 MET 运动热量消耗估算" description="免费在线运动卡路里消耗计算器：按体重、运动时长与 MET 强度值估算跑步、游泳、骑行等运动的热量消耗，辅助减脂饮食计划制定与运动强度管理。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"健康生活"},{label:"卡路里消耗计算器"}]} />
     <h1>卡路里消耗计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线运动卡路里消耗估算</p>
     <p class="result-hint"><strong>⚠️ 估算结果仅供参考，健康疑问请咨询医生或专业营养师。</strong></p>
     <p class="result-hint"><strong>⚠️ 本计算结果不能替代医生诊断。</strong></p>

@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "CIDR？", a: "子网掩码中 1 的位数。" }, { q: "子网掩码和 CIDR 有什么区别？", a: "子网掩码是 32 位点分表示（如 255.255.255.0），CIDR 是前缀长度记法（/24），两者等价可互转。" }, { q: "为什么可用主机数要减 2？", a: "主机位全 0 为网络地址、全 1 为广播地址，均不可分配给主机；/31 点对点链路是例外。" }];
 ---
 <BaseLayout title="IP 子网计算器 — 在线子网掩码 CIDR 可用主机数查询" description="免费在线 IP 子网划分计算器：输入 IP 地址与 CIDR 前缀长度，即时得出网络地址、广播地址、子网掩码、可用主机数与地址范围，网络工程师与计算机网络学习必备。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"IP 子网计算器"}]} />
     <h1>IP 子网计算器</h1>
+    <UsageGuide />
     <p class="lead">IP 子网掩码 / 可用主机数 / CIDR</p>
     
     <form id="calc-form" class="card" novalidate>

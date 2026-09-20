@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "保证金不足？", a: "需追加保证金或减仓，否则强制平仓。" }, { q: "什么是追加保证金？", a: "当账户权益低于维持保证金水平时，期货公司会要求限期补足资金，否则可能被强行平仓；规则以交易所与合同为准。" }, { q: "合约乘数在哪里查？", a: "各品种在期货合约中统一规定（如螺纹钢 10 吨/手）；保证金 = 合约价格 × 乘数 × 手数 × 保证金率。" }];
 ---
 <BaseLayout title="期货保证金计算器 — 在线所需保证金与合约价值试算" description="免费在线期货保证金计算器：输入合约价格、手数、合约乘数与保证金率，即时计算所需保证金与持仓名义价值，商品期货与股指期货开仓前的风险管理工具。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"期货保证金计算器"}]} />
     <h1>期货保证金计算器</h1>
+    <UsageGuide />
     <p class="lead">期货保证金计算</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

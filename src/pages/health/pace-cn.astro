@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "配速单位？", a: "分:秒 / 公里，例如 6'00\" = 6 分钟跑 1 公里。" }, { q: "配速和速度是什么关系？", a: "配速是每公里所需时间（分钟/公里），速度是每小时跑动距离（公里/小时），两者互为倒数；配速 6:00 即时速 10 公里。" }, { q: "如何用配速规划分段成绩？", a: "得到平均配速后按每公里等配速推算分段用时，比赛中对照分段目标保持匀速，避免前快后慢。" }];
 ---
 <BaseLayout title="跑步配速计算器 — 在线配速时速与完赛时间换算" description="免费在线跑步配速计算器：输入距离与完赛时间，即时换算配速（分钟/公里）、时速（公里/小时）与分段用时，帮助跑者设定 5K/10K/半马目标配速并匀速完赛。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"健康生活"},{label:"节拍计算器"}]} />
     <h1>节拍计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线跑步配速计算器</p>
     <p class="result-hint"><strong>⚠️ 本计算结果仅供参考，不能替代医生诊断；训练计划请结合自身状况并咨询专业教练。</strong></p>
     <form id="calc-form" class="card" novalidate>

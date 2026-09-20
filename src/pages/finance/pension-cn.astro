@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "养老金构成？", a: "基础养老金 + 个人账户养老金；本工具为简化估算。" }, { q: "养老金最低缴费年限是如何调整的？", a: "自 2030 年 1 月 1 日起，最低缴费年限由 15 年逐步提高至 20 年，每年提高 6 个月。" }, { q: "估算结果为什么可能与实际差距较大？", a: "本工具按输入的社平工资与缴费基数静态估算，未模拟未来工资增长、个人账户记账利率等变动，结果仅供参考。" }];
 ---
 <BaseLayout title="养老金计算器 — 在线退休工资估算与缴费规划" description="免费在线养老金计算器：输入当前年龄、退休年龄、月薪与当地社平工资，按基础养老金加个人账户公式估算退休后月领金额，辅助规划社保缴费基数与年限。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"养老金计算器"}]} />
     <h1>养老金计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线养老金估算</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

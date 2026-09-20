@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "爆仓价？", a: "维持保证金率触发强平的价格。" }, { q: "爆仓价是什么意思？", a: "指保证金被亏尽、仓位被交易所强制平仓的价格；杠杆越高爆仓价越接近入场价，逐仓与全仓的计算方式不同。" }, { q: "高杠杆有哪些额外风险？", a: "价格波动被杠杆倍数放大，插针行情也可能触发爆仓；本工具估算未计入资金费率与滑点。" }];
 ---
 <BaseLayout title="加密货币仓位计算器 — 在线仓位大小与爆仓价估算" description="免费在线加密货币仓位计算器：输入账户权益、杠杆倍数与入场价，估算可开仓位、名义价值与多空爆仓价，辅助永续合约风险控制，结果仅供参考不构成投资建议。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"加密货币仓位计算器"}]} />
     <h1>加密货币仓位计算器</h1>
+    <UsageGuide />
     <p class="lead">加密货币仓位 + 爆仓价</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

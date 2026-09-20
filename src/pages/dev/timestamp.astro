@@ -5,6 +5,7 @@ import ResultArea from "../../components/ResultArea.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 
 const breadcrumbItems = [
   { label: "首页", href: "/" },
@@ -38,6 +39,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={breadcrumbItems} />
     <h1>时间戳换算计算器</h1>
+    <UsageGuide />
     <p class="lead">
       在 Unix 秒/毫秒与 UTC+8 日期之间互转，便于 API 调试、日志分析。
     </p>

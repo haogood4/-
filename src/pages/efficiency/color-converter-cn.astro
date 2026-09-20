@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [
   { q: "HEX 颜色是什么？", a: "十六进制颜色码，由 # 加 6 位十六进制字符表示（如 #2563eb），是 CSS/HTML 中最常用的颜色格式。前两位表示红、中间两位绿、最后两位蓝。" },
   { q: "RGB 颜色是什么？", a: "由红(R)、绿(G)、蓝(B)三原色按 0~255 强度组合而成（如 rgb(37, 99, 235)），是显示器/图像软件的基础颜色模型。" },
@@ -16,6 +17,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"颜色转换器"}]} />
     <h1>HEX 与 RGB 颜色转换器</h1>
+    <UsageGuide />
     <p class="lead">双向实时互转 · 3 位简写自动展开 · 含颜色预览</p>
 
     <form id="calc-form" class="card" novalidate>

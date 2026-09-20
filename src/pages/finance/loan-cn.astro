@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 
 const faqItems = [
   { q: "贷款计算器与房贷计算器有什么区别？", a: "贷款计算器适用于消费贷、车贷、信用贷等通用贷款；房贷计算器专门针对住房贷款，年限通常 20-30 年。" },
@@ -15,6 +16,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"贷款计算器"}]} />
     <h1>贷款计算器</h1>
+    <UsageGuide />
     <p class="lead">输入贷款本金、年限与年利率，一键计算等额本息月供。</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成贷款建议。实际利率以放贷机构为准。</strong></p>
     <form id="calc-form" class="card" novalidate>

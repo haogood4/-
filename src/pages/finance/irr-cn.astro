@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "IRR 含义？", a: "内部收益率使所有现金流现值之和为零的折现率，常用于投资评估。" }, { q: "IRR 出现多解怎么办？", a: "当现金流符号多次变化时 IRR 可能有多解或无解，此时建议改用 NPV 或修正内部收益率 MIRR 评估。" }, { q: "IRR 能直接比较不同规模的项目吗？", a: "不能。IRR 是相对指标、不反映绝对收益规模，投资额差异大的项目应以 NPV 为主判断。" }];
 ---
 <BaseLayout title="IRR 计算器 — 在线内部收益率现金流试算" description="免费在线 IRR（内部收益率）计算器：输入多期现金流序列，Newton-Raphson 数值法求解 IRR，适用于增额终身寿与年金险收益评估、项目投资决策与基金实际回报测算。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"IRR 内部收益率计算器"}]} />
     <h1>IRR 内部收益率计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线 IRR（内部收益率）计算器，支持现金流序列</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "预产期准吗？", a: "实际分娩日期常与预产期有 ±2 周偏差。" }, { q: "为什么孕周从末次月经算起？", a: "排卵日难以精确确定，产科统一以末次月经首日为妊娠起点，因此推算孕周比实际受孕约早 2 周。" }, { q: "预产期有多准？", a: "仅约 5% 的分娩发生在预产期当天；妊娠 37–42 周内分娩均属足月，具体以产检 B 超核对为准。" }];
 ---
 <BaseLayout title="预产期计算器 — 在线末次月经推算预产期与孕周" description="免费在线预产期计算器：按末次月经首日以奈格尔法则推算预产期、当前孕周与关键产检时间点，帮助准妈妈规划孕期检查，结果仅供参考请以 B 超核对为准。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"健康生活"},{label:"预产期计算器"}]} />
     <h1>预产期计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线预产期计算</p>
     <p class="result-hint"><strong>⚠️ 估算结果仅供参考，请以产检医生的 B 超核对为准。</strong></p>
     <p class="result-hint"><strong>⚠️ 本计算结果不能替代医生诊断。</strong></p>

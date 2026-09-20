@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "涂刷遍数？", a: "新房 2 底 2 面（4 遍），旧房翻 2 遍即可。" }, { q: "乳胶漆一般兑水多少？", a: "内墙漆通常按产品说明加 10%–30% 清水稀释；过度稀释会降低遮盖力与附着力。" }, { q: "一桶漆能刷多大面积？", a: "5L 装理论涂刷约 65 ㎡/单遍（两遍约 32–35 ㎡），实际受墙面平整度与吸收率影响。" }];
 ---
 <BaseLayout title="乳胶漆用量计算器 — 在线墙面漆升数与桶数估算" description="免费在线乳胶漆用量计算器：输入墙面面积、涂刷遍数与每升涂刷面积，估算所需油漆总升数与购买桶数，避免开工缺料或多买浪费，附常见 5L 装涂刷参考。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"装修家居"},{label:"乳胶漆用量计算器"}]} />
     <h1>乳胶漆用量计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线乳胶漆升数与桶数估算</p>
     
     <form id="calc-form" class="card" novalidate>

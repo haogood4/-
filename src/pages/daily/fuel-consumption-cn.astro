@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "百公里油耗如何计算？", a: "百公里油耗 = (耗油量 / 里程) × 100。" }, { q: "实际油耗怎么降下来？", a: "保持标准胎压、避免急加速急刹车、减少长时间怠速、按期保养，都有助于降低平均油耗。" }, { q: "为什么实测油耗和工信部油耗不一致？", a: "工信部油耗在标准工况（如 WLTC）下测得，与实际路况（拥堵、空调、载重、气温）差异较大，通常实际高于官方值。" }];
 ---
 <BaseLayout title="油耗计算器 — 在线计算百公里油耗与每公里油费" description="免费在线油耗计算器：输入加油升数与行驶里程，一键计算百公里油耗、每公里油费与每升可跑公里数，帮助跟踪实际油耗、对比工信部数据并优化驾驶习惯。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"日常工具"},{label:"油耗计算器"}]} />
     <h1>油耗计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线油耗（百公里）计算器</p>
     
     <form id="calc-form" class="card" novalidate>

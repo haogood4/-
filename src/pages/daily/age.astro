@@ -5,6 +5,7 @@ import ResultArea from "../../components/ResultArea.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 
 const breadcrumbItems = [
   { label: "首页", href: "/" },
@@ -38,6 +39,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={breadcrumbItems} />
     <h1>年龄计算器</h1>
+    <UsageGuide />
     <p class="lead">
       输入出生日期与目标日期，按年/月/日逐级比较，精确算周岁（含闰年 2 月 29 日特例）。
     </p>

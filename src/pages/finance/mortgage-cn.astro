@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 
 const breadcrumbItems = [
   { label: "首页", href: "/" },
@@ -37,6 +38,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={breadcrumbItems} />
     <h1>房贷计算器</h1>
+    <UsageGuide />
     <p class="lead">
       输入贷款本金、年限与年利率，一键计算月供与总利息，支持等额本息与等额本金两种方式。
     </p>

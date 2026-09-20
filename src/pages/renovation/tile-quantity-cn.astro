@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "损耗率多少？", a: "常规铺贴 5-10%，复杂拼花 10-15%。" }, { q: "瓷砖数量怎么算？", a: "面积法：铺设面积 ÷ 单片面积 ×（1 + 损耗率）；同一批次一次性买足，后续补货易有色差。" }, { q: "斜铺损耗为什么更高？", a: "斜铺需在墙边大量切割，损耗率一般 8%–15%，大规格砖与复杂拼花按上限估算。" }];
 ---
 <BaseLayout title="瓷砖数量计算器 — 在线用砖量与损耗率估算" description="免费在线瓷砖数量计算器：输入铺设面积、瓷砖长宽与损耗率，即时算出所需片数与总面积，附直铺与斜铺损耗参考值，同批买足避免补货色差。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"装修家居"},{label:"瓷砖数量计算器"}]} />
     <h1>瓷砖数量计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线瓷砖数量 + 损耗估算</p>
     
     <form id="calc-form" class="card" novalidate>

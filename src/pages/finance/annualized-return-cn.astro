@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "年化如何计算？", a: "年化 = ((1 + 总收益)^(365/天数) - 1) × 100。" }, { q: "年化收益率有什么局限？", a: "对短期收益做年化会放大随机性，不代表未来真实年度水平；应结合持有期与回撤综合判断。" }, { q: "为什么年化收益不等于实际到手收益？", a: "年化假设期间收益可按同等水平再投资（复利），实际资金安排往往达不到该假设。" }];
 ---
 <BaseLayout title="年化收益率计算器 — 在线持有收益换算年化" description="免费在线年化收益率计算器：输入持有期总收益率与持有天数，一键换算年化收益率，帮助对比银行理财、基金、定期存款等不同期限产品的真实收益水平。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"年化收益率计算器"}]} />
     <h1>年化收益率计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线年化收益率换算</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

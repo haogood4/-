@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [
   { q: "五险一金缴费基数上下限？", a: "通常以本人上一年度月均工资核定，最低不低于社平工资 60%，最高不超过社平工资 300%。本工具按用户输入作为基数。" },
   { q: "各城市缴费比例差异？", a: "公积金比例因城而异（北京 12%、上海 7%、深圳 5%）；医保、养老、失业国家规定相对统一。" },
@@ -14,6 +15,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"五险一金计算器"}]} />
     <h1>五险一金计算器</h1>
+    <UsageGuide />
     <p class="lead">选择城市与月薪，一键计算个人与公司缴费明细。</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考。实际缴费以当地社保局与公积金中心为准。</strong></p>
     <form id="calc-form" class="card" novalidate>

@@ -133,6 +133,11 @@ console.log("冒烟断言（12 组）：");
     for (const f of walk(abs)) if (f.endsWith("index.html")) pages.push(f);
   }
   const noDisclaimer = pages.filter((f) => !/仅供参考/.test(read(f)));
+  // 使用说明区块守卫：每工具页 h1 后必须含「使用说明」徽章区块
+  const noUsage = pages.filter((f) => {
+    const h = read(f);
+    return !/class="usage-guide"/.test(h) || !/使用说明/.test(h);
+  });
   const noSchema = pages.filter((f) => {
     const h = read(f);
     return !/@type":"SoftwareApplication/.test(h) || !/FAQPage/.test(h);
@@ -176,6 +181,14 @@ console.log("冒烟断言（12 组）：");
     fail(
       "4. 计算器页缺免责声明",
       noDisclaimer
+        .slice(0, 5)
+        .map((f) => relative(DIST, f))
+        .join(" | "),
+    );
+  } else if (noUsage.length > 0) {
+    fail(
+      "4. 计算器页缺使用说明区块",
+      noUsage
         .slice(0, 5)
         .map((f) => relative(DIST, f))
         .join(" | "),

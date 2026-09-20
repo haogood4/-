@@ -5,6 +5,7 @@ import ResultArea from "../../components/ResultArea.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 
 const breadcrumbItems = [
   { label: "首页", href: "/" },
@@ -46,6 +47,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={breadcrumbItems} />
     <h1>JSON 格式化/校验计算器</h1>
+    <UsageGuide />
     <p class="lead">
       粘贴 JSON 文本，一键美化缩进或压缩体积，同时校验语法并提示错误位置。
     </p>

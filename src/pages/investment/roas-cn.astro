@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "ROAS vs ROI？", a: "ROAS = 销售额/广告费；ROI = 利润/广告费。" }, { q: "ROAS 多少算健康？", a: "取决于毛利率：盈亏平衡 ROAS = 1 ÷ 毛利率。例如毛利率 50% 时 ROAS 需大于 2 才不亏损。" }, { q: "ROAS 会高估广告贡献吗？", a: "可能。归因窗口会把部分自然转化计入广告，建议结合整体 GMV 与增量测试综合评估。" }];
 ---
 <BaseLayout title="ROAS 计算器 — 在线广告支出回报率与盈亏线估算" description="免费在线广告 ROAS 计算器：输入广告花费与广告销售额，即时得出 ROAS 与 ROI，结合毛利率可测算盈亏平衡 ROAS 线，电商投放与品牌广告效果评估常用工具。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"广告 ROAS 计算器"}]} />
     <h1>广告 ROAS 计算器</h1>
+    <UsageGuide />
     <p class="lead">广告投放 ROAS / ROI</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

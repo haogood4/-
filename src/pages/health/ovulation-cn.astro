@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "排卵日怎么算？", a: "排卵日 ≈ 下次月经前 14 天。" }, { q: "日历推算法可靠吗？", a: "仅适用于周期规律者；压力、疾病、作息变化都可能使排卵提前或推后，建议结合基础体温与排卵试纸判断。" }, { q: "身体会有哪些排卵信号？", a: "可能出现蛋清样宫颈黏液增多、一侧下腹隐痛、基础体温升高等表现，个体差异较大。" }];
 ---
 <BaseLayout title="排卵期计算器 — 在线排卵日与易孕期窗口推算" description="免费在线排卵期计算器：根据末次月经首日与月经周期长度推算下次排卵日与易孕期窗口，辅助备孕计划与生理期管理，不适合作为避孕或医疗依据。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"健康生活"},{label:"排卵期计算器"}]} />
     <h1>排卵期计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线排卵日估算</p>
     <p class="result-hint"><strong>⚠️ 估算结果仅供参考，不可作为避孕或医疗依据；如有需求请咨询医生。</strong></p>
     <p class="result-hint"><strong>⚠️ 本计算结果不能替代医生诊断。</strong></p>

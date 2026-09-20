@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [
   { q: "支持哪些转换？", a: "支持 5 种：转大写、转小写、去除所有空格（含换行）、去除换行折叠为单行、首尾去空白（含全角空格）。" },
   { q: "会修改原文吗？", a: "不会。原文与结果分离显示，您可以单独复制结果而不影响原文。" },
@@ -16,6 +17,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"文本处理工具"}]} />
     <h1>在线文本处理工具</h1>
+    <UsageGuide />
     <p class="lead">大小写转换 / 去空行 / 首尾去空白 · 本地处理</p>
 
     <form id="calc-form" class="card" novalidate>

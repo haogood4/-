@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [
   { q: "什么是基金定投？", a: "基金定投（DCA）指每月固定金额投资同一只基金，平摊成本降低择时风险，适合长期投资。" },
   { q: "年化 8% 合理吗？", a: "过去十年偏股混合基金年化约 10-12%；保守型投资者可用 6-8% 估算。" },
@@ -14,6 +15,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"基金定投计算器"}]} />
     <h1>基金定投计算器</h1>
+    <UsageGuide />
     <p class="lead">输入每月定投金额、年化收益率与年限，一键计算终值。</p>
     <p class="result-hint"><strong>⚠️ 投资有风险，计算结果仅供参考，不构成投资建议。过往业绩不代表未来。</strong></p>
     <form id="calc-form" class="card" novalidate>

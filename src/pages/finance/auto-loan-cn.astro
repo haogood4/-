@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "车贷首付多少？", a: "常见 20%-30% 首付，本工具计算贷款部分月供。" },
     { q: "车贷年限？", a: "常见 1-5 年，新能源车可至 7 年。" }, { q: "什么是尾款贷（气球贷）？", a: "还款期内月供较小、期末一次性支付大额尾款的方式；月供压力低但期末集中偿付，需评估届时资金安排。" }];
 ---
@@ -11,6 +12,7 @@ const faqItems = [{ q: "车贷首付多少？", a: "常见 20%-30% 首付，本�
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"车贷计算器"}]} />
     <h1>车贷计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线车贷月供计算器</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

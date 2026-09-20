@@ -5,6 +5,7 @@ import ResultArea from "../../components/ResultArea.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 
 const breadcrumbItems = [
   { label: "首页", href: "/" },
@@ -38,6 +39,7 @@ const faqItems = [
   <main id="main">
     <Breadcrumb items={breadcrumbItems} />
     <h1>单价比较计算器</h1>
+    <UsageGuide />
     <p class="lead">
       比较两种包装的商品哪个更划算：分别填入总价与数量，自动算出每件单价并标注更划算方。
     </p>

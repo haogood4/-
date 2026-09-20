@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "FBA 费用构成？", a: "FBA 履约费 + 月度仓储费 + 长期仓储费。" }, { q: "FBA 费用包含哪些？", a: "主要为配送费（按尺寸与重量分段）与月度仓储费（第四季度显著上浮），另可能有长期仓储费、退货处理费等。" }, { q: "尺寸分段如何确定？", a: "按包装后实测重与体积重（长×宽×高÷除数）取较高者归入 Standard/Large 等分段，不同分段配送费差异大。" }];
 ---
 <BaseLayout title="Amazon FBA 费用计算器 — 在线亚马逊配送费与利润估算" description="免费在线 Amazon FBA 费用计算器：按售价、采购成本与商品尺寸估算配送费、仓储费与单件净利，辅助跨境卖家选品评估与定价决策，费用口径以亚马逊官方费率表为准。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"Amazon FBA 费用计算器"}]} />
     <h1>Amazon FBA 费用计算器</h1>
+    <UsageGuide />
     <p class="lead">Amazon FBA 费用估算</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

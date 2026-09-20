@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "行业基准？", a: "电商 2-3%，搜索 5-10%。" }, { q: "微转化和宏转化有什么区别？", a: "宏转化是最终目标（付款/注册），微转化是中间行为（加购/查看详情），分步统计可定位漏斗流失环节。" }, { q: "转化率突然下降先查什么？", a: "先检查页面加载性能与支付链路是否报错，再核对流量结构变化（新渠道低质流量会稀释转化率）。" }];
 ---
 <BaseLayout title="转化率计算器 — 在线 CVR 转化率与转化数换算" description="免费在线转化率计算器：输入访客数与转化数即时计算转化率（CVR），并可反推目标转化所需流量，适用于电商详情页、广告投放与增长漏斗的转化效率分析。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"转化率计算器"}]} />
     <h1>转化率计算器</h1>
+    <UsageGuide />
     <p class="lead">转化率</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

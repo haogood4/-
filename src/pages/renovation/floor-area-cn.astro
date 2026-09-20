@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "套内 vs 建筑面积？", a: "建筑面积含公摊；套内更接近实际可用面积。" }, { q: "套内面积怎么量？", a: "逐间测量净长宽相乘再求和；异形空间拆成矩形分块计算，柱体与门洞按实际扣减。" }, { q: "公摊面积包含什么？", a: "电梯井、楼梯间、设备间等公共部分按规则分摊到户，不同楼栋形态公摊率差异较大。" }];
 ---
 <BaseLayout title="房屋面积计算器 — 在线房间面积求和套内面积估算" description="免费在线房屋面积计算器：逐间输入面积自动求和得出套内面积，支持套内与建筑面积换算及公摊率估算，装修报价核对与房产面积验算的实用工具。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"装修家居"},{label:"房屋面积计算器"}]} />
     <h1>房屋面积计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线各房间面积求和</p>
     
     <form id="calc-form" class="card" novalidate>

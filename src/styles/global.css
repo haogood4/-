@@ -363,6 +363,40 @@ h2 {
   color: var(--color-text-on-primary);
 }
 
+/* 使用说明区块（每工具页 h1 后）：标题四字徽章高亮，确保醒目 */
+.usage-guide {
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--radius-md);
+}
+.usage-title {
+  margin: 0 0 var(--space-3);
+  font-size: inherit;
+  font-weight: inherit;
+}
+.usage-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: var(--color-text-on-primary);
+  background-color: var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+.usage-steps {
+  margin: 0;
+  padding-left: 1.4em;
+  color: var(--color-text-primary);
+  line-height: 1.8;
+}
+.usage-steps li + li {
+  margin-top: var(--space-1);
+}
+
 /* P2-10 首页「我的工具」区块 */
 .my-tools__row {
   display: flex;

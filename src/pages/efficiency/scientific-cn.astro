@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "支持哪些函数？", a: "sin/cos/tan/log/ln/exp/sqrt/abs/pi/e。" }, { q: "三角函数用角度还是弧度？", a: "本工具按弧度制计算三角函数；角度转弧度需乘以 π/180。" }, { q: "表达式运算顺序是怎样的？", a: "遵循数学惯例：括号优先，其次函数与幂，再乘除，最后加减。" }];
 ---
 <BaseLayout title="科学计算器 — 在线三角函数对数幂运算计算" description="免费在线科学计算器：支持三角函数（弧度制）、常用对数、自然对数、指数、平方根、绝对值与 π/e 常量，表达式按标准运算优先级求值，学生与工程人员随身工具。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"科学计算器"}]} />
     <h1>科学计算器</h1>
+    <UsageGuide />
     <p class="lead">在线科学计算器（三角/对数/指数）</p>
     
     <form id="calc-form" class="card" novalidate>

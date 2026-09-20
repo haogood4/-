@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "中英文？", a: "中文按字符计数。" }, { q: "中文和英文分别怎么计数？", a: "中文字符按字计数，英文按连续字母串计为单词，数字串计为一个单词。" }, { q: "空格和换行算不算字符数？", a: "总字符数包含空格与换行；需要排除时请参考结果中的不含空格统计。" }];
 ---
 <BaseLayout title="字数统计工具 — 在线统计中文字数英文单词与行数" description="免费在线字数统计：粘贴文本即时统计总字符数（含/不含空格）、中文字数、英文单词数、段落数与行数，适合作文限字、文案字数核对与字幕排版检查。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"字数统计计算器"}]} />
     <h1>字数统计计算器</h1>
+    <UsageGuide />
     <p class="lead">字符 / 单词 / 段落 / 行数统计</p>
     
     <form id="calc-form" class="card" novalidate>

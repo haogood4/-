@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "BS 假设？", a: "对数正态分布、无风险利率恒定、波动率恒定、无交易成本。" }, { q: "什么是隐含波动率？", a: "使期权市场价格等于 BS 理论价格的波动率，反映市场对未来波动的预期，是期权贵贱的核心指标。" }, { q: "BS 模型有哪些局限？", a: "假设价格对数正态分布、波动率恒定且无交易成本，会低估极端行情概率；主要适用于欧式期权。" }];
 ---
 <BaseLayout title="期权定价计算器 — 在线 Black-Scholes 模型试算" description="免费在线 Black-Scholes 期权定价计算器：输入标的价格、行权价、无风险利率、波动率与到期时间，估算看涨/看跌期权理论价格与希腊字母，为期权交易提供参考。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"投资专业"},{label:"期权定价计算器"}]} />
     <h1>期权定价计算器</h1>
+    <UsageGuide />
     <p class="lead">Black-Scholes 期权定价</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>

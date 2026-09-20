@@ -4,12 +4,14 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "支持小数？", a: "本工具仅支持整数转换。" }, { q: "十六进制常用于哪些场景？", a: "颜色代码（如 #RRGGBB）、内存地址与汇编指令等广泛使用十六进制，每 1 位恰好对应 4 位二进制。" }, { q: "二进制负数如何表示？", a: "计算机中通常用补码：对绝对值按位取反再加 1。例如 8 位下 −1 表示为 11111111。" }];
 ---
 <BaseLayout title="进制转换计算器 — 在线二进制八进制十进制十六进制互转" description="免费在线进制转换工具：支持二进制、八进制、十进制、十六进制任意互转，结果同时展示四种进制形式，适合编程学习、颜色代码换算与内存地址计算。" >
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"效率工具"},{label:"进制转换计算器"}]} />
     <h1>进制转换计算器</h1>
+    <UsageGuide />
     <p class="lead">二进制/八进制/十进制/十六进制互转</p>
     
     <form id="calc-form" class="card" novalidate>

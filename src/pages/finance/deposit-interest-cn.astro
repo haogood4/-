@@ -4,6 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
 const faqItems = [{ q: "单利 vs 复利？", a: "单利仅本金产生利息；复利将每期利息加入下期本金。" },
     { q: "大额存单？", a: "通常 20 万起，年利率高于普通定期 30-50bp。" }, { q: "定期存款提前支取怎么计息？", a: "提前支取部分一般按支取日挂牌活期利率计息，剩余部分按原利率、原到期日继续计息。" }, { q: "存款保险限额是多少？", a: "《存款保险条例》下同一家银行单个存款人本金加利息最高偿付 50 万元。" }];
 ---
@@ -11,6 +12,7 @@ const faqItems = [{ q: "单利 vs 复利？", a: "单利仅本金产生利息；
   <main id="main">
     <Breadcrumb items={[{label:"首页",href:"/"},{label:"金融理财"},{label:"存款利息计算器"}]} />
     <h1>存款利息计算器</h1>
+    <UsageGuide />
     <p class="lead">免费在线存款利息计算器（单利/复利）</p>
     <p class="result-hint"><strong>⚠️ 计算结果仅供参考，不构成投资/理财/税务建议。</strong></p>
     <form id="calc-form" class="card" novalidate>
