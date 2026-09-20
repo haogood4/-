@@ -70,8 +70,11 @@ const pageCategory = CATEGORY_MAP[firstSegment];
     <meta name="twitter:image" content={ogImageURL.href} />
 
     <!-- 品牌与浏览器元信息 -->
-    <meta name="theme-color" content="#0f766e" />
-    <meta name="color-scheme" content="light" />
+    <!-- P1-7①：声明跟随系统暗色；CSS 媒体查询同步覆盖 token；
+         Chrome/Safari 表单控件与滚动条自动适配暗色 UA 风格 -->
+    <meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c0a09" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="alternate" type="application/rss+xml" title="计算器大全 — 知识库与政策资讯" href="/rss.xml" />

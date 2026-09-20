@@ -95,6 +95,59 @@
 }
 
 /* ------------------------------------------------------------
+   1b) dark scheme — @media (prefers-color-scheme: dark)
+   P1-7① 纯 CSS 暗色跟随：零 JS、零 CSP 影响、无 FOUC
+   仅覆盖正文与交互 token；分类/品牌语义保持一致。
+   验收：9 组对比度均 ≥4.5:1（详见 CHANGELOG/交付说明）
+   ------------------------------------------------------------ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 品牌：primary 提亮（teal-400 系），保证深底链接对比度 */
+    --color-primary: #2dd4bf;
+    --color-primary-strong: #5eead4;
+    --color-primary-deep: #99f6e4;
+    --color-primary-soft: #134e4a;
+    --color-primary-faint: #0f2d2a;
+
+    --color-accent-warm: #fbbf24;
+    --color-accent-warm-soft: #422006;
+
+    /* 背景与文字：暗底 + 高对比文字 */
+    --color-bg-page: #0c0a09;
+    --color-bg-surface: #1c1917;
+    --color-bg-subtle: #292524;
+    --color-text-primary: #f5f5f4;
+    --color-text-secondary: #d6d3d1;
+    --color-text-muted: #a8a29e;
+    --color-border: #3f3f3f;
+    --color-border-strong: #57534e;
+    --color-error: #fca5a5;
+    --color-success: #86efac;
+
+    /* 语义色：暗底适配（深紫/暖橙保持可读） */
+    --color-danger: #f87171;
+    --color-danger-bg: #2a1212;
+    --color-danger-text: #fecaca;
+    --color-danger-text-strong: #fee2e2;
+    --color-warning: #fbbf24;
+    --color-warning-bg: #2a1f08;
+    --color-warning-border: #92400e;
+    --color-warning-text: #fde68a;
+    --color-warning-text-strong: #fef3c7;
+    --color-bg-muted: #1c1917;
+    /* 按钮/链接文字反转为深底（与浅底白对比相反，保持对比度） */
+    --color-text-on-primary: #0c0a09;
+
+    /* 阴影：暗底加深（叠加深色而非黑色 → 与暗色调融合） */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+
+    color-scheme: dark;
+  }
+}
+
+/* ------------------------------------------------------------
    2) reset / base —— 重置与基础
    ------------------------------------------------------------ */
 *,

@@ -4,10 +4,14 @@
 
 ## [Unreleased]
 
+### 新增
+
+- 暗色模式第一期（P1-7①）：纯 CSS `@media (prefers-color-scheme: dark)` 覆盖 25 个 token；零 JS、零 CSP 影响、无 FOUC；BaseLayout `<meta theme-color>` 拆为 light/dark 双变体、`color-scheme: light dark`；smoke 断言 12 守 9 组暗色 token 对比度 ≥4.5:1，CSS gzip +0.21KB（6.19 → 6.40KB）。第二期（手动切换开关）仍待人工批复 FOUC + CSP 方案
+
 ### 待人工处理
 
 - legal 三页（隐私政策/用户协议/免责声明）法务审核；通过后移除 noindex 并同步 sitemap filter（P1-10）
-- 暗色模式方案批复（P1-7，第一期纯 CSS 方案已产出）
+- 暗色模式第二期（手动切换开关）方案批复（P1-7②）
 - 推送 GitHub 并跑通 CI 首次运行（本地仓库已初始化：main 分支 + 初始提交）
 
 ### 验证

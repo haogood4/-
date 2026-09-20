@@ -41,7 +41,7 @@ function urlToPath(href) {
   return null;
 }
 
-console.log("冒烟断言（11 组）：");
+console.log("冒烟断言（12 组）：");
 
 // ── 1. 页面总数 = 75（71 + legal 三页骨架 + 搜索页） ─────────
 {
@@ -506,9 +506,89 @@ console.log("冒烟断言（11 组）：");
   }
 }
 
+// ── 12. P1-7① 暗色跟随：媒体查询存在 + BaseLayout 双 theme-color + 暗色对比度 ─
+// 零 JS/零 CSP：仅靠 @media (prefers-color-scheme: dark) 覆盖 :root 变量。
+// 验收：暗色下 9 组 token 对比度 ≥4.5:1；HTML 不增内联脚本。
+{
+  const fs2 = read(join(DIST, "index.html"));
+  // 扫描全部 CSS 文件（暗色规则可能位于 BaseLayout.css 而非首页同 chunk）
+  const cssFiles = allFiles.filter(
+    (f) => f.includes("/_astro/") && f.endsWith(".css"),
+  );
+  const css = cssFiles.map((f) => read(f)).join("\n");
+  const hasDarkQuery =
+    /@media\s*\(prefers-color-scheme:\s*dark\)\s*\{:root\s*\{[^}]*--color-primary\s*:/s.test(
+      css,
+    ) ||
+    // 兼容 Astro 构建后 CSS 压缩为单行（无空格）的形态
+    /@media\(prefers-color-scheme:dark\)\{:root\{[^}]*--color-primary:/s.test(css);
+  const hasDarkScheme = /media="\(prefers-color-scheme:\s*dark\)"/.test(fs2);
+  const hasLightScheme = /media="\(prefers-color-scheme:\s*light\)"/.test(fs2);
+  const hasColorScheme = /name="color-scheme"\s+content="light\s+dark"/.test(fs2);
+  // 暗色 token 对比度复算（与断言 11 同样 9 组，按暗色映射）
+  // ratio/lum 与断言 11 同实现（独立定义避开 no-undef 跨块作用域）
+  function lum(hex) {
+    const m = hex
+      .replace("#", "")
+      .match(/.{2}/g)
+      .map((x) => parseInt(x, 16) / 255);
+    const f = (x) =>
+      x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+    return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]);
+  }
+  function ratio(a, b) {
+    const la = lum(a),
+      lb = lum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  const dark = {
+    text: "#f5f5f4",
+    page: "#0c0a09",
+    muted: "#d6d3d1",
+    soft: "#134e4a",
+    onPrimary: "#0c0a09",
+    prim: "#2dd4bf",
+    primStrong: "#5eead4",
+    errorText: "#fee2e2",
+    errorBg: "#2a1212",
+    successText: "#86efac",
+    successBg: "#0f2d2a",
+    warnText: "#fde68a",
+    warnBg: "#2a1f08",
+  };
+  const darkPairs = [
+    ["text", "page"],
+    ["muted", "page"],
+    ["prim", "page"],
+    ["text", "soft"],
+    ["onPrimary", "prim"],
+    ["onPrimary", "primStrong"],
+    ["errorText", "errorBg"],
+    ["successText", "successBg"],
+    ["warnText", "warnBg"],
+  ];
+  const darkFails = [];
+  for (const [f, b] of darkPairs) {
+    if (ratio(dark[f], dark[b]) < 4.5)
+      darkFails.push(`${f}/${b}=${ratio(dark[f], dark[b]).toFixed(2)}`);
+  }
+  if (!hasDarkQuery)
+    fail("12. 暗色 CSS 媒体查询缺失", "未在 CSS 中找到 prefers-color-scheme:dark 覆盖 :root");
+  else if (!hasDarkScheme || !hasLightScheme)
+    fail("12. BaseLayout theme-color 双变体缺失", `dark:${hasDarkScheme} light:${hasLightScheme}`);
+  else if (!hasColorScheme)
+    fail("12. color-scheme 未声明 light dark", "仅单值声明");
+  else if (darkFails.length)
+    fail("12. 暗色 token 对比度不达标", darkFails.join(", "));
+  else
+    pass(
+      `12. P1-7① 暗色跟随（媒体查询 + 双 theme-color + color-scheme light dark + 9 组 ≥4.5:1）`,
+    );
+}
+
 console.log(
   failures.length === 0
-    ? "\nSMOKE PASS: 11/11"
+    ? "\nSMOKE PASS: 12/12"
     : `\nSMOKE FAIL: ${failures.length} 组未通过`,
 );
 process.exit(failures.length === 0 ? 0 : 1);
