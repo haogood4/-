@@ -6,3 +6,4 @@ DS-202609-04,个税篇复核（大病 8 万、删合并申报）,src/content/art
 DS-202609-05,医保篇复核（删城市限额表、划入规则）,src/content/articles/medical-insurance-personal-account-2026.md,P1,2026-09-19,待首签,政策研究员（待指定姓名）,主编 + 法务（金融/健康类必签）,2026-09-26,./2026-09/medical-insurance-personal-account-2026-verification.md
 DS-202609-07,批次报告 PV-202609-01 主编+法务签署,docs/policy-verifications/2026-09/policy-verification-report.md,P1,2026-09-19,待首签,政策研究员（待指定姓名）,主编 + 法务,2026-09-26,./2026-09/policy-verification-report.md
 DS-202609-06,养老金篇复核（6 类领取、3% 计税、扩容）,src/content/articles/personal-pension-fully-implemented.md,P2,2026-09-19,待首签,政策研究员（待指定姓名）,主编 + 法务（金融/健康类必签）,2026-10-03,./2026-09/personal-pension-fully-implemented-verification.md
+DS-202609-08,legal 三页法务审核（隐私政策/用户协议/免责声明）,src/pages/legal/{privacy,terms,disclaimer}.astro,P1,2026-09-20,待首签（资料包已就位）,项目负责人（首签）,法务（二签/终签）,2026-09-26,../../../docs/legal-review-package.md

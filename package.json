@@ -14,6 +14,7 @@
     "mcp:check": "node scripts/check-mcp-json.mjs",
     "bundle:check": "node scripts/check-bundle-size.mjs",
     "smoke": "node scripts/smoke-dist.mjs",
+    "astro:probe": "node scripts/check-astro-fix.mjs",
     "verify:dist": "pnpm build && pnpm smoke",
     "predeploy": "node scripts/check-site-url.mjs && pnpm verify",
     "predeploy:report": "node scripts/check-site-url.mjs && node -e \"const o={timestamp:new Date().toISOString(),site:process.env.PUBLIC_SITE_URL||'(未设置)',node:process.version,pnpm:'>=9',astro:require('astro/package.json').version};console.log(JSON.stringify(o,null,2))\"",

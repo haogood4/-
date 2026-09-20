@@ -134,7 +134,7 @@ AI 的每轮交付必须逐项通过以下可验证标准。这些是**硬门槛
 3. **代码健康**：提取 `formatResultToDom()` 共享助手消除 15+ 处 `as any` 桥接重复；清理死代码与未使用 CSS
 4. **用户体验**：暗色模式第一期已完成（`@media (prefers-color-scheme: dark)` 纯 CSS 覆盖，零 JS/CSP）；第二期手动切换开关待人工批复；站内搜索（构建期 JSON 索引 + 前端模糊匹配，零依赖）、收藏/最近使用（localStorage）
 5. **SEO 增量**：RSS feed（@astrojs/rss）、首页硬编码计数改为构建期从数据源读取、内链自动化检查
-6. **测试纵深**：Playwright 冒烟套件（10 条关键路径）、Astro 组件 container API 测试
+6. **测试纵深**：Playwright 冒烟套件（10 条关键路径）、Astro 组件 container API 测试；P3-15 Content Collections 回归计划与 astro:probe 探针已就位（Astro 7 ≥7.3.4 即触发）
 7. **算法/计算正确性**：新计算器公式须双源交叉验证（权威教材/官方文件）；浮点金额计算一律先转「分」整数运算或使用整数分单位，杜绝 `0.1+0.2` 类误差进入展示层
 
 **负面清单（AI 不得做）**：不引入 React/Vue 等水合框架、不加后端/API、不做用户账号体系、不做个性化推荐、不加第三方统计脚本（隐私决策留人工）、不批量生成未经核对的政策类内容、不改设计 token 语义、不删除 legal 页面与免责声明。
@@ -162,7 +162,7 @@ AI 的每轮交付必须逐项通过以下可验证标准。这些是**硬门槛
 - [x] P2-12 RSS feed｜预估 3h｜✅ 2026-09-20 完成：`@astrojs/rss@4.0.19`（devDependency，构建期生成 dist/rss.xml，11 条全量文章按更新倒序）+ 端点 `src/pages/rss.xml.ts` + BaseLayout `<link rel="alternate">` 全站可发现；smoke 断言 8 扩展校验 RSS 条目数与声明；注：v4 `trailingSlash` 为 boolean（传字符串即构建失败）
 - [x] P2-13 首页计数去硬编码（从 ARTICLES/HUBS 读取）｜预估 2h｜✅ 2026-09-20 完成：知识库「N 篇」（type=article 计数）与场景指南「N 个场景」（HUBS.length）改为构建期读取；首页 title「50+」为营销约数保留
 - [x] P3-14 CONTRIBUTING + CHANGELOG｜预估 3h｜✅ 2026-09-20 完成：`CONTRIBUTING.md`（环境/命令表、7 条铁律含 CSP 红线与脚本管线与 nav.ts 单一来源、新增计算器页 7 步清单含 smoke 计数同步、已知雷区）+ `CHANGELOG.md`（Keep a Changelog 格式；Unreleased 登记 4 项人工待办；0.1.0 汇总全部 P0-P2 新增/变更/修复/移除）；顺带修正 `predeploy:report` 过时硬编码计数（pages:74/tests:248 → 动态读 astro 版本）；两文档过 prettier
-- [ ] P3-15 Astro 7 修复后回归 Content Collections 官方方案｜预估 0.5 天
+- [x] P3-15 回归测试计划与探针就位｜预估 0.5 天｜✅ 2026-09-20 完成：[docs/content-collections-regression.md](file:///home/arch/项目/计算器网站开发/docs/content-collections-regression.md)（9 节 / 触发条件 astro ≥7.3.4 + changelog 关键词 + 工作区复现、11 步回归步骤、回滚预案、DoD）；探针 [scripts/check-astro-fix.mjs](file:///home/arch/项目/计算器网站开发/scripts/check-astro-fix.mjs) + `pnpm astro:probe` 命令（silent exit 0，当前 astro 7.3.3 未达阈值）；verify 全绿、Astro 升级后即可启动回归
 
 ---
 

@@ -7,11 +7,14 @@
 ### 新增
 
 - 暗色模式第一期（P1-7①）：纯 CSS `@media (prefers-color-scheme: dark)` 覆盖 25 个 token；零 JS、零 CSP 影响、无 FOUC；BaseLayout `<meta theme-color>` 拆为 light/dark 双变体、`color-scheme: light dark`；smoke 断言 12 守 9 组暗色 token 对比度 ≥4.5:1，CSS gzip +0.21KB（6.19 → 6.40KB）。第二期（手动切换开关）仍待人工批复 FOUC + CSP 方案
+- P1-7② 手动切换开关技术方案（`docs/dark-mode-toggle-plan.md`，12 节 / 含三态模型 + 三层架构 + CSP/FOUC 分析 + 性能预算 + 风险登记 + DoD + 业内对比），待项目负责人确认 FOUC 与三态决策点后开工
+- P1-10 法务审核资料包（`docs/legal-review-package.md`，7 节 / 三页骨架 + 数据流图 + Go/No-Go 清单 + 风险登记 + 上线流程），登记为 DS-202609-08 双签项（P1，2026-09-26 截止）
+- P3-15 回归测试计划（`docs/content-collections-regression.md`，9 节 / 触发条件 + 11 步回归 + 性能与端到端验证矩阵 + 回滚预案 + DoD）；新增探针 `scripts/check-astro-fix.mjs` + `pnpm astro:probe` 命令，astro 7.3.3 未达阈值时 silent exit 0
 
 ### 待人工处理
 
-- legal 三页（隐私政策/用户协议/免责声明）法务审核；通过后移除 noindex 并同步 sitemap filter（P1-10）
-- 暗色模式第二期（手动切换开关）方案批复（P1-7②）
+- P1-7② FOUC 窗口与三态 vs 二态决策（项目负责人）
+- P1-10 legal 三页法务审核（资料包已就位待提交法务部，DS-202609-08，2026-09-26 截止）
 - 推送 GitHub 并跑通 CI 首次运行（本地仓库已初始化：main 分支 + 初始提交）
 
 ### 验证
