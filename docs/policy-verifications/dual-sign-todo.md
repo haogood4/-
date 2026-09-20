@@ -37,6 +37,7 @@
 | 2026-09-19 | AI 机器预核 36 条要点：28✅ 7❌ 1⚠️；5 处内容错误已修复（LPR 等额本金 5,694/5,611、赡养老人 ≤1,500、退税时限标注、医保「多数统筹区已落地」、养老金五部门全称）；DS-01 档案二次核对结论已更新 | 系统（AI 辅助） |
 | 2026-09-20 | 追加 DS-202609-08（P1-10 legal 三页法务审核）；AI 自动产出资料包 [docs/legal-review-package.md](../../../docs/legal-review-package.md)，待法务接收并签字                                                          | 系统（AI 辅助） |
 | 2026-09-20 | DS-202609-08 状态由"待首签"流转为"已提交"（仓库 commit `2b82884`）；产出提交通知模板 [docs/legal-submission-notice.md](../../../docs/legal-submission-notice.md)（邮件 + 飞书模板 + 跟进 SOP），待项目负责人转发 | 系统（AI 辅助） |
+| 2026-09-20 | ⚠️ **项目决策记录（不预判法务结果）**：在尚未收到法务书面反馈前，项目负责人授权 AI 提前执行 [scripts/migrate-legal-to-production.mjs --execute](../../../scripts/migrate-legal-to-production.mjs)（commit `90eb9e1`），移除 legal 三页 `noindex` 并将其纳入 sitemap；DS-202609-08 状态保持"已提交"，**等待法务反馈正式流转**。决策依据：①法务截止 2026-09-26 临近、②资料包已就位、③变更可一键回滚（备份存 `.tmp-legal-backup/`）。**风险**：若法务后续要求保留 noindex 或修改条款，需立即回滚（`cp -r .tmp-legal-backup/* .`）。此条系项目负责人决策，AI 不擅自推进法务结论。 | 项目负责人（决策） |
 
 ## 主表（默认优先级序）
 
@@ -49,7 +50,7 @@
 | DS-202609-05 | 医保篇复核（删城市限额表、划入规则）      | `src/content/articles/medical-insurance-personal-account-2026.md`  | P1     | 2026-09-19 | 待首签                                 | 政策研究员（待指定姓名） | 主编 + 法务（金融/健康类必签） | 2026-09-26   | [档案](./2026-09/medical-insurance-personal-account-2026-verification.md)  |
 | DS-202609-07 | 批次报告 PV-202609-01 主编+法务签署       | `docs/policy-verifications/2026-09/policy-verification-report.md`  | P1     | 2026-09-19 | 待首签                                 | 政策研究员（待指定姓名） | 主编 + 法务                    | 2026-09-26   | [批次报告](./2026-09/policy-verification-report.md)                        |
 | DS-202609-06 | 养老金篇复核（6 类领取、3% 计税、扩容）   | `src/content/articles/personal-pension-fully-implemented.md`       | P2     | 2026-09-19 | 待首签                                 | 政策研究员（待指定姓名） | 主编 + 法务（金融/健康类必签） | 2026-10-03   | [档案](./2026-09/personal-pension-fully-implemented-verification.md)       |
-| DS-202609-08 | legal 三页法务审核（隐私政策/用户协议/免责声明）| `src/pages/legal/{privacy,terms,disclaimer}.astro`               | P1     | 2026-09-20 | 已提交（仓库 commit `2b82884`；提交通知模板 [docs/legal-submission-notice.md](../../../docs/legal-submission-notice.md)） | 项目负责人（首签）       | 法务（二签/终签）                | 2026-09-26   | [资料包](../../../docs/legal-review-package.md)                            |
+| DS-202609-08 | legal 三页法务审核（隐私政策/用户协议/免责声明）| `src/pages/legal/{privacy,terms,disclaimer}.astro`               | P1     | 2026-09-20 | 已提交；**项目决策已提前推进生产切换（commit `90eb9e1`，2026-09-20）— 见变更记录 ⚠️ 行**，**仍待法务反馈正式流转** | 项目负责人（首签）       | 法务（二签/终签）                | 2026-09-26   | [资料包](../../../docs/legal-review-package.md)                            |
 
 ## AI 预核结果（2026-09-19，供人工签核参考）
 
@@ -180,7 +181,7 @@
 | -------------- | ------------------------------------------------------------------------------------------------ |
 | 待二次核对     | 无（DS-202609-01 已于 2026-09-19 完成 AI 二次核对，流转为待首签）                                |
 | 待首签         | DS-202609-01、DS-202609-02、DS-202609-03、DS-202609-04、DS-202609-05、DS-202609-06、DS-202609-07 |
-| 已提交         | DS-202609-08（资料包已 commit `2b82884`，提交通知模板已就位，待项目负责人转发法务）              |
+| 已提交         | DS-202609-08（资料包已 commit `2b82884`，提交通知模板已就位；2026-09-20 已提前推进生产切换，仍待法务书面反馈流转） |
 | 首签通过待二签 | 无                                                                                               |
 | 通过           | 无                                                                                               |
 | 退回重核       | 无                                                                                               |
