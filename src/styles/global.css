@@ -781,12 +781,24 @@ textarea[aria-invalid="true"] {
 .site-header__inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
+  /* 改为 flex-start 让 logo 与 [nav+toggle] 靠左、theme-toggle 由 margin-left:auto 推到右侧；
+     <1024px 时 nav 仍是 absolute 全宽下拉，flex-start 不影响；≥1024px 横排 logo+nav+toggle 左、theme-toggle 右 */
+  justify-content: flex-start;
+  gap: var(--space-3);
   max-width: 1120px;
   min-height: 64px;
   margin: 0 auto;
   padding: 0 var(--space-4);
+}
+
+/* <1024px 移动端：logo 占左侧、按钮紧跟 logo、theme-toggle 推到右侧
+   ≥1024px：nav 横向并入，logo+nav+toggle 一组左、theme-toggle 右（justify-content flex-start + margin-left:auto） */
+.site-nav {
+  margin-left: auto;
+}
+
+.theme-toggle {
+  margin-left: var(--space-2);
 }
 
 /* 触控目标：显式 min-height 44px（不依赖全局 a 规则），padding 归零防撑高页头 */
@@ -814,8 +826,6 @@ textarea[aria-invalid="true"] {
 /* 移动端：导航默认收起为全宽下拉面板 */
 .site-nav {
   display: none;
-  /* 桌面端（static）把 nav+theme-toggle 推到右侧；移动端 absolute 时该属性无效 */
-  margin-left: auto;
   position: absolute;
   top: 100%;
   left: 0;

@@ -82,12 +82,13 @@ const activeCategory = CATEGORY_MAP[firstSegment] ?? CONTENT_MAP[firstSegment];
       </svg>
       <span>计算器大全</span>
     </a>
+    <!-- 汉堡按钮放在 <nav> 外侧平级（移动端 .site-nav{display:none} 会让子元素一起消失） -->
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-list" aria-label="菜单">
+      <span class="nav-toggle__bar" aria-hidden="true"></span>
+      <span class="nav-toggle__bar" aria-hidden="true"></span>
+      <span class="nav-toggle__bar" aria-hidden="true"></span>
+    </button>
     <nav class="site-nav" aria-label="主导航">
-      <!-- 汉堡按钮：单条 bar 元素，CSS 通过 ::before/::after 补齐三条线 -->
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-list">
-        <span class="visually-hidden">菜单</span>
-        <span class="nav-toggle__bar" aria-hidden="true"></span>
-      </button>
       <ul class="site-nav__list" id="site-nav-list">
         {
           NAV_ITEMS.map(

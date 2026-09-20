@@ -53,9 +53,18 @@
       if (event.key === "Escape" && isOpen()) closeMenu(true);
     });
 
-    // 点击菜单区域之外关闭（按钮位于 nav 内部，不会误伤自身的开合点击）
+    // 点击菜单区域之外关闭。按钮已迁移到 <nav> 外侧平级（移动端避免 display:none 传染），
+    // 需把 toggleBtn 自身及其内部排除，否则同一次点击会先被 openMenu 加上 .is-open、
+    // 再被本处理器判定「点外面」立即撤销（aria-expanded 始终 false）
     document.addEventListener("click", function (event) {
-      if (isOpen() && !nav.contains(event.target)) closeMenu(false);
+      if (
+        isOpen() &&
+        !nav.contains(event.target) &&
+        event.target !== toggleBtn &&
+        !toggleBtn.contains(event.target)
+      ) {
+        closeMenu(false);
+      }
     });
 
     // 点击任一菜单链接后收起面板
