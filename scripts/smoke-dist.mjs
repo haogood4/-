@@ -347,14 +347,35 @@ console.log("冒烟断言（12 组）：");
   } else {
     idxWhy = "missing";
   }
-  if (ok && robots && conflict.length === 0 && rssOk && rssLink && idxOk)
+  // 体积削减专项：外置数据 JSON 必须随 dist 存在且可解析
+  const dataJson = ["chinese-convert", "sensitive-word", "clothing-size"].map(
+    (n) => join(DIST, "data", `${n}.json`),
+  );
+  const dataBad = dataJson.filter((p) => {
+    if (!existsSync(p)) return true;
+    try {
+      JSON.parse(read(p));
+      return false;
+    } catch {
+      return true;
+    }
+  });
+  if (
+    ok &&
+    robots &&
+    conflict.length === 0 &&
+    rssOk &&
+    rssLink &&
+    idxOk &&
+    dataBad.length === 0
+  )
     pass(
-      "8. sitemap 有效、robots 指向 sitemap、无 noindex 冲突、RSS 11 条且全站可发现、搜索索引有效",
+      "8. sitemap 有效、robots 指向 sitemap、无 noindex 冲突、RSS 11 条且全站可发现、搜索索引有效、外置数据 JSON 齐备",
     );
   else
     fail(
-      "8. sitemap/robots/RSS/搜索索引异常",
-      `sitemap:${ok} robots:${robots} noindex冲突:${conflict.join(",")} rss:${rssOk} rssLink:${rssLink} idx:${idxWhy}`,
+      "8. sitemap/robots/RSS/搜索索引/数据 JSON 异常",
+      `sitemap:${ok} robots:${robots} noindex冲突:${conflict.join(",")} rss:${rssOk} rssLink:${rssLink} idx:${idxWhy} dataJson:${dataBad.join(",")}`,
     );
 }
 

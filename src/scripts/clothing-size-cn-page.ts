@@ -1,9 +1,12 @@
 // 服装尺码对照页交互（外部脚本，无内联事件；样板见 _page-kit.ts）
+// 对照表数据外置于 /data/clothing-size.json：首次操作时 fetch（模块级 Promise 缓存），
+// datalist 候选值在数据就绪后重建；加载失败走字段错误提示。
 import {
   convertClothingSize,
   formatSizeComparison,
   getSizeTable,
   SYSTEM_LABELS,
+  type ClothingSizeTables,
   type SizeSystem,
 } from "../lib/calculators/clothing-size-cn";
 import {
@@ -35,9 +38,36 @@ const { setState, goStaleIfComputed } = createResultState({
 });
 let lastCopy = "";
 
-/** 按当前分类 + 号制重建 datalist 候选值（选择或填写均可） */
-function populateOptions(): void {
-  const table = getSizeTable(categorySelect.value);
+const LOAD_FAIL_MSG = "数据加载失败，请刷新页面重试";
+
+// ---------- 懒加载对照表：首次使用时 fetch，之后复用缓存 ----------
+let tablesPromise: Promise<ClothingSizeTables> | null = null;
+
+function loadTables(): Promise<ClothingSizeTables> {
+  if (!tablesPromise) {
+    tablesPromise = fetch("/data/clothing-size.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json() as Promise<ClothingSizeTables>;
+      })
+      .catch((err: unknown) => {
+        tablesPromise = null; // 失败后允许下次操作重试
+        throw err;
+      });
+  }
+  return tablesPromise;
+}
+
+/** 按当前分类 + 号制重建 datalist 候选值（选择或填写均可），需数据已加载 */
+async function populateOptions(): Promise<void> {
+  let tables: ClothingSizeTables;
+  try {
+    tables = await loadTables();
+  } catch {
+    setError(valueInput, errValue, LOAD_FAIL_MSG);
+    return;
+  }
+  const table = getSizeTable(categorySelect.value, tables);
   const system = systemSelect.value as SizeSystem;
   const frag = document.createDocumentFragment();
   if (table) {
@@ -51,13 +81,22 @@ function populateOptions(): void {
   valueInput.placeholder = `选择或填写${SYSTEM_LABELS[system]}，如 ${table ? table[0][system] : ""}`;
 }
 
-function handleSubmit(event: Event): void {
+async function handleSubmit(event: Event): Promise<void> {
   event.preventDefault();
   clearError(valueInput, errValue);
+  let tables: ClothingSizeTables;
+  try {
+    tables = await loadTables();
+  } catch {
+    setError(valueInput, errValue, LOAD_FAIL_MSG);
+    setState("empty");
+    return;
+  }
   const r = convertClothingSize({
     category: categorySelect.value,
     system: systemSelect.value,
     value: valueInput.value,
+    tables,
   });
   if (!r.ok) {
     setError(valueInput, errValue, r.error.message);
@@ -80,12 +119,14 @@ function handleReset(): void {
   systemSelect.value = "cn";
   valueInput.value = "";
   clearError(valueInput, errValue);
-  populateOptions();
+  void populateOptions();
   lastCopy = "";
   setState("empty");
 }
 
-form.addEventListener("submit", handleSubmit);
+form.addEventListener("submit", (event) => {
+  void handleSubmit(event);
+});
 resetBtn.addEventListener("click", handleReset);
 valueInput.addEventListener("input", () => {
   if (!errValue.hidden && valueInput.value.trim() !== "") {
@@ -94,14 +135,15 @@ valueInput.addEventListener("input", () => {
   goStaleIfComputed();
 });
 categorySelect.addEventListener("change", () => {
-  populateOptions();
+  void populateOptions();
   goStaleIfComputed();
 });
 systemSelect.addEventListener("change", () => {
-  populateOptions();
+  void populateOptions();
   goStaleIfComputed();
 });
 
-populateOptions();
+// 初始 datalist 与占位符由页面静态 HTML 提供（默认 男装·中国号），
+// 不在加载期 fetch，首次换算/切换分类号制时才拉取数据。
 setState("empty");
 bindCopyButton(copyBtn, () => lastCopy);

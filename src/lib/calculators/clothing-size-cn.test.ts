@@ -1,9 +1,25 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   convertClothingSize,
   formatSizeComparison,
   getSizeTable,
+  type ClothingSizeTables,
 } from "./clothing-size-cn";
+
+// 对照表数据已外置（vitest 在仓库根运行），单测直接读 JSON 注入引擎
+const tables = JSON.parse(
+  readFileSync("public/data/clothing-size.json", "utf-8"),
+) as ClothingSizeTables;
+
+describe("clothing-size-cn / 数据文件", () => {
+  it("clothing-size.json 存在且四表齐全", () => {
+    for (const key of ["men", "women", "kids", "shoes"] as const) {
+      expect(Array.isArray(tables[key])).toBe(true);
+      expect(tables[key].length).toBeGreaterThan(0);
+    }
+  });
+});
 
 describe("clothing-size-cn / 男装上装四制互查", () => {
   it("中国号 175 → L：EU 50 / US 40 / UK 18，胸围 94–98", () => {
@@ -11,6 +27,7 @@ describe("clothing-size-cn / 男装上装四制互查", () => {
       category: "men",
       system: "cn",
       value: "175",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
@@ -27,6 +44,7 @@ describe("clothing-size-cn / 男装上装四制互查", () => {
       category: "men",
       system: "eu",
       value: "52",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
@@ -40,6 +58,7 @@ describe("clothing-size-cn / 男装上装四制互查", () => {
       category: "men",
       system: "us",
       value: "36",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
@@ -53,11 +72,13 @@ describe("clothing-size-cn / 男装上装四制互查", () => {
       category: "men",
       system: "cn",
       value: "165",
+      tables,
     });
     const max = convertClothingSize({
       category: "men",
       system: "uk",
       value: "24",
+      tables,
     });
     expect(min.ok).toBe(true);
     expect(max.ok).toBe(true);
@@ -72,11 +93,13 @@ describe("clothing-size-cn / 男装上装四制互查", () => {
       category: "men",
       system: "cn",
       value: "xl",
+      tables,
     });
     const b = convertClothingSize({
       category: "men",
       system: "cn",
       value: " XXL ",
+      tables,
     });
     expect(a.ok).toBe(true);
     expect(b.ok).toBe(true);
@@ -91,6 +114,7 @@ describe("clothing-size-cn / 女装上装", () => {
       category: "women",
       system: "uk",
       value: "12",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
@@ -104,6 +128,7 @@ describe("clothing-size-cn / 女装上装", () => {
       category: "women",
       system: "cn",
       value: "155",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
@@ -121,6 +146,7 @@ describe("clothing-size-cn / 童装区间", () => {
       category: "kids",
       system: "cn",
       value: "130",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
@@ -135,6 +161,7 @@ describe("clothing-size-cn / 童装区间", () => {
       category: "kids",
       system: "uk",
       value: "11-12",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
@@ -147,11 +174,13 @@ describe("clothing-size-cn / 童装区间", () => {
       category: "kids",
       system: "cn",
       value: "160",
+      tables,
     });
     const low = convertClothingSize({
       category: "kids",
       system: "cn",
       value: "105",
+      tables,
     });
     expect(max.ok).toBe(true);
     if (max.ok) expect(max.value.us).toBe("14");
@@ -166,6 +195,7 @@ describe("clothing-size-cn / 鞋码", () => {
       category: "shoes",
       system: "eu",
       value: "40",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
@@ -180,11 +210,13 @@ describe("clothing-size-cn / 鞋码", () => {
       category: "shoes",
       system: "us",
       value: "8.5",
+      tables,
     });
     const b = convertClothingSize({
       category: "shoes",
       system: "us",
       value: "8.50",
+      tables,
     });
     expect(a.ok).toBe(true);
     expect(b.ok).toBe(true);
@@ -196,11 +228,13 @@ describe("clothing-size-cn / 鞋码", () => {
       category: "shoes",
       system: "eu",
       value: "36",
+      tables,
     });
     const max = convertClothingSize({
       category: "shoes",
       system: "eu",
       value: "46",
+      tables,
     });
     expect(min.ok).toBe(true);
     expect(max.ok).toBe(true);
@@ -215,6 +249,7 @@ describe("clothing-size-cn / 无效输入", () => {
       category: "men",
       system: "cn",
       value: "   ",
+      tables,
     });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error.code).toBe("EMPTY");
@@ -224,6 +259,7 @@ describe("clothing-size-cn / 无效输入", () => {
       category: "hat",
       system: "cn",
       value: "175",
+      tables,
     });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error.code).toBe("UNKNOWN_CATEGORY");
@@ -233,6 +269,7 @@ describe("clothing-size-cn / 无效输入", () => {
       category: "men",
       system: "jp",
       value: "M",
+      tables,
     });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error.code).toBe("UNKNOWN_SYSTEM");
@@ -242,6 +279,7 @@ describe("clothing-size-cn / 无效输入", () => {
       category: "men",
       system: "eu",
       value: "99",
+      tables,
     });
     expect(r.ok).toBe(false);
     if (!r.ok) {
@@ -254,15 +292,16 @@ describe("clothing-size-cn / 无效输入", () => {
 
 describe("clothing-size-cn / 表访问与复制文本", () => {
   it("getSizeTable：已知分类返回整表，未知分类返回 null", () => {
-    expect(getSizeTable("shoes")).toHaveLength(11);
-    expect(getSizeTable("men")).toHaveLength(6);
-    expect(getSizeTable("nope")).toBeNull();
+    expect(getSizeTable("shoes", tables)).toHaveLength(11);
+    expect(getSizeTable("men", tables)).toHaveLength(6);
+    expect(getSizeTable("nope", tables)).toBeNull();
   });
   it("formatSizeComparison 含四制、参考区间与免责声明", () => {
     const r = convertClothingSize({
       category: "women",
       system: "cn",
       value: "165",
+      tables,
     });
     expect(r.ok).toBe(true);
     if (r.ok) {

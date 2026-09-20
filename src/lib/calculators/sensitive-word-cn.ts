@@ -3,6 +3,8 @@
 // 不收集上传文本，符合「敏感词检测工具」纯前端定位。
 //
 // 词库说明：
+// - 词库数据已外置到 public/data/sensitive-word.json（页面脚本首次检测时
+//   fetch 懒加载），本文件只保留纯逻辑，检测时通过参数传入 WordDict。
 // - 不收录真实政治敏感词，仅以「示例A」「示例B」等占位表示分类与命中规则。
 // - 真实常见违规词（赌博/色情/广告引流等）以类别代表词形式收录，便于演示。
 // - 检测目标：教学演示 + 自媒体/UGC 内容自检，不替代平台合规审核。
@@ -32,123 +34,8 @@ export interface SensitiveWord {
   suggest: string;
 }
 
-export const SENSITIVE_WORDS: Record<SensitiveCategory, SensitiveWord[]> = {
-  // 政治：仅用占位示例，避免收录真实政治敏感词；用户文本命中占位视为示意
-  politics: [
-    { label: "示例A", pattern: "示例A", suggest: "政治相关内容请谨慎发布" },
-    { label: "示例B", pattern: "示例B", suggest: "政治相关内容请谨慎发布" },
-    { label: "示例C", pattern: "示例C", suggest: "政治相关内容请谨慎发布" },
-    { label: "示例D", pattern: "示例D", suggest: "政治相关内容请谨慎发布" },
-    { label: "示例E", pattern: "示例E", suggest: "政治相关内容请谨慎发布" },
-  ],
-  violence: [
-    { label: "暴力", pattern: "暴力", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "凶杀", pattern: "凶杀", suggest: "请避免宣扬或描述暴力行为" },
-    {
-      label: "恐怖袭击",
-      pattern: "恐怖袭击",
-      suggest: "请避免宣扬或描述暴力行为",
-    },
-    { label: "血腥", pattern: "血腥", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "屠杀", pattern: "屠杀", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "绑架", pattern: "绑架", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "枪支", pattern: "枪支", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "弹药", pattern: "弹药", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "爆炸物", pattern: "爆炸物", suggest: "请避免宣扬或描述暴力行为" },
-    {
-      label: "管制刀具",
-      pattern: "管制刀具",
-      suggest: "请避免宣扬或描述暴力行为",
-    },
-    { label: "刺杀", pattern: "刺杀", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "爆炸", pattern: "爆炸", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "投毒", pattern: "投毒", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "焚烧", pattern: "焚烧", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "砍杀", pattern: "砍杀", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "自杀", pattern: "自杀", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "自残", pattern: "自残", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "黑社会", pattern: "黑社会", suggest: "请避免宣扬或描述暴力行为" },
-    {
-      label: "恐怖主义",
-      pattern: "恐怖主义",
-      suggest: "请避免宣扬或描述暴力行为",
-    },
-    { label: "毒品", pattern: "毒品", suggest: "请避免宣扬或描述违禁品" },
-    { label: "摇头丸", pattern: "摇头丸", suggest: "请避免宣扬或描述违禁品" },
-    { label: "冰毒", pattern: "冰毒", suggest: "请避免宣扬或描述违禁品" },
-    { label: "海洛因", pattern: "海洛因", suggest: "请避免宣扬或描述违禁品" },
-    { label: "大麻", pattern: "大麻", suggest: "请避免宣扬或描述违禁品" },
-    { label: "K粉", pattern: "K粉", suggest: "请避免宣扬或描述违禁品" },
-    { label: "枪杀", pattern: "枪杀", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "斩首", pattern: "斩首", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "军火", pattern: "军火", suggest: "请避免宣扬或描述暴力行为" },
-    { label: "制毒", pattern: "制毒", suggest: "请避免宣扬或描述违禁品" },
-    { label: "吸毒", pattern: "吸毒", suggest: "请避免宣扬或描述违禁品" },
-  ],
-  porn: [
-    { label: "色情", pattern: "色情", suggest: "请避免色情低俗内容" },
-    { label: "裸聊", pattern: "裸聊", suggest: "请避免色情低俗内容" },
-    { label: "一夜情", pattern: "一夜情", suggest: "请避免色情低俗内容" },
-    { label: "约炮", pattern: "约炮", suggest: "请避免色情低俗内容" },
-    { label: "招嫖", pattern: "招嫖", suggest: "请避免色情低俗内容" },
-    { label: "卖淫", pattern: "卖淫", suggest: "请避免色情低俗内容" },
-    { label: "嫖娼", pattern: "嫖娼", suggest: "请避免色情低俗内容" },
-    { label: "包养", pattern: "包养", suggest: "请避免色情低俗内容" },
-    { label: "情色", pattern: "情色", suggest: "请避免色情低俗内容" },
-    { label: "黄网", pattern: "黄网", suggest: "请避免色情低俗内容" },
-    { label: "黄片", pattern: "黄片", suggest: "请避免色情低俗内容" },
-    { label: "黄图", pattern: "黄图", suggest: "请避免色情低俗内容" },
-    { label: "做爱", pattern: "做爱", suggest: "请避免色情低俗内容" },
-    { label: "性交易", pattern: "性交易", suggest: "请避免色情低俗内容" },
-    { label: "SM", pattern: "SM", suggest: "请避免色情低俗内容" },
-    { label: "援交", pattern: "援交", suggest: "请避免色情低俗内容" },
-    { label: "车震", pattern: "车震", suggest: "请避免色情低俗内容" },
-    { label: "口交", pattern: "口交", suggest: "请避免色情低俗内容" },
-    { label: "一夜欢", pattern: "一夜欢", suggest: "请避免色情低俗内容" },
-    { label: "三级片", pattern: "三级片", suggest: "请避免色情低俗内容" },
-  ],
-  ad: [
-    { label: "广告", pattern: "广告", suggest: "广告引流类内容需谨慎发布" },
-    { label: "赌博", pattern: "赌博", suggest: "请避免赌博相关内容" },
-    { label: "博彩", pattern: "博彩", suggest: "请避免赌博相关内容" },
-    { label: "彩票", pattern: "彩票", suggest: "请避免赌博相关内容" },
-    { label: "棋牌", pattern: "棋牌", suggest: "请避免赌博相关内容" },
-    { label: "代孕", pattern: "代孕", suggest: "请避免违法违规代孕广告" },
-    { label: "刷单", pattern: "刷单", suggest: "请避免刷单等违法兼职" },
-    { label: "兼职", pattern: "兼职", suggest: "请谨慎发布兼职引流信息" },
-    { label: "高薪", pattern: "高薪", suggest: "请警惕「高薪兼职」类骗局" },
-    {
-      label: "兼职日结",
-      pattern: "兼职日结",
-      suggest: "请警惕「兼职日结」类骗局",
-    },
-    { label: "私聊", pattern: "私聊", suggest: "请警惕引导私下的引流话术" },
-    { label: "加微", pattern: "加微", suggest: "请警惕引导加微信的引流话术" },
-    { label: "微信", pattern: "微信", suggest: "请警惕脱离平台的引流话术" },
-    { label: "QQ", pattern: "QQ", suggest: "请警惕脱离平台的引流话术" },
-    { label: "代练", pattern: "代练", suggest: "请避免游戏代练相关违规宣传" },
-    { label: "外挂", pattern: "外挂", suggest: "请避免游戏外挂相关违规宣传" },
-    { label: "私服", pattern: "私服", suggest: "请避免游戏私服相关违规宣传" },
-    { label: "刷钻", pattern: "刷钻", suggest: "请避免刷钻等违规宣传" },
-    { label: "刷粉丝", pattern: "刷粉丝", suggest: "请避免刷粉丝等违规宣传" },
-    { label: "刷量", pattern: "刷量", suggest: "请避免刷量等违规宣传" },
-    { label: "办证", pattern: "办证", suggest: "请避免办证类违规广告" },
-    { label: "代考", pattern: "代考", suggest: "请避免代考类违规广告" },
-    { label: "移民", pattern: "移民", suggest: "请谨慎移民类广告宣传" },
-    { label: "绿卡", pattern: "绿卡", suggest: "请谨慎移民类广告宣传" },
-    { label: "小额贷款", pattern: "小额贷款", suggest: "请谨慎贷款类广告宣传" },
-    {
-      label: "信用卡套现",
-      pattern: "信用卡套现",
-      suggest: "请避免信用卡套现等违规广告",
-    },
-    {
-      label: "代开发票",
-      pattern: "代开发票",
-      suggest: "请避免代开发票等违规广告",
-    },
-  ],
-};
+/** 外置词库数据结构（public/data/sensitive-word.json 即此形状的 JSON） */
+export type WordDict = Record<SensitiveCategory, SensitiveWord[]>;
 
 /** 高频规避写法：去符号、空格、繁简、相似字等。命中后给出提示。 */
 export const EVASION_RULES: Array<{
@@ -182,9 +69,8 @@ export interface SensitiveHit {
   suggest: string;
 }
 
-/** 检测输入参数 */
-export interface SensitiveInput {
-  text: string;
+/** 检测选项 */
+export interface SensitiveOptions {
   categories?: SensitiveCategory[]; // 默认 4 类全开
 }
 
@@ -223,12 +109,17 @@ function findPositions(text: string, keyword: string): Array<[number, number]> {
 }
 
 /**
- * 检测主函数：遍历词库 + 规避规则，返回所有命中。
+ * 检测主函数：遍历传入词库 + 规避规则，返回所有命中。
  * 为降低替换复杂度，先收集全部命中区间再做合并与遮罩。
+ * 词库由调用方（页面脚本 fetch 懒加载）传入；绝不 throw。
  */
-export function detectSensitive(input: SensitiveInput): SensitiveCalcResult {
-  const text = input.text ?? "";
-  if (text.length > MAX_TEXT_LEN) {
+export function detectSensitive(
+  text: string,
+  dict: WordDict,
+  options: SensitiveOptions = {},
+): SensitiveCalcResult {
+  const safeText = text ?? "";
+  if (safeText.length > MAX_TEXT_LEN) {
     return {
       ok: false,
       error: {
@@ -240,8 +131,8 @@ export function detectSensitive(input: SensitiveInput): SensitiveCalcResult {
 
   const start = Date.now();
   const cats: SensitiveCategory[] =
-    input.categories && input.categories.length > 0
-      ? input.categories
+    options.categories && options.categories.length > 0
+      ? options.categories
       : (Object.keys(CATEGORY_META) as SensitiveCategory[]);
 
   const hits: SensitiveHit[] = [];
@@ -253,9 +144,9 @@ export function detectSensitive(input: SensitiveInput): SensitiveCalcResult {
   };
 
   for (const cat of cats) {
-    const words = SENSITIVE_WORDS[cat] ?? [];
+    const words = dict?.[cat] ?? [];
     for (const w of words) {
-      const positions = findPositions(text, w.pattern);
+      const positions = findPositions(safeText, w.pattern);
       if (positions.length === 0) continue;
       hits.push({
         category: cat,
@@ -271,7 +162,7 @@ export function detectSensitive(input: SensitiveInput): SensitiveCalcResult {
       let m: RegExpExecArray | null;
       const positions: Array<[number, number]> = [];
       rule.re.lastIndex = 0;
-      while ((m = rule.re.exec(text)) !== null) {
+      while ((m = rule.re.exec(safeText)) !== null) {
         const startIdx = m.index;
         const endIdx = startIdx + m[0].length;
         if (m[0].length === 0) {
@@ -292,7 +183,7 @@ export function detectSensitive(input: SensitiveInput): SensitiveCalcResult {
     }
   }
 
-  const masked = maskText(text, hits);
+  const masked = maskText(safeText, hits);
   const elapsedMs = Date.now() - start;
 
   return {
@@ -341,12 +232,14 @@ export function maskText(text: string, hits: SensitiveHit[]): string {
 }
 
 /** 词库总览，便于页面渲染统计 */
-export function getLibraryStats(): Record<SensitiveCategory, number> {
+export function getLibraryStats(
+  dict: WordDict,
+): Record<SensitiveCategory, number> {
   return {
-    politics: SENSITIVE_WORDS.politics.length,
-    violence: SENSITIVE_WORDS.violence.length,
-    porn: SENSITIVE_WORDS.porn.length,
-    ad: SENSITIVE_WORDS.ad.length,
+    politics: dict?.politics?.length ?? 0,
+    violence: dict?.violence?.length ?? 0,
+    porn: dict?.porn?.length ?? 0,
+    ad: dict?.ad?.length ?? 0,
   };
 }
 

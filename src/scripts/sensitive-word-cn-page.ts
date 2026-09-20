@@ -2,10 +2,10 @@
 import {
   CATEGORY_META,
   detectSensitive,
-  SENSITIVE_WORDS,
   summarizeHits,
   type SensitiveCategory,
   type SensitiveHit,
+  type WordDict,
 } from "../lib/calculators/sensitive-word-cn";
 import {
   requireEl,
@@ -21,6 +21,7 @@ const errText = requireEl<HTMLParagraphElement>("#field-error-text");
 const catCheckboxes = Array.from(
   document.querySelectorAll<HTMLInputElement>("input[data-cat]"),
 );
+const calcBtn = requireEl<HTMLButtonElement>("#calc-btn");
 const resultCaption = requireEl<HTMLParagraphElement>("#result-caption");
 const resultMain = requireEl<HTMLParagraphElement>("#result-main");
 const resultDetail = requireEl<HTMLParagraphElement>("#result-detail");
@@ -39,18 +40,39 @@ const { setState, goStaleIfComputed } = createResultState({
   buttons: [copyBtn],
 });
 
+// ---------- 懒加载词库：不进 bundle，首次点击「开始检测」时下载并缓存 ----------
+let dictPromise: Promise<WordDict> | null = null;
+
+function loadDict(): Promise<WordDict> {
+  if (!dictPromise) {
+    dictPromise = fetch("/data/sensitive-word.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json() as Promise<WordDict>;
+      })
+      .catch((err: unknown) => {
+        dictPromise = null; // 失败后允许下次点击重试
+        throw err;
+      });
+  }
+  return dictPromise;
+}
+
 function getSelectedCategories(): SensitiveCategory[] {
   return catCheckboxes
     .filter((el) => el.checked)
     .map((el) => el.dataset.cat as SensitiveCategory);
 }
 
-function renderCategoryStats(stats: Record<SensitiveCategory, number>): void {
-  catList.innerHTML = "";
+function renderCategoryStats(
+  stats: Record<SensitiveCategory, number>,
+  dict: WordDict,
+): void {
+  catList.replaceChildren();
   const order: SensitiveCategory[] = ["politics", "violence", "porn", "ad"];
   for (const cat of order) {
     const meta = CATEGORY_META[cat];
-    const libTotal = SENSITIVE_WORDS[cat].length;
+    const libTotal = dict[cat]?.length ?? 0;
     const li = document.createElement("li");
     li.className = `cat-item cat-${meta.tone}`;
     const left = document.createElement("span");
@@ -63,7 +85,7 @@ function renderCategoryStats(stats: Record<SensitiveCategory, number>): void {
 }
 
 function renderHits(hits: SensitiveHit[]): void {
-  hitList.innerHTML = "";
+  hitList.replaceChildren();
   if (hits.length === 0) {
     const li = document.createElement("li");
     li.className = "hit-empty";
@@ -99,8 +121,8 @@ function renderHits(hits: SensitiveHit[]): void {
   }
 }
 
-form.addEventListener("submit", (ev) => {
-  ev.preventDefault();
+async function handleSubmit(event: Event): Promise<void> {
+  event.preventDefault();
   clearFieldError(textInput, errText);
   const cats = getSelectedCategories();
   if (cats.length === 0) {
@@ -108,7 +130,19 @@ form.addEventListener("submit", (ev) => {
     setState("empty");
     return;
   }
-  const r = detectSensitive({ text: textInput.value, categories: cats });
+  const text = textInput.value;
+  calcBtn.disabled = true;
+  let dict: WordDict;
+  try {
+    dict = await loadDict();
+  } catch {
+    setFieldError(textInput, errText, "词库加载失败，请刷新页面重试");
+    setState("empty");
+    calcBtn.disabled = false;
+    return;
+  }
+  calcBtn.disabled = false;
+  const r = detectSensitive(text, dict, { categories: cats });
   if (!r.ok) {
     setFieldError(textInput, errText, r.error.message);
     setState("empty");
@@ -119,11 +153,15 @@ form.addEventListener("submit", (ev) => {
   resultMain.textContent = summarizeHits(v);
   resultMain.classList.toggle("result-pass", v.totalHits === 0);
   resultDetail.textContent = `共检测 ${v.totalHits} 处 · 耗时 ${v.elapsedMs}ms`;
-  renderCategoryStats(v.categoryStats);
+  renderCategoryStats(v.categoryStats, dict);
   renderHits(v.hits);
   maskedEl.textContent = v.masked || "（空）";
   lastMasked = v.masked;
   setState("computed");
+}
+
+form.addEventListener("submit", (event) => {
+  void handleSubmit(event);
 });
 
 resetBtn.addEventListener("click", () => {

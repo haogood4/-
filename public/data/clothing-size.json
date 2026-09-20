@@ -1,0 +1,273 @@
+{
+  "men": [
+    {
+      "cn": "165",
+      "eu": "46",
+      "us": "36",
+      "uk": "14",
+      "label": "S",
+      "chestMin": 86,
+      "chestMax": 90,
+      "waistMin": 72,
+      "waistMax": 78
+    },
+    {
+      "cn": "170",
+      "eu": "48",
+      "us": "38",
+      "uk": "16",
+      "label": "M",
+      "chestMin": 90,
+      "chestMax": 94,
+      "waistMin": 78,
+      "waistMax": 84
+    },
+    {
+      "cn": "175",
+      "eu": "50",
+      "us": "40",
+      "uk": "18",
+      "label": "L",
+      "chestMin": 94,
+      "chestMax": 98,
+      "waistMin": 84,
+      "waistMax": 90
+    },
+    {
+      "cn": "180",
+      "eu": "52",
+      "us": "42",
+      "uk": "20",
+      "label": "XL",
+      "chestMin": 98,
+      "chestMax": 104,
+      "waistMin": 90,
+      "waistMax": 96
+    },
+    {
+      "cn": "185",
+      "eu": "54",
+      "us": "44",
+      "uk": "22",
+      "label": "2XL",
+      "chestMin": 104,
+      "chestMax": 110,
+      "waistMin": 96,
+      "waistMax": 102
+    },
+    {
+      "cn": "190",
+      "eu": "56",
+      "us": "46",
+      "uk": "24",
+      "label": "3XL",
+      "chestMin": 110,
+      "chestMax": 116,
+      "waistMin": 102,
+      "waistMax": 108
+    }
+  ],
+  "women": [
+    {
+      "cn": "155",
+      "eu": "34",
+      "us": "2",
+      "uk": "6",
+      "label": "XS",
+      "chestMin": 80,
+      "chestMax": 84,
+      "waistMin": 62,
+      "waistMax": 66
+    },
+    {
+      "cn": "160",
+      "eu": "36",
+      "us": "4",
+      "uk": "8",
+      "label": "S",
+      "chestMin": 84,
+      "chestMax": 88,
+      "waistMin": 66,
+      "waistMax": 70
+    },
+    {
+      "cn": "165",
+      "eu": "38",
+      "us": "6",
+      "uk": "10",
+      "label": "M",
+      "chestMin": 88,
+      "chestMax": 92,
+      "waistMin": 70,
+      "waistMax": 74
+    },
+    {
+      "cn": "170",
+      "eu": "40",
+      "us": "8",
+      "uk": "12",
+      "label": "L",
+      "chestMin": 92,
+      "chestMax": 96,
+      "waistMin": 74,
+      "waistMax": 78
+    },
+    {
+      "cn": "175",
+      "eu": "42",
+      "us": "10",
+      "uk": "14",
+      "label": "XL",
+      "chestMin": 96,
+      "chestMax": 102,
+      "waistMin": 78,
+      "waistMax": 84
+    },
+    {
+      "cn": "180",
+      "eu": "44",
+      "us": "12",
+      "uk": "16",
+      "label": "2XL",
+      "chestMin": 102,
+      "chestMax": 108,
+      "waistMin": 84,
+      "waistMax": 90
+    }
+  ],
+  "kids": [
+    {
+      "cn": "110",
+      "eu": "110",
+      "us": "4",
+      "uk": "3-4",
+      "chestMin": 55,
+      "chestMax": 58,
+      "ageNote": "3-4 岁"
+    },
+    {
+      "cn": "120",
+      "eu": "120",
+      "us": "6",
+      "uk": "5-6",
+      "chestMin": 59,
+      "chestMax": 63,
+      "ageNote": "5-6 岁"
+    },
+    {
+      "cn": "130",
+      "eu": "130",
+      "us": "8",
+      "uk": "7-8",
+      "chestMin": 64,
+      "chestMax": 68,
+      "ageNote": "7-8 岁"
+    },
+    {
+      "cn": "140",
+      "eu": "140",
+      "us": "10",
+      "uk": "9-10",
+      "chestMin": 69,
+      "chestMax": 74,
+      "ageNote": "9-10 岁"
+    },
+    {
+      "cn": "150",
+      "eu": "150",
+      "us": "12",
+      "uk": "11-12",
+      "chestMin": 75,
+      "chestMax": 81,
+      "ageNote": "11-12 岁"
+    },
+    {
+      "cn": "160",
+      "eu": "160",
+      "us": "14",
+      "uk": "13",
+      "chestMin": 82,
+      "chestMax": 88,
+      "ageNote": "13 岁以上"
+    }
+  ],
+  "shoes": [
+    {
+      "cn": "230",
+      "eu": "36",
+      "us": "4",
+      "uk": "3",
+      "footCm": 23
+    },
+    {
+      "cn": "235",
+      "eu": "37",
+      "us": "4.5",
+      "uk": "3.5",
+      "footCm": 23.5
+    },
+    {
+      "cn": "240",
+      "eu": "38",
+      "us": "5.5",
+      "uk": "4.5",
+      "footCm": 24
+    },
+    {
+      "cn": "245",
+      "eu": "39",
+      "us": "6.5",
+      "uk": "5.5",
+      "footCm": 24.5
+    },
+    {
+      "cn": "250",
+      "eu": "40",
+      "us": "7",
+      "uk": "6",
+      "footCm": 25
+    },
+    {
+      "cn": "255",
+      "eu": "41",
+      "us": "8",
+      "uk": "7",
+      "footCm": 25.5
+    },
+    {
+      "cn": "260",
+      "eu": "42",
+      "us": "8.5",
+      "uk": "7.5",
+      "footCm": 26
+    },
+    {
+      "cn": "265",
+      "eu": "43",
+      "us": "9.5",
+      "uk": "8.5",
+      "footCm": 26.5
+    },
+    {
+      "cn": "270",
+      "eu": "44",
+      "us": "10",
+      "uk": "9",
+      "footCm": 27
+    },
+    {
+      "cn": "275",
+      "eu": "45",
+      "us": "11",
+      "uk": "10",
+      "footCm": 27.5
+    },
+    {
+      "cn": "280",
+      "eu": "46",
+      "us": "11.5",
+      "uk": "11",
+      "footCm": 28
+    }
+  ]
+}

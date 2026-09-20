@@ -1,30 +1,46 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   CATEGORY_META,
   detectSensitive,
   getLibraryStats,
   maskText,
-  SENSITIVE_WORDS,
   summarizeHits,
   type SensitiveHit,
+  type WordDict,
 } from "./sensitive-word-cn";
 
+// 词库已外置为静态 JSON（vitest 在仓库根运行，用相对路径加载）
+const DICT_PATH = "public/data/sensitive-word.json";
+const dict = JSON.parse(readFileSync(DICT_PATH, "utf8")) as WordDict;
+
 describe("sensitive-word-cn", () => {
+  it("外置 JSON 词库存在且总词数 ≥ 80", () => {
+    expect(Object.keys(dict).sort()).toEqual([
+      "ad",
+      "politics",
+      "porn",
+      "violence",
+    ]);
+    const total = Object.values(dict).reduce((s, a) => s + a.length, 0);
+    expect(total).toBeGreaterThanOrEqual(80);
+  });
+
   it("词库分类齐全，每类至少 1 条", () => {
-    expect(SENSITIVE_WORDS.politics.length).toBeGreaterThan(0);
-    expect(SENSITIVE_WORDS.violence.length).toBeGreaterThan(0);
-    expect(SENSITIVE_WORDS.porn.length).toBeGreaterThan(0);
-    expect(SENSITIVE_WORDS.ad.length).toBeGreaterThan(0);
+    expect(dict.politics.length).toBeGreaterThan(0);
+    expect(dict.violence.length).toBeGreaterThan(0);
+    expect(dict.porn.length).toBeGreaterThan(0);
+    expect(dict.ad.length).toBeGreaterThan(0);
   });
 
   it("总词条数 ≥ 80", () => {
-    const stats = getLibraryStats();
+    const stats = getLibraryStats(dict);
     const total = stats.politics + stats.violence + stats.porn + stats.ad;
     expect(total).toBeGreaterThanOrEqual(80);
   });
 
   it("空文本：未命中", () => {
-    const r = detectSensitive({ text: "" });
+    const r = detectSensitive("", dict);
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.value.totalHits).toBe(0);
@@ -34,15 +50,16 @@ describe("sensitive-word-cn", () => {
   });
 
   it("正常文本不命中", () => {
-    const r = detectSensitive({
-      text: "今天天气不错，适合出去散步。Hello world 123。",
-    });
+    const r = detectSensitive(
+      "今天天气不错，适合出去散步。Hello world 123。",
+      dict,
+    );
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.value.totalHits).toBe(0);
   });
 
   it("命中暴力类", () => {
-    const r = detectSensitive({ text: "此人涉及暴力与毒品" });
+    const r = detectSensitive("此人涉及暴力与毒品", dict);
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.value.categoryStats.violence).toBeGreaterThanOrEqual(2);
@@ -51,7 +68,7 @@ describe("sensitive-word-cn", () => {
   });
 
   it("命中色情类", () => {
-    const r = detectSensitive({ text: "他沉迷于色情网站" });
+    const r = detectSensitive("他沉迷于色情网站", dict);
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.value.categoryStats.porn).toBeGreaterThanOrEqual(1);
@@ -59,9 +76,10 @@ describe("sensitive-word-cn", () => {
   });
 
   it("命中广告引流 + 规避规则（联系方式/链接）", () => {
-    const r = detectSensitive({
-      text: "招聘兼职日结，加微信 13812345678 详谈：https://example.com/job",
-    });
+    const r = detectSensitive(
+      "招聘兼职日结，加微信 13812345678 详谈：https://example.com/job",
+      dict,
+    );
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.value.categoryStats.ad).toBeGreaterThanOrEqual(3);
@@ -72,10 +90,7 @@ describe("sensitive-word-cn", () => {
   });
 
   it("分类过滤：只检测广告类", () => {
-    const r = detectSensitive({
-      text: "赌博 + 暴力",
-      categories: ["ad"],
-    });
+    const r = detectSensitive("赌博 + 暴力", dict, { categories: ["ad"] });
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.value.categoryStats.ad).toBeGreaterThan(0);
@@ -85,13 +100,13 @@ describe("sensitive-word-cn", () => {
   });
 
   it("重叠命中：连续字符多次匹配", () => {
-    const r = detectSensitive({ text: "不不不" });
+    const r = detectSensitive("不不不", dict);
     // "不" 不在词库，但词库中如 "不不" 类重叠词不应漏
     expect(r.ok).toBe(true);
   });
 
   it("遮罩：替换命中片段为 *", () => {
-    const r = detectSensitive({ text: "他喜欢赌博和色情" });
+    const r = detectSensitive("他喜欢赌博和色情", dict);
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.value.masked).not.toBe("他喜欢赌博和色情");
@@ -139,13 +154,13 @@ describe("sensitive-word-cn", () => {
   });
 
   it("summarizeHits：未命中", () => {
-    const r = detectSensitive({ text: "干净的文本" });
+    const r = detectSensitive("干净的文本", dict);
     expect(r.ok).toBe(true);
     if (r.ok) expect(summarizeHits(r.value)).toBe("未检测到敏感词");
   });
 
   it("summarizeHits：多分类", () => {
-    const r = detectSensitive({ text: "赌博 色情 暴力" });
+    const r = detectSensitive("赌博 色情 暴力", dict);
     expect(r.ok).toBe(true);
     if (r.ok) {
       const s = summarizeHits(r.value);
@@ -156,7 +171,7 @@ describe("sensitive-word-cn", () => {
   });
 
   it("超出长度限制", () => {
-    const r = detectSensitive({ text: "x".repeat(20001) });
+    const r = detectSensitive("x".repeat(20001), dict);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error.code).toBe("TEXT_TOO_LONG");
   });
