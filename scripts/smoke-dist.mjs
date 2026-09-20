@@ -442,10 +442,6 @@ console.log("冒烟断言（11 组）：");
     }
   }
   // 对比度（WCAG AA）：扫描 global.css 解析颜色 token，配对计算
-  const cssText = fs.readFileSync(
-    path.join(DIST, "..", "src/styles/global.css"),
-    "utf8",
-  );
   function lum(hex) {
     const m = hex
       .replace("#", "")
