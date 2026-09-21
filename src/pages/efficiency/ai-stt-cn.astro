@@ -42,6 +42,9 @@ const faqItems = [
     <h1>语音转文字</h1>
     <UsageGuide />
     <p class="lead">对麦克风说话实时转写 · 中英日多语言 · 识别结束一键复制。</p>
+    <p class="ymyl-notice" role="note">
+      <strong>🎤 录音合规提醒</strong>：本工具基于浏览器 Web Speech API，需授权麦克风权限。<strong>请仅录制自己的声音或已获得对话方同意的内容</strong>，<strong>勿在未告知的情况下录制他人对话、会议、讲座等</strong>，避免侵犯他人隐私与个人信息权益。本站不接收任何音频数据。
+    </p>
 
     <form id="calc-form" class="card" novalidate aria-label="语音识别表单">
       <div class="field">
@@ -105,7 +108,7 @@ const faqItems = [
 
     <p class="disclaimer">
       识别由浏览器语音服务完成（<strong>可能经浏览器厂商云端处理</strong
-      >），本站不存储任何数据；识别结果仅供参考，重要内容请人工校对。
+      >），本站不存储任何数据；识别结果仅供参考，重要内容请人工校对。请确保录音内容合法合规，已获得相关方同意。
     </p>
 
     <CalcJsonLd

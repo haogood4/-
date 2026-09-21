@@ -1294,6 +1294,16 @@ body[data-category="daily"] main h1::before {
   border-radius: var(--radius-sm);
 }
 
+.ymyl-notice--danger {
+  color: var(--color-error);
+  background-color: rgba(220, 38, 38, 0.08);
+  border-left: 3px solid var(--color-error);
+}
+
+.ymyl-notice--danger strong {
+  color: var(--color-error);
+}
+
 /* ---------- 四则运算面板 ---------- */
 .calc {
   display: flex;
