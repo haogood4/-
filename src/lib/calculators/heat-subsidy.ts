@@ -3,6 +3,8 @@
 // 将工作场所温度降低到 33℃ 以下的，应当向劳动者发放高温津贴，并纳入工资总额。
 // 省级标准以当地人社部门最新通知为准；本页预设收录 2026 年公开报道口径。
 // 注意：本工具按「标准 × 时长」线性计算，不做税率与地区系数调整。
+// 省份预设已外置至 /data/heat-subsidy-presets.json（页面脚本运行时 fetch，
+// .astro 与测试构建期 import 同一 JSON，本引擎保持纯计算）。
 
 import { NUMBER_RE } from "./_shared";
 
@@ -17,119 +19,6 @@ export type HeatSubsidyErrorCode =
   | "INVALID_MODE";
 
 export type HeatSubsidyField = "mode" | "rate" | "duration";
-
-export interface HeatPreset {
-  province: string;
-  mode: HeatSubsidyMode;
-  /** 发放标准（元/月 或 元/日） */
-  rate: number;
-  /** 月数（monthly）或天数（daily） */
-  duration: number;
-  /** 发放月份说明 */
-  months: string;
-  note: string;
-}
-
-// 2026 年已核实的省级公开口径（note 统一注明「以当地最新通知为准」）。
-// 河南/安徽/陕西按「发放月数 × 21.75 个工作日」估算天数；海南按 7 × 30 天历日估算。
-export const HEAT_PRESETS: HeatPreset[] = [
-  {
-    province: "上海",
-    mode: "monthly",
-    rate: 300,
-    duration: 4,
-    months: "6-9月",
-    note: "上海高温津贴 300 元/月（6-9 月共 4 个月）；以当地最新通知为准",
-  },
-  {
-    province: "江苏",
-    mode: "monthly",
-    rate: 300,
-    duration: 4,
-    months: "以当地通知为准",
-    note: "江苏高温津贴 300 元/月，共 4 个月；以当地最新通知为准",
-  },
-  {
-    province: "浙江（室外作业）",
-    mode: "monthly",
-    rate: 300,
-    duration: 4,
-    months: "以当地通知为准",
-    note: "浙江室外作业 300 元/月（室内作业 200 元/月），共 4 个月；以当地最新通知为准",
-  },
-  {
-    province: "山东",
-    mode: "monthly",
-    rate: 300,
-    duration: 4,
-    months: "以当地通知为准",
-    note: "山东高温津贴 300 元/月，共 4 个月；以当地最新通知为准",
-  },
-  {
-    province: "广东",
-    mode: "monthly",
-    rate: 300,
-    duration: 5,
-    months: "6-10月",
-    note: "广东高温津贴 300 元/月（6-10 月共 5 个月）；以当地最新通知为准",
-  },
-  {
-    province: "广西",
-    mode: "monthly",
-    rate: 300,
-    duration: 5,
-    months: "以当地通知为准",
-    note: "广西高温津贴 300 元/月，共 5 个月；以当地最新通知为准",
-  },
-  {
-    province: "河南",
-    mode: "daily",
-    rate: 15,
-    duration: 88,
-    months: "以当地通知为准",
-    note: "河南按 15 元/日发放；88 日按发放月数 × 21.75 个工作日估算，实际以出勤天数为准；以当地最新通知为准",
-  },
-  {
-    province: "安徽",
-    mode: "daily",
-    rate: 25,
-    duration: 88,
-    months: "以当地通知为准",
-    note: "安徽按 25 元/日发放；88 日按发放月数 × 21.75 个工作日估算，实际以出勤天数为准；以当地最新通知为准",
-  },
-  {
-    province: "海南",
-    mode: "daily",
-    rate: 10,
-    duration: 212,
-    months: "4-10月",
-    note: "海南按 10 元/日发放（4-10 月共 7 个月）；212 日按 7 × 30 天历日估算，实际以出勤天数为准；以当地最新通知为准",
-  },
-  {
-    province: "河北（室外作业）",
-    mode: "monthly",
-    rate: 210,
-    duration: 3,
-    months: "以当地通知为准",
-    note: "河北室外作业 210 元/月（室内作业 155 元/月），共 3 个月；以当地最新通知为准",
-  },
-  {
-    province: "贵州",
-    mode: "monthly",
-    rate: 168,
-    duration: 4,
-    months: "以当地通知为准",
-    note: "贵州高温津贴 168 元/月（或 8 元/日），共 4 个月；以当地最新通知为准",
-  },
-  {
-    province: "陕西",
-    mode: "daily",
-    rate: 25,
-    duration: 88,
-    months: "以当地通知为准",
-    note: "陕西按 25 元/日发放；88 日按发放月数 × 21.75 个工作日估算，实际以出勤天数为准；以当地最新通知为准",
-  },
-];
 
 export type HeatSubsidyResult =
   | {

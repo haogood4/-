@@ -1,6 +1,8 @@
-// 二维码生成器引擎 —— 纯函数，无 DOM 依赖
+// 二维码生成器引擎 —— 纯函数，无 DOM 依赖、无 fetch（数据由页面脚本/测试加载后传入）
 // 算法移植自真机扫码验证过的单文件实现（TABLE/TOTAL/ALIGN/FMT 数据表逐字保留），
 // 改写为现代 TS 模块级函数；源文件 throw Error 处改为返回错误联合类型。
+// 版本×纠错等级容量表已外置至 /data/qr-code-table.json（JSON 键为字符串）：
+// 调用方须经 normalizeQrTable 规整为 QrTable 后传入 generateQrCode。
 //
 // 已知限制（继承自源算法）：
 // - Q 等级 + 第 4 版及以上，个别扫码 App 识别不稳定；页面默认推荐 L 等级。
@@ -34,166 +36,68 @@ export type QrCodeResult =
       error: { code: QrErrorCode; message: string };
     };
 
-interface LevelSpec {
+export interface LevelSpec {
   /** 每块纠错码字数 */
   ecc: number;
   /** [块数, 每块数据码字数][] */
   blocks: readonly (readonly [number, number])[];
 }
 
-/** @internal 版本×纠错等级容量表（逐字移植） */
-export const TABLE: Record<number, Record<QrLevel, LevelSpec>> = {
-  1: {
-    L: { ecc: 7, blocks: [[1, 19]] },
-    M: { ecc: 10, blocks: [[1, 16]] },
-    Q: { ecc: 13, blocks: [[1, 13]] },
-    H: { ecc: 17, blocks: [[1, 9]] },
-  },
-  2: {
-    L: { ecc: 10, blocks: [[1, 34]] },
-    M: { ecc: 16, blocks: [[1, 28]] },
-    Q: { ecc: 22, blocks: [[1, 22]] },
-    H: { ecc: 28, blocks: [[1, 16]] },
-  },
-  3: {
-    L: { ecc: 15, blocks: [[1, 55]] },
-    M: { ecc: 26, blocks: [[1, 44]] },
-    Q: { ecc: 18, blocks: [[2, 17]] },
-    H: { ecc: 22, blocks: [[2, 13]] },
-  },
-  4: {
-    L: { ecc: 20, blocks: [[1, 80]] },
-    M: { ecc: 18, blocks: [[2, 32]] },
-    Q: { ecc: 26, blocks: [[2, 24]] },
-    H: { ecc: 16, blocks: [[4, 9]] },
-  },
-  5: {
-    L: { ecc: 26, blocks: [[1, 108]] },
-    M: { ecc: 24, blocks: [[2, 43]] },
-    Q: {
-      ecc: 18,
-      blocks: [
-        [2, 15],
-        [2, 16],
-      ],
+/** 版本 × 纠错等级容量表（数据外置于 /data/qr-code-table.json，运行时经 normalizeQrTable 传入） */
+export type QrTable = Record<number, Record<QrLevel, LevelSpec>>;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+/** 单个等级规格守卫（JSON 反序列化后无类型，逐字段校验，返回统一错误） */
+function toLevelSpec(raw: unknown): LevelSpec {
+  const fail = (): Error =>
+    new Error("二维码容量表格式非法（缺少合法的 ecc/blocks 字段）");
+  if (
+    !isRecord(raw) ||
+    typeof raw.ecc !== "number" ||
+    !Array.isArray(raw.blocks)
+  ) {
+    throw fail();
+  }
+  const blocks: (readonly [number, number])[] = raw.blocks.map(
+    (block: unknown) => {
+      if (
+        !Array.isArray(block) ||
+        block.length !== 2 ||
+        typeof block[0] !== "number" ||
+        typeof block[1] !== "number"
+      ) {
+        throw fail();
+      }
+      return [block[0], block[1]] as const;
     },
-    H: {
-      ecc: 22,
-      blocks: [
-        [2, 11],
-        [2, 12],
-      ],
-    },
-  },
-  6: {
-    L: { ecc: 18, blocks: [[2, 68]] },
-    M: { ecc: 16, blocks: [[4, 27]] },
-    Q: { ecc: 24, blocks: [[4, 19]] },
-    H: {
-      ecc: 28,
-      blocks: [
-        [4, 15],
-        [4, 16],
-      ],
-    },
-  },
-  7: {
-    L: { ecc: 20, blocks: [[2, 78]] },
-    M: { ecc: 18, blocks: [[4, 31]] },
-    Q: {
-      ecc: 18,
-      blocks: [
-        [2, 14],
-        [4, 15],
-      ],
-    },
-    H: {
-      ecc: 26,
-      blocks: [
-        [4, 13],
-        [1, 14],
-      ],
-    },
-  },
-  8: {
-    L: { ecc: 24, blocks: [[2, 97]] },
-    M: {
-      ecc: 22,
-      blocks: [
-        [2, 38],
-        [2, 39],
-      ],
-    },
-    Q: {
-      ecc: 22,
-      blocks: [
-        [4, 18],
-        [2, 19],
-      ],
-    },
-    H: {
-      ecc: 26,
-      blocks: [
-        [4, 14],
-        [2, 15],
-      ],
-    },
-  },
-  9: {
-    L: { ecc: 30, blocks: [[2, 116]] },
-    M: {
-      ecc: 22,
-      blocks: [
-        [3, 36],
-        [2, 37],
-      ],
-    },
-    Q: {
-      ecc: 20,
-      blocks: [
-        [4, 16],
-        [4, 17],
-      ],
-    },
-    H: {
-      ecc: 24,
-      blocks: [
-        [4, 12],
-        [4, 13],
-      ],
-    },
-  },
-  10: {
-    L: {
-      ecc: 18,
-      blocks: [
-        [2, 68],
-        [2, 69],
-      ],
-    },
-    M: {
-      ecc: 26,
-      blocks: [
-        [4, 43],
-        [1, 44],
-      ],
-    },
-    Q: {
-      ecc: 24,
-      blocks: [
-        [6, 19],
-        [2, 20],
-      ],
-    },
-    H: {
-      ecc: 28,
-      blocks: [
-        [6, 15],
-        [2, 16],
-      ],
-    },
-  },
-};
+  );
+  return { ecc: raw.ecc, blocks };
+}
+
+/**
+ * 把 /data/qr-code-table.json 的原始 JSON（版本键为字符串）规整为 QrTable：
+ * 键 Number 化、逐字段类型守卫。页面脚本 fetch 后与测试 import 后
+ * 都必须先经此转换，再把结果传入 generateQrCode。
+ */
+export function normalizeQrTable(raw: Record<string, unknown>): QrTable {
+  const table: QrTable = {};
+  for (const [key, levels] of Object.entries(raw)) {
+    const v = Number(key);
+    if (!Number.isInteger(v) || v < 1 || !isRecord(levels)) {
+      throw new Error(`二维码容量表：版本 ${key} 数据缺失或非法`);
+    }
+    table[v] = {
+      L: toLevelSpec(levels.L),
+      M: toLevelSpec(levels.M),
+      Q: toLevelSpec(levels.Q),
+      H: toLevelSpec(levels.H),
+    };
+  }
+  return table;
+}
 
 /** @internal 各版本码字总数（逐字移植） */
 export const TOTAL: Record<number, number> = {
@@ -318,21 +222,26 @@ function utf8Bytes(s: string): number[] {
   return Array.from(new TextEncoder().encode(s));
 }
 
-function dataCodewords(v: number, level: QrLevel): number {
+function dataCodewords(table: QrTable, v: number, level: QrLevel): number {
   let dcw = 0;
-  for (const [count, len] of TABLE[v][level].blocks) dcw += count * len;
+  for (const [count, len] of table[v][level].blocks) dcw += count * len;
   return dcw;
 }
 
 /** 该版本/等级下字节模式最大载荷（字节数） */
-function maxBytes(v: number, level: QrLevel): number {
+function maxBytes(table: QrTable, v: number, level: QrLevel): number {
   const countBits = v < 10 ? 8 : 16;
-  return Math.floor((dataCodewords(v, level) * 8 - 4 - countBits) / 8);
+  return Math.floor((dataCodewords(table, v, level) * 8 - 4 - countBits) / 8);
 }
 
 /** 字节模式比特流 → 补位后的数据码字序列 */
-function encodeData(bytes: number[], v: number, level: QrLevel): number[] {
-  const dcw = dataCodewords(v, level);
+function encodeData(
+  table: QrTable,
+  bytes: number[],
+  v: number,
+  level: QrLevel,
+): number[] {
+  const dcw = dataCodewords(table, v, level);
   const bits: number[] = [];
   const push = (val: number, len: number): void => {
     for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1);
@@ -356,8 +265,13 @@ function encodeData(bytes: number[], v: number, level: QrLevel): number[] {
 }
 
 /** 分块 + RS 纠错 + 数据/纠错码字交织 */
-function interleave(dataCw: number[], v: number, level: QrLevel): number[] {
-  const info = TABLE[v][level];
+function interleave(
+  table: QrTable,
+  dataCw: number[],
+  v: number,
+  level: QrLevel,
+): number[] {
+  const info = table[v][level];
   const blocks: number[][] = [];
   let idx = 0;
   for (const [count, len] of info.blocks) {
@@ -672,20 +586,24 @@ function penalty(g: number[][], size: number): number {
 /**
  * 生成二维码（字节模式 UTF-8，自动选最小版本与最优掩码）。
  *
+ * table：外置容量表（/data/qr-code-table.json 经 normalizeQrTable 规整后的结果），
+ * 由页面脚本或测试加载后传入，本引擎不自行加载。
+ *
  * 已知限制：Q 等级 + 第 4 版及以上个别扫码器识别不稳定，默认建议 L 等级。
  */
-export function generateQrCode(input: {
-  text: string;
-  level: QrLevel;
-}): QrCodeResult {
-  const text = input.text.trim();
-  if (text === "") {
+export function generateQrCode(
+  text: string,
+  level: QrLevel,
+  table: QrTable,
+): QrCodeResult {
+  const trimmed = text.trim();
+  if (trimmed === "") {
     return { ok: false, error: { code: "EMPTY", message: "请输入内容" } };
   }
-  const bytes = utf8Bytes(text);
+  const bytes = utf8Bytes(trimmed);
   let version = 0;
   for (let v = 1; v <= 10; v++) {
-    if (bytes.length <= maxBytes(v, input.level)) {
+    if (bytes.length <= maxBytes(table, v, level)) {
       version = v;
       break;
     }
@@ -695,14 +613,15 @@ export function generateQrCode(input: {
       ok: false,
       error: {
         code: "TOO_LONG",
-        message: `内容过长（最多约 ${maxBytes(10, input.level)} 个英文字符，中文约占3个字符）`,
+        message: `内容过长（最多约 ${maxBytes(table, 10, level)} 个英文字符，中文约占3个字符）`,
       },
     };
   }
   const codewords = interleave(
-    encodeData(bytes, version, input.level),
+    table,
+    encodeData(table, bytes, version, level),
     version,
-    input.level,
+    level,
   );
   if (codewords.length !== TOTAL[version]) {
     return {
@@ -720,7 +639,7 @@ export function generateQrCode(input: {
         if (!m.func[r][c] && MASKS[mask](r, c)) m.grid[r][c] ^= 1;
       }
     }
-    drawFormat(m, input.level, mask);
+    drawFormat(m, level, mask);
     drawVersion(m, version);
     const pen = penalty(m.grid, m.size);
     if (best === undefined || pen < best.pen) {

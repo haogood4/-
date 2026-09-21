@@ -1,11 +1,27 @@
 ---
+import { readFileSync } from "node:fs";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
 import UsageGuide from "../../components/UsageGuide.astro";
-import { ASCII_TABLE } from "../../lib/calculators/ascii-table";
+// ASCII 对照数据单一来源：public/data/ascii-table.json（页面脚本运行时 fetch 同一文件）。
+// 构建期经 node:fs 读取：Vite 模块图不允许直接 import public/ 下的资源。
+interface AsciiControlRow {
+  code: number;
+  name: string;
+  desc: string;
+}
+interface AsciiPrintableRow {
+  code: number;
+  char: string;
+  name: string;
+}
+const ASCII_TABLE: {
+  control: AsciiControlRow[];
+  printable: AsciiPrintableRow[];
+} = JSON.parse(readFileSync("public/data/ascii-table.json", "utf-8"));
 
 const hex2 = (n: number) => n.toString(16).toUpperCase().padStart(2, "0");
 

@@ -1,5 +1,12 @@
 // 二维码生成器页面交互（外部脚本，无内联事件；样板见 _page-kit.ts）
-import { generateQrCode, type QrLevel } from "../lib/calculators/qr-code-cn";
+// 容量表数据外置于 /data/qr-code-table.json：提交时 lazy fetch（模块级 Promise
+// 缓存）并经 normalizeQrTable 规整（JSON 版本键为字符串），失败走字段错误提示。
+import {
+  generateQrCode,
+  normalizeQrTable,
+  type QrLevel,
+  type QrTable,
+} from "../lib/calculators/qr-code-cn";
 import {
   requireEl,
   setFieldError,
@@ -8,6 +15,27 @@ import {
   bindCopyButton,
   bindShareButton,
 } from "./_page-kit";
+
+const LOAD_FAIL_MSG = "数据加载失败，请刷新页面重试";
+
+// ---------- 懒加载容量表：首次提交时 fetch，之后复用缓存 ----------
+let tablePromise: Promise<QrTable> | null = null;
+
+function loadTable(): Promise<QrTable> {
+  if (!tablePromise) {
+    tablePromise = fetch("/data/qr-code-table.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json() as Promise<Record<string, unknown>>;
+      })
+      .then((raw) => normalizeQrTable(raw))
+      .catch((err: unknown) => {
+        tablePromise = null; // 失败后允许下次提交重试
+        throw err;
+      });
+  }
+  return tablePromise;
+}
 
 const form = requireEl<HTMLFormElement>("#calc-form");
 const textInput = requireEl<HTMLTextAreaElement>("#qr-text");
@@ -52,12 +80,23 @@ function drawQr(grid: number[][], size: number): void {
   }
 }
 
-function handleSubmit(event: Event): void {
+async function handleSubmit(event: Event): Promise<void> {
   event.preventDefault();
   clearFieldError(textInput, errorText);
 
   const level = levelSelect.value as QrLevel;
-  const result = generateQrCode({ text: textInput.value, level });
+
+  // 容量表就绪后再生成；加载失败给通用错误提示
+  let table: QrTable;
+  try {
+    table = await loadTable();
+  } catch {
+    setFieldError(textInput, errorText, LOAD_FAIL_MSG);
+    goStaleIfComputed();
+    return;
+  }
+
+  const result = generateQrCode(textInput.value, level, table);
   if (!result.ok) {
     setFieldError(textInput, errorText, result.error.message);
     textInput.focus();
@@ -97,7 +136,9 @@ function onFieldInput(): void {
   goStaleIfComputed();
 }
 
-form.addEventListener("submit", handleSubmit);
+form.addEventListener("submit", (event) => {
+  void handleSubmit(event);
+});
 resetBtn.addEventListener("click", handleReset);
 downloadBtn.addEventListener("click", handleDownload);
 textInput.addEventListener("input", onFieldInput);

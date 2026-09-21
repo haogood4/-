@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
-  ASCII_TABLE,
   charToCodes,
   codeToChar,
   MAX_CODE_POINT,
   MAX_QUERY_CHARS,
 } from "./ascii-table";
+// 对照数据已外置为单一来源 JSON，与页面脚本/构建期共用同一文件
+import ASCII_TABLE from "../../../public/data/ascii-table.json";
 
 describe("charToCodes — 字符 → 编码", () => {
   it("ASCII 字符 A：65 / 0x41 / 单字节 41", () => {

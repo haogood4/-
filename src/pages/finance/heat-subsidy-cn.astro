@@ -1,4 +1,5 @@
 ---
+import { readFileSync } from "node:fs";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import ResultArea from "../../components/ResultArea.astro";
@@ -6,7 +7,19 @@ import AdContainer from "../../components/AdContainer.astro";
 import FaqSection from "../../components/FaqSection.astro";
 import CalcJsonLd from "../../components/CalcJsonLd.astro";
 import UsageGuide from "../../components/UsageGuide.astro";
-import { HEAT_PRESETS } from "../../lib/calculators/heat-subsidy";
+// 省份预设单一来源：public/data/heat-subsidy-presets.json（页面脚本运行时 fetch 同一文件）。
+// 构建期经 node:fs 读取：Vite 模块图不允许直接 import public/ 下的资源。
+interface HeatPreset {
+  province: string;
+  mode: string;
+  rate: number;
+  duration: number;
+  months: string;
+  note: string;
+}
+const HEAT_PRESETS: HeatPreset[] = JSON.parse(
+  readFileSync("public/data/heat-subsidy-presets.json", "utf-8"),
+);
 
 const breadcrumbItems = [
   { label: "首页", href: "/" },

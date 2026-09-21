@@ -358,9 +358,14 @@ console.log("冒烟断言（12 组）：");
     idxWhy = "missing";
   }
   // 体积削减专项：外置数据 JSON 必须随 dist 存在且可解析
-  const dataJson = ["chinese-convert", "sensitive-word", "clothing-size"].map(
-    (n) => join(DIST, "data", `${n}.json`),
-  );
+  const dataJson = [
+    "chinese-convert",
+    "sensitive-word",
+    "clothing-size",
+    "heat-subsidy-presets",
+    "ascii-table",
+    "qr-code-table",
+  ].map((n) => join(DIST, "data", `${n}.json`));
   const dataBad = dataJson.filter((p) => {
     if (!existsSync(p)) return true;
     try {

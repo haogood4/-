@@ -3,10 +3,14 @@ import {
   generateQrCode,
   makeMatrix,
   MASKS,
-  TABLE,
+  normalizeQrTable,
   TOTAL,
   type QrLevel,
 } from "./qr-code-cn";
+// 容量表已外置为单一来源 JSON（键为字符串版本号），经 normalizeQrTable 规整后传入引擎
+import rawTable from "../../../public/data/qr-code-table.json";
+
+const TABLE = normalizeQrTable(rawTable);
 
 /**
  * 往返解码：从最终 grid 反向提取数据位（按 placeData 蛇形顺序、跳过功能模块、
@@ -94,7 +98,7 @@ function decodeQr(
 }
 
 function expectRoundTrip(text: string, level: QrLevel = "L"): void {
-  const r = generateQrCode({ text, level });
+  const r = generateQrCode(text, level, TABLE);
   expect(r.ok).toBe(true);
   if (!r.ok) return;
   expect(decodeQr(r.value.grid, r.value.version, level, r.value.mask)).toBe(
@@ -126,7 +130,7 @@ describe("generateQrCode / 往返解码", () => {
 
 /** 断言生成成功并取出 value（失败直接抛错，让相关用例明确失败） */
 function mustOk(text: string, level: QrLevel = "L") {
-  const r = generateQrCode({ text, level });
+  const r = generateQrCode(text, level, TABLE);
   if (!r.ok) throw new Error(`生成失败：${r.error.code} ${r.error.message}`);
   return r.value;
 }
@@ -159,13 +163,13 @@ describe("generateQrCode / 结构不变量", () => {
 
 describe("generateQrCode / 容量边界", () => {
   it("L 级 271 字节（第 10 版上限）成功", () => {
-    const r = generateQrCode({ text: "a".repeat(271), level: "L" });
+    const r = generateQrCode("a".repeat(271), "L", TABLE);
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.value.version).toBe(10);
   });
 
   it("L 级 272 字节返回 TOO_LONG 且提示容量", () => {
-    const r = generateQrCode({ text: "a".repeat(272), level: "L" });
+    const r = generateQrCode("a".repeat(272), "L", TABLE);
     expect(r.ok).toBe(false);
     if (!r.ok) {
       expect(r.error.code).toBe("TOO_LONG");
@@ -177,7 +181,7 @@ describe("generateQrCode / 容量边界", () => {
 describe("generateQrCode / 纠错等级", () => {
   it("L/M/Q/H 短文本均成功", () => {
     for (const level of ["L", "M", "Q", "H"] as QrLevel[]) {
-      const r = generateQrCode({ text: "hi", level });
+      const r = generateQrCode("hi", level, TABLE);
       expect(r.ok).toBe(true);
     }
   });
@@ -185,13 +189,13 @@ describe("generateQrCode / 纠错等级", () => {
 
 describe("generateQrCode / 错误处理", () => {
   it("空文本 → EMPTY", () => {
-    const r = generateQrCode({ text: "", level: "L" });
+    const r = generateQrCode("", "L", TABLE);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error.code).toBe("EMPTY");
   });
 
   it("纯空白文本 → EMPTY", () => {
-    const r = generateQrCode({ text: "   \n\t ", level: "L" });
+    const r = generateQrCode("   \n\t ", "L", TABLE);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error.code).toBe("EMPTY");
   });

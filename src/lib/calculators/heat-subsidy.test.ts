@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { calculateHeatSubsidy, HEAT_PRESETS } from "./heat-subsidy";
+import { calculateHeatSubsidy } from "./heat-subsidy";
+// 预设数据已外置为单一来源 JSON，与页面脚本/构建期共用同一文件
+import HEAT_PRESETS from "../../../public/data/heat-subsidy-presets.json";
 
 const cv = (mode: string, rate: string, duration: string) =>
   calculateHeatSubsidy({ mode, rate, duration });

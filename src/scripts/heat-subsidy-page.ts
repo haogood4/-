@@ -1,8 +1,10 @@
 // 高温津贴计算器页面交互（外部脚本）
+// 省份预设数据外置于 /data/heat-subsidy-presets.json：初始化时 fetch
+// （模块级 Promise 缓存），就绪后按首个预设填充表单；加载失败走字段错误提示。
 import {
   calculateHeatSubsidy,
-  HEAT_PRESETS,
   type HeatSubsidyField,
+  type HeatSubsidyMode,
 } from "../lib/calculators/heat-subsidy";
 import {
   requireEl,
@@ -12,6 +14,19 @@ import {
   bindCopyButton,
   bindShareButton,
 } from "./_page-kit";
+
+/** 省份预设条目（与 /data/heat-subsidy-presets.json 结构一致） */
+interface HeatPreset {
+  province: string;
+  mode: HeatSubsidyMode;
+  /** 发放标准（元/月 或 元/日） */
+  rate: number;
+  /** 月数（monthly）或天数（daily） */
+  duration: number;
+  /** 发放月份说明 */
+  months: string;
+  note: string;
+}
 
 const form = requireEl<HTMLFormElement>("#calc-form");
 const selectProvince = requireEl<HTMLSelectElement>("#input-province");
@@ -40,6 +55,8 @@ const textFields = [fieldMap.rate, fieldMap.duration];
 
 let lastCopyText = "";
 
+const LOAD_FAIL_MSG = "数据加载失败，请刷新页面重试";
+
 const { setState, goStaleIfComputed } = createResultState({
   resultEmpty: requireEl("#result-empty"),
   resultContent: requireEl("#result-content"),
@@ -48,12 +65,43 @@ const { setState, goStaleIfComputed } = createResultState({
   buttons: [copyBtn, shareBtn],
 });
 
-function findPreset(province: string) {
-  return HEAT_PRESETS.find((p) => p.province === province);
+// ---------- 懒加载省份预设：首次使用时 fetch，之后复用缓存 ----------
+let presetsPromise: Promise<HeatPreset[]> | null = null;
+let presetsCache: HeatPreset[] = [];
+
+function loadPresets(): Promise<HeatPreset[]> {
+  if (!presetsPromise) {
+    presetsPromise = fetch("/data/heat-subsidy-presets.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json() as Promise<HeatPreset[]>;
+      })
+      .catch((err: unknown) => {
+        presetsPromise = null; // 失败后允许下次操作重试
+        throw err;
+      });
+  }
+  return presetsPromise;
+}
+
+/** 确保预设可用并写入缓存；失败时抛错由调用方提示 */
+async function ensurePresets(): Promise<HeatPreset[]> {
+  const presets = await loadPresets();
+  presetsCache = presets;
+  return presets;
+}
+
+function findPreset(province: string): HeatPreset | undefined {
+  return presetsCache.find((p) => p.province === province);
 }
 
 /** 选择省份后自动填充计发方式/标准/时长（纯 DOM 赋值；自定义不覆盖） */
-function applyProvince(): void {
+async function applyProvince(): Promise<void> {
+  try {
+    await ensurePresets();
+  } catch {
+    return; // 数据加载失败：保持当前表单值，后续操作可重试
+  }
   const preset = findPreset(selectProvince.value);
   if (!preset) return;
   selectMode.value = preset.mode;
@@ -70,7 +118,7 @@ function provinceLabel(): string {
   return `${preset.province} ${preset.rate} ${unit} × ${preset.duration} ${span}`;
 }
 
-function handleSubmit(event: Event): void {
+async function handleSubmit(event: Event): Promise<void> {
   event.preventDefault();
   clearFieldError(selectMode, errorMode);
   for (const f of textFields) clearFieldError(f.input, f.error);
@@ -87,6 +135,14 @@ function handleSubmit(event: Event): void {
     return;
   }
 
+  // 省份标签依赖预设数据；未就绪/加载失败时给通用错误提示
+  try {
+    await ensurePresets();
+  } catch {
+    setFieldError(inputRate, errorRate, LOAD_FAIL_MSG);
+    return;
+  }
+
   resultCaption.textContent = provinceLabel();
   resultMain.textContent = `高温津贴合计 ¥${result.total.toFixed(2)}`;
   resultProcess.textContent = result.formulaText;
@@ -94,9 +150,15 @@ function handleSubmit(event: Event): void {
   setState("computed");
 }
 
-function handleReset(): void {
-  selectProvince.value = HEAT_PRESETS[0]?.province ?? "custom";
-  applyProvince();
+async function handleReset(): Promise<void> {
+  // 默认选中首个预设（上海）；数据未就绪时回退「自定义」
+  try {
+    const presets = await ensurePresets();
+    selectProvince.value = presets[0]?.province ?? "custom";
+  } catch {
+    selectProvince.value = "custom";
+  }
+  await applyProvince();
   for (const f of textFields) clearFieldError(f.input, f.error);
   clearFieldError(selectMode, errorMode);
   lastCopyText = "";
@@ -111,14 +173,20 @@ function onFieldInput(): void {
   goStaleIfComputed();
 }
 
-form.addEventListener("submit", handleSubmit);
-resetBtn.addEventListener("click", handleReset);
-selectProvince.addEventListener("change", applyProvince);
+form.addEventListener("submit", (event) => {
+  void handleSubmit(event);
+});
+resetBtn.addEventListener("click", () => {
+  void handleReset();
+});
+selectProvince.addEventListener("change", () => {
+  void applyProvince();
+});
 selectMode.addEventListener("change", goStaleIfComputed);
 for (const f of textFields) f.input.addEventListener("input", onFieldInput);
 
 bindCopyButton(copyBtn, () => lastCopyText);
 bindShareButton(shareBtn);
 
-applyProvince(); // 初始按首个预设（上海）填充
+void applyProvince(); // 数据就绪后按首个预设（上海）填充
 setState("empty");

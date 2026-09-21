@@ -14,6 +14,10 @@
 - P1-10 法务审核资料包（`docs/legal-review-package.md`，7 节 / 三页骨架 + 数据流图 + Go/No-Go 清单 + 风险登记 + 上线流程），登记为 DS-202609-08 双签项（P1，2026-09-26 截止）
 - P3-15 回归测试计划（`docs/content-collections-regression.md`，9 节 / 触发条件 + 11 步回归 + 性能与端到端验证矩阵 + 回滚预案 + DoD）；新增探针 `scripts/check-astro-fix.mjs` + `pnpm astro:probe` 命令，astro 7.3.3 未达阈值时 silent exit 0
 
+### 变更
+
+- JS 二期瘦身（P6 后）：二维码容量表、ASCII 对照表、高温津贴省份预设外置为 `public/data/*.json`（构建期与运行时同源单文件，页面首次操作 lazy fetch，qr 引擎数据参数化 + normalizeQrTable 类型守卫）；全站 JS brotli 118.51 → 117.72KB，browser 实测三工具 7/7 PASS；brotli 分布审计确认 105 文件最大 3.56KB、96 页平均 ~1.1KB，当前架构已达结构下限
+
 ### 待人工处理
 
 - P1-7② FOUC 窗口与三态 vs 二态决策（项目负责人）
