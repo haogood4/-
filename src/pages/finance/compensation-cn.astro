@@ -1,0 +1,181 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "经济补偿金计算器" },
+];
+
+const faqItems = [
+  {
+    q: "经济补偿 N 是怎么算的？",
+    a: "依据《劳动合同法》第四十七条：按劳动者在本单位工作的年限，每满 1 年支付 1 个月工资；6 个月以上不满 1 年的，按 1 年计算；不满 6 个月的，向劳动者支付半个月工资的经济补偿。月工资指解除或终止前 12 个月的平均工资（含计时/计件工资、奖金、津贴和补贴等货币性收入）。",
+  },
+  {
+    q: "什么情形下有「代通知金（N+1）」？",
+    a: "依据《劳动合同法》第四十条，劳动者患病或非因工负伤、不能胜任工作、客观情况发生重大变化等情形下，用人单位提前 30 日书面通知才能解除；未提前通知的，应额外支付 1 个月工资的「代通知金」+ 经济补偿金，合计即俗称的 N+1。代通知金按劳动者上月工资标准支付。",
+  },
+  {
+    q: "违法解除赔偿金 2N 是怎么规定的？",
+    a: "《劳动合同法》第八十七条规定：用人单位违反本法规定解除或终止劳动合同的，应当依照经济补偿标准的二倍向劳动者支付赔偿金，即俗称的 2N。注意 2N 与 N+1 不能同时主张——前者针对违法解除的赔偿，后者针对合法但未提前通知的补偿。",
+  },
+  {
+    q: "月工资超过社平 3 倍怎么处理？",
+    a: "《劳动合同法》第四十七条第二款规定：劳动者月工资高于用人单位所在直辖市、设区的市级人民政府公布的本地区上年度职工月平均工资 3 倍的，向其支付经济补偿的标准按职工月平均工资 3 倍的数额支付，向其支付经济补偿的年限最高不超过 12 年。即同时触发「按 3 倍社平封顶」+「年限 12 年封顶」。本工具按用户输入的社平口径自动判定是否封顶。",
+  },
+  {
+    q: "本工具结果与劳动仲裁/判决为何可能有差异？",
+    a: "可能存在差异的原因：① 月工资基数有争议（奖金/津贴/补贴是否计入、合同约定 vs 实际发放）；② 工龄换算（合并计算、跨单位连续工龄、视同缴费）；③ 高薪封顶需以用人单位所在地的「上年度职工月平均工资」为准，各地每年由统计局公布；④ 是否属违法解除由仲裁/法院认定。本工具结果仅供参考，最终以劳动仲裁裁决/法院判决为准。",
+  },
+];
+---
+
+<BaseLayout
+  title="经济补偿金计算器 — N / N+1 / 2N 在线测算"
+  description="免费在线经济补偿金计算器：依据《劳动合同法》第四十七条 / 第八十七条与劳社部发〔2008〕41 号，按 N / N+1 / 2N 三种情形自动测算月数、3 倍社平封顶与年限封顶，给出应发金额与公式代入。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>经济补偿金计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      依据《劳动合同法》第四十七条与第八十七条、劳社部发〔2008〕41 号，按 N / N+1 / 2N
+      三种情形自动测算经济补偿金应发金额；月薪超过社平 3 倍时自动按 3 倍社平计入，年限最高 12 年。
+    </p>
+    <p class="result-hint">
+      <strong
+        >⚠️
+        计算结果仅供参考，月工资基数与是否违法解除以劳动仲裁 / 法院裁决为准。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="经济补偿金计算表单">
+      <div class="field">
+        <label for="input-salary">月工资（元）</label>
+        <input
+          id="input-salary"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="如 8000"
+          aria-describedby="field-error-salary"
+        />
+        <p class="field-error" id="field-error-salary" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-years">工作年限（年）</label>
+        <input
+          id="input-years"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="如 3.5（半年以上不满 1 年按 1 年算）"
+          aria-describedby="field-error-years"
+        />
+        <p class="field-error" id="field-error-years" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-type">补偿类型</label>
+        <select id="input-type" class="field-select">
+          <option value="N">N（合法解除经济补偿）</option>
+          <option value="N+1">N+1（含代通知金）</option>
+          <option value="2N">2N（违法解除赔偿金）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-region-avg">本地区上年度职工月平均工资（可选）</label>
+        <input
+          id="input-region-avg"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="留空 = 不触发 3 倍封顶"
+          aria-describedby="field-error-region"
+        />
+        <p class="field-error" id="field-error-region" hidden></p>
+        <p class="field-hint">
+          触发「月薪 &gt; 社平 ×3」时按 3 倍社平计入，年限最高 12 年（第四十七条第二款）
+        </p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算经济补偿
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填写月工资（解除/终止前 12 个月平均工资）与工作年限（含小数）。</li>
+        <li>选择补偿类型 N / N+1 / 2N；如月薪高于本地区社平 3 倍，填写社平触发封顶。</li>
+        <li>点击「计算经济补偿」查看计发月数、是否触发封顶与应发金额。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算明细</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>N = 工龄 × 1 月工资（每满 1 年按 1 月算；6 个月以上不满 1 年按 1 年算；不满 6 个月按半月）。</p>
+        </li>
+        <li class="formula-item">
+          <p>N+1 = N + 代通知金（1 月，按上月工资）。</p>
+        </li>
+        <li class="formula-item">
+          <p>2N = N × 2（违法解除赔偿金，第八十七条）。</p>
+        </li>
+        <li class="formula-item">
+          <p>高薪封顶：月薪 &gt; 社平 ×3 → 按 3 倍社平计入；年限最高 12 年（第四十七条第二款）。</p>
+        </li>
+        <li class="formula-item">
+          <p>例：月薪 8000 / 工龄 3 年 / N → 8000 × 3 = 24000 元；月薪 30000 / 社平 8000 / 工龄 15 年 / N → 按 24000 × 12 = 288000 元（封顶）。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/overtime-pay-cn/">加班费计算器</a></li>
+        <li><a href="/finance/injury-cn/">工伤赔偿计算器</a></li>
+        <li><a href="/finance/lawsuit-fee-cn/">诉讼费计算器</a></li>
+        <li><a href="/finance/social-insurance-cn/">五险一金计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，月工资基数、是否违法解除、社平口径以劳动仲裁 / 法院裁决及当地人社部门公告为准。
+    </p>
+
+    <CalcJsonLd
+      name="经济补偿金计算器"
+      description="免费在线经济补偿金计算器：依据《劳动合同法》第四十七条 / 第八十七条与劳社部发〔2008〕41 号，按 N / N+1 / 2N 三种情形自动测算月数、3 倍社平封顶与年限封顶，给出应发金额与公式代入。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script
+    is:inline
+    type="module"
+    src="/scripts/compensation-cn-page.js"
+  ></script>
+</BaseLayout>

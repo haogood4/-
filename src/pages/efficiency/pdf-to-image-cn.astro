@@ -1,0 +1,139 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import BreadcrumbJsonLd from "../../components/BreadcrumbJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const description =
+  "在线 PDF 转图片工具：把 PDF 每一页导出为 PNG 或 JPG 图片，支持 72/96/144/300 四档 DPI，本地处理不上传。完整功能开发中，当前提供接口契约与交互流程预览。";
+
+const faqItems = [
+  {
+    q: "现在能把 PDF 转成图片吗？",
+    a: "还不能。完整转换功能正在开发中，当前页面提供接口契约与流程预览：可以选择文件、体验输出格式与 DPI 的选择，但文件不会被解析，也不会生成图片。",
+  },
+  {
+    q: "DPI 选多少合适？",
+    a: "72 DPI 适合屏幕快速预览，96 DPI 满足一般网页使用，144 DPI 适合高清演示，300 DPI 达到打印级清晰度（文件也更大）。上线后按用途选择即可。",
+  },
+  {
+    q: "导出的图片是什么格式？",
+    a: "上线后支持 PNG（无损、文字边缘锐利）与 JPEG（体积更小、适合照片型页面）两种输出，按页编号命名，方便批量使用。",
+  },
+  {
+    q: "文件会被上传吗？",
+    a: "不会。本工具设计为全程浏览器本地处理，当前版本同样不读取、不上传任何文件内容。",
+  },
+];
+---
+
+<BaseLayout
+  title="PDF 转图片工具 — PDF 在线转 PNG/JPG 图片（完整功能开发中）"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "PDF 转图片工具" },
+      ]}
+    />
+    <h1>PDF 转图片工具</h1>
+    <UsageGuide />
+    <p class="lead">
+      PDF 每页导出 PNG/JPG · 72~300 DPI 可选 · 本地处理不上传 · 完整功能开发中
+    </p>
+
+    <section class="section" aria-label="功能状态说明">
+      <div class="card">
+        <p>
+          <strong>诚实声明：完整功能开发中，暂提供接口契约。</strong>
+          本页当前展示未来版本的操作流程与接口契约，PDF 处理引擎尚未接入，文件不会被解析、转换或上传。
+        </p>
+      </div>
+    </section>
+
+    <form id="calc-form" class="card" novalidate aria-label="PDF 转图片表单">
+      <div class="field">
+        <label for="pdf-input">选择 PDF 文件</label>
+        <input
+          type="file"
+          id="pdf-input"
+          class="field-input"
+          accept="application/pdf,.pdf"
+        />
+        <p class="field-hint">当前版本不会读取文件内容。</p>
+        <p class="field-error" id="field-error-file" hidden></p>
+      </div>
+      <div class="field">
+        <label for="image-format">图片格式</label>
+        <select id="image-format" class="field-select">
+          <option value="png" selected>PNG（无损，文字清晰）</option>
+          <option value="jpeg">JPEG（体积更小）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="dpi">输出 DPI</label>
+        <select id="dpi" class="field-select">
+          <option value="72">72（屏幕预览）</option>
+          <option value="96" selected>96（网页使用）</option>
+          <option value="144">144（高清演示）</option>
+          <option value="300">300（打印级）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary"
+          >转换为图片</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >重置</button
+        >
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明（完整功能上线后）</h2>
+      <ol class="note-list">
+        <li>选择 1 个需要转换的 PDF 文件。</li>
+        <li>选择图片格式与 DPI，不确定时保持默认即可。</li>
+        <li>点击「转换为图片」，本地转换完成后逐页下载图片。</li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/pdf-watermark-cn/">PDF 加水印工具</a></li>
+        <li><a href="/efficiency/pdf-merge-cn/">PDF 合并工具</a></li>
+        <li><a href="/efficiency/image-convert-cn/">图片格式转换工具</a></li>
+        <li><a href="/efficiency/image-resize-cn/">在线图片改尺寸工具</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="PDF 转图片工具"
+      description={description}
+      faqItems={faqItems}
+    />
+    <BreadcrumbJsonLd
+      items={[
+        { name: "首页", href: "/" },
+        { name: "效率工具" },
+        { name: "PDF 转图片工具" },
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/pdf-to-image-cn-page.js"
+  ></script>
+</BaseLayout>

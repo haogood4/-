@@ -1,0 +1,235 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import BreadcrumbJsonLd from "../../components/BreadcrumbJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const description =
+  "免费在线 GIF 解析工具：上传 GIF 即可查看帧数与尺寸信息，并导出首帧 PNG。逐帧导出 PNG 的完整功能开发中（GIF 编解码依赖体积较大），解析在浏览器本地完成，文件不上传。";
+
+const faqItems = [
+  {
+    q: "能查看 GIF 的哪些信息？",
+    a: "目前可以查看逻辑屏幕尺寸（宽×高）与总帧数，两者通过纯字节扫描解析，不需要完整解码画面；同时可把首帧导出为 PNG 图片。",
+  },
+  {
+    q: "为什么不能逐帧导出？",
+    a: "GIF 逐帧导出需要 LZW 解码、GIF 重新编码则需要 LZW 编码，这类依赖体积较大，超出本站每页脚本的体积预算。我们采用降级方案：先提供帧数/尺寸解析与首帧 PNG 导出，逐帧导出完整功能开发中。",
+  },
+  {
+    q: "预览显示的是完整动画吗？",
+    a: "预览区显示的是浏览器原生渲染的 GIF，会正常播放动画；但 Canvas 画布只能取到首帧静态画面，因此当前可导出的是首帧 PNG 而非每一帧。",
+  },
+  {
+    q: "文件会上传到服务器吗？",
+    a: "不会。解析在您的浏览器内完成，GIF 文件不经过任何服务器，也不会被保存。",
+  },
+  {
+    q: "支持多大的 GIF？",
+    a: "支持不超过 20MB 的 GIF87a / GIF89a 文件；损坏或截断的文件会提示具体原因（签名不符、数据流不完整等）。",
+  },
+];
+---
+
+<BaseLayout
+  title="在线 GIF 解析工具 — 查看 GIF 帧数与尺寸，导出首帧 PNG（本地处理）"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "GIF 解析工具" },
+      ]}
+    />
+    <h1>在线 GIF 解析工具</h1>
+    <UsageGuide />
+    <p class="lead">查看 GIF 帧数与尺寸 · 导出首帧 PNG · 本地处理不上传</p>
+
+    <section class="section" aria-label="功能状态说明">
+      <div class="card">
+        <p>
+          <strong>诚实声明：采用降级方案。</strong>
+          GIF 编解码（LZW）依赖体积较大，逐帧导出 PNG 与 GIF 重新编码的完整功能开发中；当前提供帧数与尺寸解析、首帧
+          PNG 导出，页面顶部提示「导出逐帧 PNG」为规划中的完整功能。
+        </p>
+      </div>
+    </section>
+
+    <form id="calc-form" class="card" novalidate aria-label="GIF 解析表单">
+      <div class="field">
+        <label for="file-input">选择 GIF 文件</label>
+        <label class="dropzone" id="dropzone" for="file-input">
+          <span class="dropzone__title">把 GIF 拖到这里，或点击选择文件</span>
+          <span class="dropzone__hint">仅支持 GIF 格式，不超过 20MB</span>
+          <input
+            type="file"
+            id="file-input"
+            class="dropzone__input"
+            accept="image/gif,.gif"
+          />
+        </label>
+        <p class="field-hint" id="file-info" hidden></p>
+        <p class="field-error" id="field-error-file" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary"
+          >解析 GIF</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >重置</button
+        >
+      </div>
+    </form>
+
+    <div class="card" id="preview-card">
+      <img
+        id="preview-gif"
+        class="gif-preview"
+        alt="GIF 预览（浏览器原生播放）"
+        width="320"
+        height="240"
+      />
+      <p class="field-hint">
+        预览为浏览器原生渲染（正常播放动画）；Canvas
+        仅能取到首帧，逐帧导出功能开发中。
+      </p>
+    </div>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        选择 GIF 并点击「解析 GIF」查看结果
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">解析结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-process" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          文件已变更，请重新解析
+        </p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled
+            >复制结果</button
+          >
+          <button
+            type="button"
+            id="share-btn"
+            class="btn btn-secondary"
+            disabled>分享工具</button
+          >
+          <button
+            type="button"
+            id="download-btn"
+            class="btn btn-primary"
+            disabled>下载首帧 PNG</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>拖拽或点击选择一个 GIF 文件（≤20MB）。</li>
+        <li>点击「解析 GIF」，查看尺寸与帧数信息。</li>
+        <li>需要静态图时点击「下载首帧 PNG」保存首帧画面。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="spec-heading">
+      <h2 id="spec-heading">解析契约</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            引擎按 GIF 块结构纯字节扫描：校验 GIF87a/GIF89a 签名，读取逻辑屏幕
+            描述符宽高，遍历图像描述符统计帧数，不解码 LZW 像素数据。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            输出契约包含 width、height、frames 三个字段；损坏文件区分「签名不符
+            / 数据流不完整 / 无图像帧」三类错误提示。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/image-resize-cn/">在线图片改尺寸工具</a></li>
+        <li><a href="/efficiency/image-convert-cn/">图片格式转换工具</a></li>
+        <li><a href="/efficiency/image-compress-cn/">在线图片压缩工具</a></li>
+        <li><a href="/efficiency/qr-code-cn/">二维码生成器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="在线 GIF 解析工具"
+      description={description}
+      faqItems={faqItems}
+    />
+    <BreadcrumbJsonLd
+      items={[
+        { name: "首页", href: "/" },
+        { name: "效率工具" },
+        { name: "GIF 解析工具" },
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/image-gif-cn-page.js"></script>
+</BaseLayout>
+
+<style>
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    padding: 28px 16px;
+    border: 2px dashed var(--border-color, #cbd5e1);
+    border-radius: 12px;
+    background: var(--surface-2, rgba(148, 163, 184, 0.08));
+    cursor: pointer;
+    text-align: center;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+  .dropzone:hover,
+  .dropzone--active {
+    border-color: var(--accent, #0f766e);
+    background: var(--accent-soft, rgba(15, 118, 110, 0.08));
+  }
+  .dropzone__title {
+    font-weight: 600;
+  }
+  .dropzone__hint {
+    font-size: 0.85em;
+    opacity: 0.75;
+  }
+  .dropzone__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .gif-preview {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 8px;
+    background: var(--surface-2, rgba(148, 163, 184, 0.12));
+  }
+</style>

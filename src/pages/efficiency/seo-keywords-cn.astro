@@ -1,0 +1,159 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "长尾关键词扩展" },
+];
+
+const faqItems = [
+  {
+    q: "什么是长尾关键词？",
+    a: "长尾词是由核心词加上修饰语形成的更具体、搜索量更低但意图更明确的搜索短语，如核心词「计算器」扩展出「免费在线房贷计算器」。单个长尾词流量小，但竞争低、转化高，批量覆盖后总量可观。",
+  },
+  {
+    q: "三组输入分别是干什么的？",
+    a: "前置词生成「修饰语+核心词」（如 免费计算器）；后缀词生成「核心词+修饰语」（如 计算器推荐）；疑问句模板用 {k} 代表核心词生成问句（如 {k}哪个好 → 计算器哪个好）。三组笛卡尔拼接后自动去重。",
+  },
+  {
+    q: "修饰词从哪里来？",
+    a: "常用来源：搜索引擎下拉联想与相关搜索、站长平台的关键词挖掘工具、竞品页面标题中的高频词、客服与用户咨询里的原话。建议每类填 5~10 个，快速覆盖主要搜索意图。",
+  },
+  {
+    q: "生成后怎么用？",
+    a: "把长尾词分配到具体页面：一个页面主打 1 个长尾词，写进标题、描述与正文首段；词库可复制到表格里做内容排期，避免多个页面互相争抢同一个词。",
+  },
+];
+---
+
+<BaseLayout
+  title="长尾关键词扩展 — SEO 关键词笛卡尔组合生成工具"
+  description="免费长尾关键词扩展工具：输入核心词与前置词、后缀词、疑问句模板，自动笛卡尔拼接批量生成长尾关键词，去重保序，支持 {k} 占位符，一键复制到内容排期表，SEO 选词效率工具。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>长尾关键词扩展</h1>
+    <UsageGuide />
+    <p class="lead">
+      核心词 × 前置 / 后缀 / 疑问三组笛卡尔拼接 · 去重保序 · 一键复制。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="长尾词扩展表单">
+      <div class="field">
+        <label for="kw-core">核心关键词（必填）</label>
+        <input
+          type="text"
+          id="kw-core"
+          class="field-input"
+          placeholder="例如：计算器"
+          aria-describedby="field-error-core"
+        />
+        <p class="field-error" id="field-error-core" hidden></p>
+      </div>
+      <div class="field">
+        <label for="kw-prefixes"
+          >前置词（每行一个，生成「修饰语+核心词」）</label
+        >
+        <textarea
+          id="kw-prefixes"
+          class="field-input"
+          rows="3"
+          placeholder="免费
+在线
+好用的"
+          spellcheck="false"></textarea>
+      </div>
+      <div class="field">
+        <label for="kw-suffixes"
+          >后缀词（每行一个，生成「核心词+修饰语」）</label
+        >
+        <textarea
+          id="kw-suffixes"
+          class="field-input"
+          rows="3"
+          placeholder="推荐
+排行榜
+哪个好"
+          spellcheck="false"></textarea>
+      </div>
+      <div class="field">
+        <label for="kw-questions">疑问句模板（每行一个，&#123;k&#125; 代表核心词）</label>
+        <textarea
+          id="kw-questions"
+          class="field-input"
+          rows="3"
+          placeholder="{k}怎么用
+{k}哪个准"
+          spellcheck="false"></textarea>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          扩展长尾词
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          输入核心关键词，再按行填入前置词、后缀词与疑问句模板（均可只填一组）。
+        </li>
+        <li>点击「扩展长尾词」，结果区每行一个词，已去重保序。</li>
+        <li>点击「复制全部」，粘贴到表格做页面与内容排期分配。</li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/seo-meta-cn/">TDK 标签生成器</a></li>
+        <li><a href="/efficiency/seo-sitemap-cn/">Sitemap 生成器</a></li>
+        <li><a href="/efficiency/seo-robots-cn/">robots.txt 生成器</a></li>
+        <li><a href="/efficiency/seo-link-check-cn/">外链有效性检查</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      扩展结果为机械组合的候选词，<strong>仅供参考</strong
+      >；请结合真实搜索量与业务相关性筛选，避免生硬堆砌关键词。
+    </p>
+
+    <CalcJsonLd
+      name="长尾关键词扩展"
+      description="免费长尾关键词扩展工具：输入核心词与前置词、后缀词、疑问句模板，自动笛卡尔拼接批量生成长尾关键词，去重保序，支持 {k} 占位符，一键复制到内容排期表，SEO 选词效率工具。"
+      faqItems={faqItems}
+      featureList={[
+        "三组修饰词笛卡尔拼接",
+        "{k} 疑问句模板占位符",
+        "全局去重且保序",
+        "批量复制到排期表",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    /* 长尾词列表每行一个，主结果区按原样展示 */
+    #result-main {
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/seo-keywords-cn-page.js"
+  ></script>
+</BaseLayout>

@@ -1,0 +1,125 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "开发工具" },
+  { label: "UA 在线解析" },
+];
+
+const faqItems = [
+  {
+    q: "能识别哪些浏览器和系统？",
+    a: "浏览器：Chrome、Edge、Firefox、Safari、Opera、IE（含 Trident 内核）、Samsung Internet、QQ/UC 浏览器；系统：Windows 7/8/8.1/10/11、macOS、Linux、Android、iOS/iPadOS、ChromeOS，并区分手机/平板/桌面。",
+  },
+  {
+    q: "为什么 Edge 的 UA 里有 Chrome 字样还能识别成 Edge？",
+    a: "Chromium 系浏览器 UA 彼此包含（Edge/Opera 的 UA 都含 Chrome/ 标记）。本工具按「特征标记优先级」判定：Edg/ 优先于 OPR/，二者均优先于 Chrome/，这是业界通行做法。",
+  },
+  {
+    q: "UA 解析结果准确吗？",
+    a: "User-Agent 是客户端自报家门，可被用户或代理随意改写，只能作为参考而非身份认证。现代浏览器还推出了 UA 减捐（UA Reduction），版本号后几位被冻结为 0，属正常现象。",
+  },
+  {
+    q: "客户端信息会被上传吗？",
+    a: "不会。解析在浏览器本地完成，无任何网络请求，输入的 UA 字符串只用于当次解析。",
+  },
+];
+---
+
+<BaseLayout
+  title="UA 在线解析 — User-Agent 识别浏览器/系统/设备（免费）"
+  description="免费在线 User-Agent 解析工具：粘贴 UA 字符串即可识别浏览器（Chrome/Edge/Firefox/Safari/Opera/IE 等）与版本、操作系统（Windows/macOS/Android/iOS 等）与设备类型（手机/平板/桌面），本地解析不上传。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>UA 在线解析</h1>
+    <UsageGuide />
+    <p class="lead">浏览器 + 版本 · 操作系统 · 设备类型，一贴即知。</p>
+
+    <form id="calc-form" class="card" novalidate aria-label="UA 解析表单">
+      <div class="field">
+        <label for="ua-text">User-Agent 字符串</label>
+        <textarea
+          id="ua-text"
+          class="field-input"
+          rows="4"
+          spellcheck="false"
+          placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+          aria-describedby="field-error-ua"></textarea>
+        <p class="field-error" id="field-error-ua" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          解析
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          把需要分析的 User-Agent 字符串粘贴进输入框（浏览器 F12 → Network →
+          请求头可见）。
+        </li>
+        <li>点击「解析」查看浏览器与版本、操作系统、设备类型。</li>
+        <li>识别不了的特征会显示「未知」兜底，不会报错。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">判定规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            顺序敏感：Edg/ → OPR/ → SamsungBrowser → Firefox → MSIE/Trident →
+            Chrome → Safari，先命中先得，避免 Chromium 系互相误判。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            设备判定：iPhone/iPod → 手机；iPad → 平板；Android 含 Mobile →
+            手机、不含 → 平板；桌面系统 → 桌面。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/http-status-cn/">HTTP 状态码查询</a></li>
+        <li><a href="/efficiency/ip-subnet-cn/">IP 子网计算器</a></li>
+        <li><a href="/dev/hash-cn/">哈希生成器</a></li>
+        <li><a href="/dev/url-encode/">URL 编码解码</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考：UA 可被伪造或被浏览器减捐策略简化，不应用于安全判定。
+    </p>
+
+    <CalcJsonLd
+      name="UA 在线解析"
+      description="免费在线 User-Agent 解析工具：粘贴 UA 字符串即可识别浏览器（Chrome/Edge/Firefox/Safari/Opera/IE 等）与版本、操作系统（Windows/macOS/Android/iOS 等）与设备类型（手机/平板/桌面），本地解析不上传。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/ua-parser-cn-page.js"></script>
+</BaseLayout>

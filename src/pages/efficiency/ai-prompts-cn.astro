@@ -1,0 +1,162 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "AI 提示词大全" },
+];
+
+const categories = [
+  "全部",
+  "写作创作",
+  "编程开发",
+  "学习教育",
+  "办公效率",
+  "营销文案",
+  "角色扮演",
+];
+
+const faqItems = [
+  {
+    q: "提示词里的 {占位符} 怎么用？",
+    a: "把花括号及其中文字替换为你的实际内容即可，例如把「{主题}」换成「秋天的第一杯奶茶」，把「{代码}」换成要审查的代码片段，其余文字保持原样发送给 AI。",
+  },
+  {
+    q: "这些提示词适用于哪些 AI？",
+    a: "提示词为通用中文模板，ChatGPT、Claude、Gemini、文心一言、通义千问等主流对话式 AI 均可使用；不同模型的响应风格略有差异，可按需微调。",
+  },
+  {
+    q: "可以一次复制多条提示词吗？",
+    a: "可以。选择分类或输入关键词后，结果区会列出全部命中条目，点击「复制全部」即可一次性复制；单条使用时复制对应段落即可。",
+  },
+  {
+    q: "提示词库会更新吗？",
+    a: "会。提示词库（约 10KB 的 JSON 文件）随页面异步加载，覆盖写作、编程、学习、办公、营销、角色扮演六大场景共 30 余条，后续会按使用反馈持续增补；首次加载失败时重试即可。",
+  },
+];
+---
+
+<BaseLayout
+  title="AI 提示词大全 — 精选中文 Prompt 模板库（6 大场景一键复制）"
+  description="免费 AI 提示词大全：收录写作创作、编程开发、学习教育、办公效率、营销文案、角色扮演 6 大场景 30 余条精选中文 Prompt 模板，支持分类筛选与关键词搜索，一键复制即用。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>AI 提示词大全</h1>
+    <UsageGuide />
+    <p class="lead">
+      6 大场景 30+ 条精选 Prompt · 分类筛选 + 关键词搜索 · 一键复制即用。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="提示词筛选表单">
+      <div class="field">
+        <label for="prompt-category">场景分类</label>
+        <select id="prompt-category" class="field-select">
+          {
+            categories.map((c) => (
+              <option value={c} selected={c === "全部"}>
+                {c}
+              </option>
+            ))
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="prompt-keyword">关键词（可选）</label>
+        <input
+          type="text"
+          id="prompt-keyword"
+          class="field-input"
+          placeholder="例如：周报、SQL、面试"
+          aria-describedby="field-error-keyword"
+        />
+        <p class="field-error" id="field-error-keyword" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          查找提示词
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择场景分类，或输入关键词（匹配标题与内容）缩小范围。</li>
+        <li>点击「查找提示词」，结果区按「标题 + 内容」列出命中的模板。</li>
+        <li>
+          把模板中的 &#123;占位符&#125; 替换为实际内容，发送给任意对话式 AI
+          即可。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="scene-heading">
+      <h2 id="scene-heading">场景速览</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            写作创作：公众号大纲、爆款标题、短视频脚本；编程开发：代码审查、单测生成、Bug
+            定位、SQL 优化。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            学习教育与办公：费曼讲解、学习计划、会议纪要、周报；营销与角色扮演：卖点提炼、电商文案、面试官模拟、英语陪练。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/ai-tts-cn/">文字转语音</a></li>
+        <li><a href="/efficiency/ai-stt-cn/">语音转文字</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+        <li><a href="/efficiency/password-generator-cn/">随机密码生成器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      提示词模板仅供参考，请结合自身场景调整后使用；生成内容由 AI
+      模型决定，请注意甄别事实性信息。
+    </p>
+
+    <CalcJsonLd
+      name="AI 提示词大全"
+      description="免费 AI 提示词大全：收录写作创作、编程开发、学习教育、办公效率、营销文案、角色扮演 6 大场景 30 余条精选中文 Prompt 模板，支持分类筛选与关键词搜索，一键复制即用。"
+      faqItems={faqItems}
+      featureList={[
+        "6 大场景 30+ 条中文 Prompt",
+        "分类筛选与关键词搜索",
+        "占位符模板一键替换",
+        "结果一键复制",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    /* 提示词列表为多段文本，主结果区按原样展示 */
+    #result-main {
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/ai-prompts-cn-page.js"></script>
+</BaseLayout>

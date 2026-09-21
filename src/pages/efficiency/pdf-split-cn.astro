@@ -1,0 +1,152 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import BreadcrumbJsonLd from "../../components/BreadcrumbJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const description =
+  "在线 PDF 拆分工具：支持每 N 页拆一份或按页码范围（如 1-3,5）拆分 PDF，本地处理不上传。完整功能开发中，当前提供接口契约与交互流程预览，文件不会被解析或上传。";
+
+const faqItems = [
+  {
+    q: "现在能把 PDF 拆开吗？",
+    a: "还不能。完整拆分功能正在开发中，当前页面提供接口契约与流程预览：可以体验「每 N 页一份」和「按页码范围」两种模式的选择与输入，但文件不会被解析或拆分。",
+  },
+  {
+    q: "两种拆分模式有什么区别？",
+    a: "「每 N 页一份」按固定页数均分，例如每 2 页一份；「按页码范围」按您输入的范围切分，例如 1-3,5 表示第 1~3 页和第 5 页各成一份，范围支持逗号分隔多段。",
+  },
+  {
+    q: "文件会被上传吗？",
+    a: "不会。本工具的设计原则是全程浏览器本地处理，当前版本同样不读取、不上传任何文件内容，选择文件仅用于完善流程体验。",
+  },
+  {
+    q: "页码范围的格式是什么？",
+    a: "完整功能上线后支持「1-3,5,8-10」这样的写法：单个页码直接写数字，连续区间用短横线连接，多段用逗号分隔；当前版本会按同样规则校验输入格式。",
+  },
+];
+---
+
+<BaseLayout
+  title="PDF 拆分工具 — 按页码/每 N 页拆分 PDF（完整功能开发中）"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "PDF 拆分工具" },
+      ]}
+    />
+    <h1>PDF 拆分工具</h1>
+    <UsageGuide />
+    <p class="lead">
+      每 N 页一份或按页码范围拆分 · 本地处理不上传 · 完整功能开发中
+    </p>
+
+    <section class="section" aria-label="功能状态说明">
+      <div class="card">
+        <p>
+          <strong>诚实声明：完整功能开发中，暂提供接口契约。</strong>
+          本页当前展示未来版本的操作流程与接口契约，PDF 处理引擎尚未接入，文件不会被解析、拆分或上传。
+        </p>
+      </div>
+    </section>
+
+    <form id="calc-form" class="card" novalidate aria-label="PDF 拆分表单">
+      <div class="field">
+        <label for="pdf-input">选择 PDF 文件</label>
+        <input
+          type="file"
+          id="pdf-input"
+          class="field-input"
+          accept="application/pdf,.pdf"
+        />
+        <p class="field-hint">当前版本不会读取文件内容。</p>
+        <p class="field-error" id="field-error-file" hidden></p>
+      </div>
+      <div class="field">
+        <label for="split-mode">拆分模式</label>
+        <select id="split-mode" class="field-select">
+          <option value="every-n" selected>每 N 页一份</option>
+          <option value="ranges">按页码范围</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="split-n">每份页数（1 ~ 1000）</label>
+        <input
+          type="number"
+          id="split-n"
+          class="field-input"
+          min="1"
+          max="1000"
+          step="1"
+          value="1"
+        />
+        <p class="field-error" id="field-error-n" hidden></p>
+      </div>
+      <div class="field">
+        <label for="split-ranges">页码范围（如 1-3,5,8-10）</label>
+        <input
+          type="text"
+          id="split-ranges"
+          class="field-input"
+          placeholder="1-3,5,8-10"
+        />
+        <p class="field-error" id="field-error-ranges" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary"
+          >拆分 PDF</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >重置</button
+        >
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明（完整功能上线后）</h2>
+      <ol class="note-list">
+        <li>选择 1 个需要拆分的 PDF 文件。</li>
+        <li>选择「每 N 页一份」或「按页码范围」并填写参数。</li>
+        <li>点击「拆分 PDF」，本地拆分完成后按顺序下载各份文件。</li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/pdf-merge-cn/">PDF 合并工具</a></li>
+        <li><a href="/efficiency/pdf-to-image-cn/">PDF 转图片工具</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+        <li><a href="/efficiency/pdf-extract-text-cn/">PDF 文字提取工具</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="PDF 拆分工具"
+      description={description}
+      faqItems={faqItems}
+    />
+    <BreadcrumbJsonLd
+      items={[
+        { name: "首页", href: "/" },
+        { name: "效率工具" },
+        { name: "PDF 拆分工具" },
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/pdf-split-cn-page.js"></script>
+</BaseLayout>

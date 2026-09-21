@@ -1,0 +1,142 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "开发工具" },
+  { label: "HTTP 状态码查询" },
+];
+
+const faqItems = [
+  {
+    q: "收录了多少状态码？",
+    a: "61 条，覆盖 1xx 信息、2xx 成功、3xx 重定向、4xx 客户端错误、5xx 服务端错误五大类，含 103 Early Hints、425 Too Early、451 Unavailable For Legal Reasons 等较新状态码。",
+  },
+  {
+    q: "301 和 302 对 SEO 有什么区别？",
+    a: "301 是永久重定向，搜索引擎会把原 URL 的权重转移到新地址；302 是临时重定向，权重原则上保留在原 URL。站内改版换域名应使用 301，活动临时跳转用 302/307。",
+  },
+  {
+    q: "401 和 403 有什么不同？",
+    a: "401 表示未认证（不知道你是谁），需要登录或提供 Token；403 表示已认证但权限不足（知道你是谁但不让你看）。前者重试登录可能解决，后者需要管理员授权。",
+  },
+  {
+    q: "502 与 504 都是网关错误，怎么区分？",
+    a: "502 Bad Gateway 表示上游服务返回了无效响应（进程崩溃、返回乱码）；504 Gateway Timeout 表示上游在时限内没有响应（慢查询、阻塞）。排查方向分别是上游健康与上游性能。",
+  },
+];
+---
+
+<BaseLayout
+  title="HTTP 状态码查询 — 61 个状态码中文解释与排查建议"
+  description="免费在线 HTTP 状态码大全：收录 1xx~5xx 共 61 个状态码的中文含义、SEO 影响与排查思路，支持按分类筛选与关键词搜索，前端后端排障与 SEO 检测常用速查表。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>HTTP 状态码查询</h1>
+    <UsageGuide />
+    <p class="lead">61 个状态码 · 分类筛选 + 关键词搜索 · 中文释义。</p>
+
+    <form id="calc-form" class="card" novalidate aria-label="状态码查询表单">
+      <div class="field">
+        <label for="status-search">关键词（状态码数字或英文名）</label>
+        <input
+          id="status-search"
+          class="field-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="例如 404、not found、重定向"
+          aria-describedby="field-error-search"
+        />
+        <p class="field-error" id="field-error-search" hidden></p>
+      </div>
+      <div class="field">
+        <label for="status-category">分类</label>
+        <select id="status-category" class="field-select">
+          <option value="全部" selected>全部</option>
+          <option value="1xx 信息">1xx 信息</option>
+          <option value="2xx 成功">2xx 成功</option>
+          <option value="3xx 重定向">3xx 重定向</option>
+          <option value="4xx 客户端错误">4xx 客户端错误</option>
+          <option value="5xx 服务端错误">5xx 服务端错误</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          查询
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>输入状态码数字（如 404）或英文名关键词，或直接按分类筛选。</li>
+        <li>点击「查询」查看命中条目：状态码、英文名、中文含义与分类。</li>
+        <li>结果可一键复制为纯文本，方便贴进工单或文档。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">分类口诀</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>1xx 打招呼、2xx 办成了、3xx 去别处、4xx 你的锅、5xx 我的锅。</p>
+        </li>
+        <li class="formula-item">
+          <p>
+            SEO 最常用：301 永久跳转（权重转移）、302 临时跳转、304
+            协商缓存命中、410 永久删除（应解除索引）、503 临时不可用（可带
+            Retry-After）。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/seo-link-check-cn/">死链检测工具</a></li>
+        <li><a href="/dev/ua-parser-cn/">UA 在线解析</a></li>
+        <li><a href="/dev/url-encode/">URL 编码解码</a></li>
+        <li><a href="/efficiency/seo-robots-cn/">robots.txt 生成器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考：个别状态码在不同服务器/框架中的实际行为可能不同，请以 RFC
+      9110 及目标平台文档为准。
+    </p>
+
+    <CalcJsonLd
+      name="HTTP 状态码查询"
+      description="免费在线 HTTP 状态码大全：收录 1xx~5xx 共 61 个状态码的中文含义、SEO 影响与排查思路，支持按分类筛选与关键词搜索，前端后端排障与 SEO 检测常用速查表。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/http-status-cn-page.js"
+  ></script>
+</BaseLayout>
+
+<style is:global>
+  /* 本页结果为多行列表文本 */
+  #result-main {
+    white-space: pre-wrap;
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import BreadcrumbJsonLd from "../../components/BreadcrumbJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const description =
+  "在线 PDF 合并工具：选择多个 PDF 一键合并为一个文件，合并顺序可控、本地处理不上传。完整功能开发中，当前页面提供接口契约与交互流程预览，可先了解未来使用方式。";
+
+const faqItems = [
+  {
+    q: "现在能用这个工具合并 PDF 吗？",
+    a: "还不能。完整合并功能正在开发中，当前页面提供接口契约与交互流程预览：您可以选择文件并体验操作流程，但文件不会被解析、合并或上传，也不会产生下载结果。",
+  },
+  {
+    q: "完整功能上线后会怎么工作？",
+    a: "将按本页预留的接口契约实现：选择 2 个及以上 PDF、可自定义输出文件名，全部处理在浏览器本地完成，文件不上传服务器。上线后无需改动使用习惯。",
+  },
+  {
+    q: "现在选择文件安全吗？",
+    a: "安全。文件只停留在您的浏览器里用于统计数量，页面不会读取文件内容，更不会上传到任何服务器；您也可以直接体验流程而不选择任何文件。",
+  },
+  {
+    q: "合并顺序可以调整吗？",
+    a: "完整功能上线时将支持按列表顺序合并，先选择的排前面；届时会提供上移/下移调整顺序的操作，本页契约已为顺序参数预留扩展。",
+  },
+];
+---
+
+<BaseLayout
+  title="PDF 合并工具 — 在线合并多个 PDF 文件（完整功能开发中）"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "PDF 合并工具" },
+      ]}
+    />
+    <h1>PDF 合并工具</h1>
+    <UsageGuide />
+    <p class="lead">
+      把多个 PDF 合并为一个文件 · 本地处理不上传 · 完整功能开发中
+    </p>
+
+    <section class="section" aria-label="功能状态说明">
+      <div class="card">
+        <p>
+          <strong>诚实声明：完整功能开发中，暂提供接口契约。</strong>
+          本页当前展示未来版本的操作流程与接口契约，PDF 处理引擎尚未接入，文件不会被解析、合并或上传。
+        </p>
+      </div>
+    </section>
+
+    <form id="calc-form" class="card" novalidate aria-label="PDF 合并表单">
+      <div class="field">
+        <label for="pdf-input">选择 PDF 文件（至少 2 个）</label>
+        <input
+          type="file"
+          id="pdf-input"
+          class="field-input"
+          accept="application/pdf,.pdf"
+          multiple
+        />
+        <p class="field-hint">仅统计文件数量，当前版本不会读取文件内容。</p>
+        <p class="field-error" id="field-error-file" hidden></p>
+      </div>
+      <div class="field">
+        <label for="output-name">输出文件名（不含 .pdf 扩展名）</label>
+        <input
+          type="text"
+          id="output-name"
+          class="field-input"
+          value="merged"
+          maxlength="60"
+        />
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary"
+          >合并 PDF</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >重置</button
+        >
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明（完整功能上线后）</h2>
+      <ol class="note-list">
+        <li>选择 2 个及以上需要合并的 PDF 文件。</li>
+        <li>填写输出文件名，默认 merged。</li>
+        <li>点击「合并 PDF」，本地合并完成后直接下载，文件全程不上传。</li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/pdf-split-cn/">PDF 拆分工具</a></li>
+        <li><a href="/efficiency/pdf-compress-cn/">PDF 压缩工具</a></li>
+        <li><a href="/efficiency/image-compress-cn/">在线图片压缩工具</a></li>
+        <li><a href="/efficiency/qr-code-cn/">二维码生成器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="PDF 合并工具"
+      description={description}
+      faqItems={faqItems}
+    />
+    <BreadcrumbJsonLd
+      items={[
+        { name: "首页", href: "/" },
+        { name: "效率工具" },
+        { name: "PDF 合并工具" },
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/pdf-merge-cn-page.js"></script>
+</BaseLayout>

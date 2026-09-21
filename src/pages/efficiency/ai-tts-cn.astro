@@ -1,0 +1,162 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "文字转语音" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些浏览器？",
+    a: "文字转语音使用浏览器原生的 speechSynthesis API，Chrome、Edge、Safari 均支持；部分国产浏览器或无内核壳浏览器可能缺少语音包，表现为无声或报错。",
+  },
+  {
+    q: "内容会被上传吗？",
+    a: "不会。语音合成完全在本地由浏览器/操作系统内置的语音引擎完成，输入的文本不会发送到本站或第三方服务器。",
+  },
+  {
+    q: "为什么点了朗读没有声音？",
+    a: "常见原因：系统或浏览器音量被静音、未安装对应语言的语音包（如日语需日语 TTS 语音包）、其他标签页正在占用朗读通道。可先点击「停止朗读」再重试。",
+  },
+  {
+    q: "文本有长度限制吗？",
+    a: "单次上限 3000 字。浏览器对超长文本的合成容易中途停止或内存占用过高，长文章建议分段朗读；工具会按每秒约 4 字预估朗读时长供参考。",
+  },
+  {
+    q: "语速和音调可以调多少？",
+    a: "语速 0.1~10 倍、音调 0~2，实际效果取决于系统语音引擎的支持程度；过快的语速在部分引擎中会被截断，一般 0.5~2 之间效果最稳定。",
+  },
+];
+---
+
+<BaseLayout
+  title="文字转语音 — 在线 TTS 语音朗读工具（本地合成不上传）"
+  description="免费在线文字转语音工具：输入中文/英文文本一键朗读，支持语速、音调、语言调节，基于浏览器原生语音合成 API 本地运行不上传，适合听文章、校对文稿、朗读练习等场景。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>文字转语音</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入文本一键朗读 · 语速 / 音调 / 语言可调 · 浏览器本地合成绝不上传。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="文字转语音表单">
+      <div class="field">
+        <label for="tts-text">朗读文本（上限 3000 字）</label>
+        <textarea
+          id="tts-text"
+          class="field-input"
+          rows="5"
+          placeholder="输入要朗读的文字，例如：今天也要保持好心情。"
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field">
+        <label for="tts-lang">语言</label>
+        <select id="tts-lang" class="field-select">
+          <option value="zh-CN" selected>中文（普通话）</option>
+          <option value="zh-TW">中文（台湾）</option>
+          <option value="en-US">英语（美国）</option>
+          <option value="ja-JP">日语</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tts-rate">语速</label>
+        <select id="tts-rate" class="field-select">
+          <option value="0.5">0.5x（缓慢）</option>
+          <option value="0.75">0.75x</option>
+          <option value="1" selected>1x（正常）</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.5x</option>
+          <option value="2">2x（快速）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tts-pitch">音调</label>
+        <select id="tts-pitch" class="field-select">
+          <option value="0.5">低沉</option>
+          <option value="0.75">偏低</option>
+          <option value="1" selected>正常</option>
+          <option value="1.25">偏高</option>
+          <option value="1.5">清亮</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          开始朗读
+        </button>
+        <button id="stop-btn" type="button" class="btn btn-secondary">
+          停止朗读
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>在文本框输入要朗读的内容（支持中英文，上限 3000 字）。</li>
+        <li>选择语言、语速与音调，保持默认即可满足大多数场景。</li>
+        <li>点击「开始朗读」播放；过程中可随时「停止朗读」或修改后重听。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="tech-heading">
+      <h2 id="tech-heading">技术说明</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            本页调用浏览器原生 speechSynthesis API
+            播报，语音引擎由操作系统提供；朗读时长按「每秒约 4 字 ×
+            语速」预估，仅供参考。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/ai-stt-cn/">语音转文字</a></li>
+        <li><a href="/efficiency/ai-prompts-cn/">AI 提示词大全</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+        <li><a href="/efficiency/qr-code-cn/">二维码生成器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      语音由浏览器本地合成，<strong>文本不会上传到任何服务器</strong
+      >；合成效果取决于系统语音包，结果仅供参考。
+    </p>
+
+    <CalcJsonLd
+      name="文字转语音"
+      description="免费在线文字转语音工具：输入中文/英文文本一键朗读，支持语速、音调、语言调节，基于浏览器原生语音合成 API 本地运行不上传，适合听文章、校对文稿、朗读练习等场景。"
+      faqItems={faqItems}
+      featureList={[
+        "中英文文本一键朗读",
+        "语速 0.1~10x、音调 0~2 可调",
+        "本地合成不上传",
+        "3000 字上限并预估朗读时长",
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/ai-tts-cn-page.js"></script>
+</BaseLayout>

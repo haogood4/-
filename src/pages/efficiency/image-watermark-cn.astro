@@ -1,0 +1,336 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import BreadcrumbJsonLd from "../../components/BreadcrumbJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const description =
+  "免费在线图片加水印工具：自定义文字水印，支持平铺或单点摆放、五档锚位、字号 12-200px、透明度与旋转角度可调，输出 PNG，浏览器本地 Canvas 处理不上传，适合作品防盗与内部资料标注。";
+
+const faqItems = [
+  {
+    q: "水印可以平铺整张图吗？",
+    a: "可以。「平铺」模式按文字尺寸加间距步进铺满整张图片，常用于内部资料、草稿防扩散；「单点」模式支持居中与四角共五个锚位，适合角落签名式标注。",
+  },
+  {
+    q: "字号、透明度、旋转怎么搭配？",
+    a: "常用搭配：36px 字号 + 0.3 透明度 + -30° 旋转的斜向浅色水印，肉眼可辨又不遮挡主体；黑底图选白色水印、白底图选黑色水印，透明度越低越含蓄。",
+  },
+  {
+    q: "图片会上传到服务器吗？",
+    a: "不会。水印绘制全程在您的浏览器内用 Canvas 本地完成，图片与水印文字都不经过任何服务器，也不会被保存。",
+  },
+  {
+    q: "输出是什么格式？",
+    a: "输出 PNG（无损），最大程度保留水印边缘与原图细节。水印文字最长 40 个字符，字号 12~200 像素，旋转 -90°~90°。",
+  },
+  {
+    q: "能给 PDF 加水印吗？",
+    a: "本工具针对图片。PDF 逐页加水印的专门工具正在开发中，上线后会出现在本页相关工具列表中。",
+  },
+];
+---
+
+<BaseLayout
+  title="在线图片加水印工具 — 文字水印平铺/单点，透明度可调（本地处理）"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "在线图片加水印" },
+      ]}
+    />
+    <h1>在线图片加水印工具</h1>
+    <UsageGuide />
+    <p class="lead">
+      文字水印 · 平铺/单点 · 字号/透明度/旋转可调 · 本地处理不上传
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="图片加水印表单">
+      <div class="field">
+        <label for="file-input">选择图片</label>
+        <label class="dropzone" id="dropzone" for="file-input">
+          <span class="dropzone__title">把图片拖到这里，或点击选择文件</span>
+          <span class="dropzone__hint"
+            >支持 PNG / JPEG / WebP，单张不超过 10MB</span
+          >
+          <input
+            type="file"
+            id="file-input"
+            class="dropzone__input"
+            accept="image/png,image/jpeg,image/webp"
+          />
+        </label>
+        <p class="field-hint" id="file-info" hidden></p>
+        <p class="field-error" id="field-error-file" hidden></p>
+      </div>
+      <div class="field">
+        <label for="watermark-text">水印文字（最长 40 字）</label>
+        <input
+          type="text"
+          id="watermark-text"
+          class="field-input"
+          placeholder="例如：内部资料，请勿外传"
+          maxlength="40"
+        />
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field">
+        <label for="watermark-layout">水印布局</label>
+        <select id="watermark-layout" class="field-select">
+          <option value="tile" selected>平铺（铺满整张图）</option>
+          <option value="single">单点（一个位置）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="watermark-anchor">单点位置（仅单点布局生效）</label>
+        <select id="watermark-anchor" class="field-select">
+          <option value="center">居中</option>
+          <option value="top-left">左上</option>
+          <option value="top-right">右上</option>
+          <option value="bottom-left">左下</option>
+          <option value="bottom-right" selected>右下</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="watermark-margin">单点边距（0 ~ 500 像素）</label>
+        <input
+          type="number"
+          id="watermark-margin"
+          class="field-input"
+          min="0"
+          max="500"
+          step="1"
+          value="24"
+        />
+        <p class="field-error" id="field-error-margin" hidden></p>
+      </div>
+      <div class="field">
+        <label for="watermark-gap">平铺间距（10 ~ 300 像素）</label>
+        <input
+          type="number"
+          id="watermark-gap"
+          class="field-input"
+          min="10"
+          max="300"
+          step="1"
+          value="60"
+        />
+        <p class="field-error" id="field-error-gap" hidden></p>
+      </div>
+      <div class="field">
+        <label for="font-size">字号（12 ~ 200 像素）</label>
+        <input
+          type="number"
+          id="font-size"
+          class="field-input"
+          min="12"
+          max="200"
+          step="1"
+          value="36"
+        />
+        <p class="field-error" id="field-error-size" hidden></p>
+      </div>
+      <div class="field">
+        <label for="opacity">不透明度（0.05 ~ 1）</label>
+        <input
+          type="number"
+          id="opacity"
+          class="field-input"
+          min="0.05"
+          max="1"
+          step="0.05"
+          value="0.3"
+        />
+        <p class="field-error" id="field-error-opacity" hidden></p>
+      </div>
+      <div class="field">
+        <label for="rotation">旋转角度（-90 ~ 90 度）</label>
+        <input
+          type="number"
+          id="rotation"
+          class="field-input"
+          min="-90"
+          max="90"
+          step="1"
+          value="-30"
+        />
+        <p class="field-error" id="field-error-rotation" hidden></p>
+      </div>
+      <div class="field">
+        <label for="watermark-color">水印颜色</label>
+        <select id="watermark-color" class="field-select">
+          <option value="#ffffff" selected>白色（适合深色图）</option>
+          <option value="#000000">黑色（适合浅色图）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary"
+          >添加水印</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >重置</button
+        >
+      </div>
+    </form>
+
+    <div class="card" id="preview-card">
+      <div class="preview-grid">
+        <figure class="preview-item">
+          <img id="preview-original" alt="原图预览" width="320" height="240" />
+          <figcaption>原图预览</figcaption>
+        </figure>
+        <figure class="preview-item">
+          <canvas
+            id="watermark-canvas"
+            class="watermark-canvas"
+            width="0"
+            height="0"
+            role="img"
+            aria-label="加水印后预览"></canvas>
+          <figcaption>加水印后预览</figcaption>
+        </figure>
+      </div>
+      <p class="field-hint">
+        水印绘制在浏览器本地完成，图片不会上传；预览效果与导出结果一致。
+      </p>
+    </div>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        选择图片并点击「添加水印」查看结果
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">水印结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-process" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          参数或图片已变更，请重新处理
+        </p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled
+            >复制结果</button
+          >
+          <button
+            type="button"
+            id="share-btn"
+            class="btn btn-secondary"
+            disabled>分享工具</button
+          >
+          <button
+            type="button"
+            id="download-btn"
+            class="btn btn-primary"
+            disabled>下载图片</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>拖拽或点击选择一张 PNG/JPEG/WebP 图片。</li>
+        <li>填写水印文字，选择平铺或单点布局并调整字号、透明度、旋转。</li>
+        <li>点击「添加水印」，预览确认后点击「下载图片」保存 PNG。</li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/image-resize-cn/">在线图片改尺寸工具</a></li>
+        <li>
+          <a href="/efficiency/image-idphoto-cn/">在线证件照换底色工具</a>
+        </li>
+        <li><a href="/efficiency/image-compress-cn/">在线图片压缩工具</a></li>
+        <li><a href="/efficiency/pdf-watermark-cn/">PDF 加水印工具</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="在线图片加水印工具"
+      description={description}
+      faqItems={faqItems}
+    />
+    <BreadcrumbJsonLd
+      items={[
+        { name: "首页", href: "/" },
+        { name: "效率工具" },
+        { name: "在线图片加水印" },
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/image-watermark-cn-page.js"
+  ></script>
+</BaseLayout>
+
+<style>
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    padding: 28px 16px;
+    border: 2px dashed var(--border-color, #cbd5e1);
+    border-radius: 12px;
+    background: var(--surface-2, rgba(148, 163, 184, 0.08));
+    cursor: pointer;
+    text-align: center;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+  .dropzone:hover,
+  .dropzone--active {
+    border-color: var(--accent, #0f766e);
+    background: var(--accent-soft, rgba(15, 118, 110, 0.08));
+  }
+  .dropzone__title {
+    font-weight: 600;
+  }
+  .dropzone__hint {
+    font-size: 0.85em;
+    opacity: 0.75;
+  }
+  .dropzone__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .preview-item {
+    margin: 0;
+    text-align: center;
+  }
+  .preview-item img,
+  .watermark-canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background: var(--surface-2, rgba(148, 163, 184, 0.12));
+  }
+  .preview-item figcaption {
+    margin-top: 8px;
+    font-size: 0.85em;
+    overflow-wrap: anywhere;
+    opacity: 0.8;
+  }
+</style>

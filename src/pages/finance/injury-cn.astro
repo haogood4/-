@@ -1,0 +1,158 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "工伤赔偿计算器" },
+];
+
+const faqItems = [
+  {
+    q: "一次性伤残补助金怎么算？1-10 级月数分别是多少？",
+    a: "依据《工伤保险条例》（国务院令第 375 号，修订 586 号）第三十五、三十七条：1-10 级一次性伤残补助金月数 = 27/25/23/21/18/16/13/11/9/7 个月本人工资。本人工资指工伤职工因工作遭受事故伤害或者患职业病前 12 个月平均月缴费工资；上下限为统筹地区上年度职工平均工资的 60% 与 300%。",
+  },
+  {
+    q: "1-4 级伤残津贴是按月发放吗？能领多久？",
+    a: "是。第三十五条规定：一级伤残 90%、二级 85%、三级 80%、四级 75%，按月支付本人工资的相应比例作为伤残津贴；达到退休年龄并办理退休手续后，停发伤残津贴，按国家有关规定享受基本养老保险待遇。基本养老保险待遇低于伤残津贴的，由工伤保险基金补足差额。",
+  },
+  {
+    q: "5-10 级解除劳动合同时还有什么补助？",
+    a: "5-6 级经工伤职工本人提出，可以与用人单位解除或终止劳动关系；7-10 级劳动（聘用）合同期满终止或本人提出解除的，由工伤保险基金支付一次性工伤医疗补助金、用人单位支付一次性伤残就业补助金。具体月数由各省、自治区、直辖市人民政府规定（第三十七条），常见区间为 5-6 级 18 个月、7-8 级 12 个月、9 级 8 个月、10 级 6 个月（参考口径，以本省实施办法为准）。",
+  },
+  {
+    q: "工伤赔偿与交通事故人身损害赔偿可以同时主张吗？",
+    a: "一般不重复主张，但可以由工伤保险基金先行支付，再由第三方侵权责任人承担相应赔偿。依据《最高法关于审理人身损害赔偿案件适用法律若干问题的解释》第三条：依法应当参加工伤保险统筹的用人单位劳动者因工伤事故遭受人身损害，劳动者或者其近亲属向人民法院起诉请求用人单位承担民事赔偿责任的，告知按《工伤保险条例》的规定处理；因用人单位以外的第三人侵权造成劳动者人身损害的，可向第三人主张民事赔偿。本工具仅算工伤保险条例口径的待遇，不含第三方侵权赔偿。",
+  },
+  {
+    q: "本工具结果与社保机构核定为何可能有差异？",
+    a: "可能存在差异的原因：① 本人工资上下限按统筹地区上年度职工平均工资 60%~300% 锁定，超出部分不计入；② 一次性工伤医疗补助金与一次性伤残就业补助金具体月数由各省自定；③ 1-4 级伤残津贴具体计发起点由社保机构核定；④ 医疗费、康复费、辅助器具费按「实报实销」由基金支付，未纳入本工具估算。本工具结果仅供参考，最终以统筹地区社保机构核定为准。",
+  },
+];
+---
+
+<BaseLayout
+  title="工伤赔偿计算器 — 1-10 级一次性伤残补助金 + 津贴 在线测算"
+  description="免费在线工伤赔偿计算器：依据《工伤保险条例》（国务院令第 375 号 / 修订 586 号）第三十五、三十七条，自动按 1-10 级伤残等级测算一次性伤残补助金、1-4 级按月伤残津贴、5-10 级一次性工伤医疗与伤残就业补助金。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>工伤赔偿计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      依据《工伤保险条例》（国务院令第 375 号，修订 586 号）第三十五、三十七条，按 1-10
+      级伤残等级自动测算一次性伤残补助金、1-4 级按月伤残津贴、5-10
+      级解除劳动合同时的一次性工伤医疗补助金与一次性伤残就业补助金。
+    </p>
+    <p class="result-hint">
+      <strong
+        >⚠️
+        计算结果仅供参考，本地标准与上下限以统筹地区社保机构公告为准；不含医疗费、康复费、辅助器具费等实报实销项目。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="工伤赔偿计算表单">
+      <div class="field">
+        <label for="input-salary">受伤前月工资（元）</label>
+        <input
+          id="input-salary"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="如 8000"
+          aria-describedby="field-error-salary"
+        />
+        <p class="field-error" id="field-error-salary" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-level">伤残等级（1~10）</label>
+        <input
+          id="input-level"
+          class="field-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="1~10 整数"
+          aria-describedby="field-error-level"
+        />
+        <p class="field-error" id="field-error-level" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-resign">是否解除 / 终止劳动合同</label>
+        <select id="input-resign" class="field-select">
+          <option value="false">否（保留劳动关系）</option>
+          <option value="true">是（触发 5-10 级一次性医疗 / 就业补助金）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算工伤赔偿
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填写受伤前月工资（工伤前 12 个月平均月缴费工资）与伤残等级（1~10 整数）。</li>
+        <li>选择是否已解除 / 终止劳动合同（5-10 级触发一次性医疗 / 就业补助金）。</li>
+        <li>点击「计算工伤赔偿」查看一次性伤残补助金、按月津贴（如适用）、一次性医疗 / 就业补助金（如适用）。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算明细</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>一次性伤残补助金月数：1-10 级 = 27 / 25 / 23 / 21 / 18 / 16 / 13 / 11 / 9 / 7 个月本人工资（第三十五、三十七条）。</p>
+        </li>
+        <li class="formula-item">
+          <p>1-4 级按月伤残津贴：本人工资 × 90% / 85% / 80% / 75%（条例第三十五条），达到退休年龄后转基本养老保险待遇，低于伤残津贴部分由基金补差。</p>
+        </li>
+        <li class="formula-item">
+          <p>5-10 级解除劳动合同时：一次性工伤医疗补助金 + 一次性伤残就业补助金 = 常见参考 5-6 级 18 个月、7-8 级 12 个月、9 级 8 个月、10 级 6 个月（以统筹地区上年度职工月平均工资为基数，具体由各省自定）。</p>
+        </li>
+        <li class="formula-item">
+          <p>例：月薪 8000 / 6 级 → 一次性伤残补助金 = 8000 × 16 = 128000 元；月薪 8000 / 1 级 → 216000 元 + 按月津贴 7200 元（90%）。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/overtime-pay-cn/">加班费计算器</a></li>
+        <li><a href="/finance/compensation-cn/">经济补偿金计算器</a></li>
+        <li><a href="/finance/social-insurance-cn/">五险一金计算器</a></li>
+        <li><a href="/finance/lawsuit-fee-cn/">诉讼费计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，一次性医疗 / 就业补助金具体月数与上下限以统筹地区社保机构公告为准；本工具不含医疗费、康复费、辅助器具费等实报实销项目。
+    </p>
+
+    <CalcJsonLd
+      name="工伤赔偿计算器"
+      description="免费在线工伤赔偿计算器：依据《工伤保险条例》（国务院令第 375 号 / 修订 586 号）第三十五、三十七条，自动按 1-10 级伤残等级测算一次性伤残补助金、1-4 级按月伤残津贴、5-10 级一次性工伤医疗与伤残就业补助金。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/injury-cn-page.js"></script>
+</BaseLayout>

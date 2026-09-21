@@ -1,0 +1,138 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "外链有效性检查" },
+];
+
+const faqItems = [
+  {
+    q: "为什么有的链接显示「可达但无法读取状态码」？",
+    a: "浏览器同源策略（CORS）限制了跨域读取响应。目标站点未开放 CORS 头时，工具会自动降级为 no-cors 连通性探测：请求发出且未报错即认为可达，但状态码不可见。",
+  },
+  {
+    q: "为什么链接明明能打开，却显示「无法访问」？",
+    a: "常见原因：目标站开启了防盗链或 WAF，拒绝来自浏览器脚本的跨域请求；链接要求登录；或网络环境拦截。显示异常不代表链接已失效，建议用浏览器直接打开复核。",
+  },
+  {
+    q: "支持检查多少条链接？会跟随重定向吗？",
+    a: "单次最多检查 50 条（自动去重、补全 https:// 协议），超出部分会提示截断。fetch 默认跟随重定向，最终统计的是重定向链终点的状态码。",
+  },
+  {
+    q: "检查数据会上传吗？",
+    a: "不会。检查请求由你的浏览器直接发往目标站点，本站服务器不参与中转、不存储任何 URL；超时 5 秒自动放弃，避免长时间等待。",
+  },
+];
+---
+
+<BaseLayout
+  title="外链有效性检查 — 批量检测友情链接 / 导出链接状态码"
+  description="免费外链有效性检查工具：粘贴 URL 列表批量检测链接状态码，自动去重补协议，2xx/3xx/4xx/5xx 分级统计，5 秒超时保护，浏览器直连目标站点不上传数据，适合友情链接与出站链接巡检。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>外链有效性检查</h1>
+    <UsageGuide />
+    <p class="lead">
+      批量检测链接状态码 · 自动去重补协议 · 分级统计 · 浏览器直连不上传。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="外链检查表单">
+      <div class="field">
+        <label for="links-input"
+          >URL 列表（每行一条，# 开头为注释，上限 50 条）</label
+        >
+        <textarea
+          id="links-input"
+          class="field-input"
+          rows="8"
+          placeholder="https://example.com/
+example.org/page
+# 友情链接
+https://partner.example.com/"
+          aria-describedby="field-error-urls"
+          spellcheck="false"></textarea>
+        <p class="field-error" id="field-error-urls" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          开始检查
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>每行粘贴一条链接（无协议自动补 https://，重复自动去重）。</li>
+        <li>点击「开始检查」，结果区逐条显示状态码与判定，过程约数秒。</li>
+        <li>结束后查看分级统计，对 ✗ 异常条目用浏览器复核后处理。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="legend-heading">
+      <h2 id="legend-heading">结果标记说明</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            ✓ 2xx 正常 · → 3xx 重定向（已自动跟随）· ⚠ 可达但 CORS
+            限制读不到状态码 · ✗ 4xx/5xx 或无法访问、超时。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/seo-sitemap-cn/">Sitemap 生成器</a></li>
+        <li><a href="/efficiency/seo-robots-cn/">robots.txt 生成器</a></li>
+        <li><a href="/efficiency/seo-meta-cn/">TDK 标签生成器</a></li>
+        <li><a href="/efficiency/seo-keywords-cn/">长尾关键词扩展</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      检查结果受目标站点 CORS / 防盗链策略影响，<strong>仅供参考</strong
+      >；判定为异常的链接请用浏览器人工复核后再删除。
+    </p>
+
+    <CalcJsonLd
+      name="外链有效性检查"
+      description="免费外链有效性检查工具：粘贴 URL 列表批量检测链接状态码，自动去重补协议，2xx/3xx/4xx/5xx 分级统计，5 秒超时保护，浏览器直连目标站点不上传数据，适合友情链接与出站链接巡检。"
+      faqItems={faqItems}
+      featureList={[
+        "批量检测最多 50 条链接",
+        "URL 去重与协议补全",
+        "状态码分级统计",
+        "5 秒超时与 CORS 降级探测",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    /* 检查结果逐行展示，主结果区按原样展示 */
+    #result-main {
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/seo-link-check-cn-page.js"
+  ></script>
+</BaseLayout>

@@ -1,0 +1,142 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "开发工具" },
+  { label: "SQL 格式化工具" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些 SQL 方言？",
+    a: "词法层面与方言无关（字符串、注释、标识符的处理各方言基本一致），关键字大写与布局覆盖 SELECT/INSERT/UPDATE/DELETE/CREATE 等通用语法。方言特有语法（如 MySQL 的反引号标识符）会按普通文本保留，不影响排版。",
+  },
+  {
+    q: "格式化时会把我的数据弄乱吗？",
+    a: "不会。字符串字面量（含 it''s 这类转义引号）整体原样保留，大写化只作用于字符串外的关键字；行注释与块注释在处理时会被移除，含重要注释的 SQL 请提前备份。",
+  },
+  {
+    q: "压缩和格式化分别适合什么场景？",
+    a: "格式化用于 review 与排查：主子句换行、SELECT 列表逐列一行、WHERE 内 AND/OR 换行、子查询逐层缩进；压缩用于日志输出、拼 SQL 字符串时去掉多余空白。",
+  },
+  {
+    q: "SQL 会被上传吗？",
+    a: "不会。解析与排版完全在浏览器本地完成，无任何网络请求。",
+  },
+];
+---
+
+<BaseLayout
+  title="SQL 格式化工具 — 在线 SQL 美化缩进/压缩一行（本地运行）"
+  description="免费在线 SQL 格式化与压缩工具：关键字大写、主子句换行缩进、SELECT 列表逐列排版、子查询逐层缩进，压缩模式去除注释与多余空白；正确处理字符串字面量与转义引号，浏览器本地处理不上传。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>SQL 格式化工具</h1>
+    <UsageGuide />
+    <p class="lead">
+      关键字大写 · 主子句换行缩进 · 子查询逐层排版 · 本地处理。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="SQL 处理表单">
+      <div class="field">
+        <label for="sql-source">SQL 语句</label>
+        <textarea
+          id="sql-source"
+          class="field-input"
+          rows="8"
+          spellcheck="false"
+          placeholder="select a,b from t where x=1 and y=2"
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field">
+        <label for="sql-mode">处理方向</label>
+        <select id="sql-mode" class="field-select">
+          <option value="format" selected>格式化（大写 + 换行缩进）</option>
+          <option value="minify">压缩（去注释与空白）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          开始处理
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>粘贴 SQL 语句，选择「格式化」或「压缩」。</li>
+        <li>
+          格式化：关键字大写、SELECT/FROM/WHERE 等主子句独占一行、列表逐列缩进。
+        </li>
+        <li>结果可一键复制回编辑器；压缩模式适合拼日志或排查长语句。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">布局规则</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            主子句（SELECT/FROM/WHERE/GROUP BY/ORDER
+            BY/HAVING/LIMIT/OFFSET/UNION/VALUES/SET 等）独占一行；SELECT
+            列表按逗号逐列一行；WHERE 内 AND/OR 换行缩进一层。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            JOIN 系列换行；ON 条件跟在 ON 同行；括号内出现 SELECT
+            视为子查询断行缩进，IN(1, 2, 3) 等值列表保持内联。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+        <li><a href="/dev/js-minify-cn/">JS 压缩/美化工具</a></li>
+        <li><a href="/dev/csv-to-json/">CSV 转 JSON 工具</a></li>
+        <li><a href="/dev/code-diff/">文本差异对比工具</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考：本工具做词法级排版，不做语法校验与执行计划分析，复杂方言语句请以数据库实际解析为准。
+    </p>
+
+    <CalcJsonLd
+      name="SQL 格式化工具"
+      description="免费在线 SQL 格式化与压缩工具：关键字大写、主子句换行缩进、SELECT 列表逐列排版、子查询逐层缩进，压缩模式去除注释与多余空白；正确处理字符串字面量与转义引号，浏览器本地处理不上传。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/sql-format-cn-page.js"></script>
+</BaseLayout>
+
+<style is:global>
+  /* 本页结果为多行 SQL 文本 */
+  #result-main {
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+</style>

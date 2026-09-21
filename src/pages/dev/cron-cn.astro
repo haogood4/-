@@ -1,0 +1,127 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "开发工具" },
+  { label: "Cron 表达式解析器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些 Cron 语法？",
+    a: "标准五字段（分 时 日 月 周），每个字段支持 *、*/n 步进、固定值 n、范围 n-m、列表 n,m,k 以及范围步进 n-m/k 的组合。不支持 @hourly 等简写与秒级六字段格式。",
+  },
+  {
+    q: "周字段 0 和 7 都表示周日吗？",
+    a: "是。多数 Cron 实现（cronie、Quartz 除外）中 0 与 7 等价，均表示周日。本工具解析时会把 7 归一化为 0，展开结果中只出现 0。",
+  },
+  {
+    q: "「日」和「星期」同时指定会怎样？",
+    a: "经典 vixie-cron 的语义是「或」：两者任一命中即触发。本工具只做字段展开与中文描述，不模拟触发日历；需要精确排程请以目标系统的行为为准。",
+  },
+  {
+    q: "解析结果怎么用？",
+    a: "展开的字段值可用于核对语法是否正确；中文描述可直接贴进文档或值班手册，方便非技术同事看懂定时任务的执行时间。",
+  },
+];
+---
+
+<BaseLayout
+  title="Cron 表达式解析器 — 在线校验并翻译成中文说明"
+  description="免费在线 Cron 表达式解析工具：支持五字段 *、*/n、n、n-m、n,m,k、n-m/k 语法，实时校验合法性并展开各字段取值，自动生成中文人话描述，开发者排定时任务必备。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>Cron 表达式解析器</h1>
+    <UsageGuide />
+    <p class="lead">五字段 Cron 校验 · 字段值展开 · 一键翻译成人话。</p>
+
+    <form id="calc-form" class="card" novalidate aria-label="Cron 解析表单">
+      <div class="field">
+        <label for="cron-expr">Cron 表达式（分 时 日 月 周）</label>
+        <input
+          id="cron-expr"
+          class="field-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="例如 */15 9-18 * * 1-5"
+          aria-describedby="field-error-expr"
+        />
+        <p class="field-error" id="field-error-expr" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          解析表达式
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>粘贴或输入五字段 Cron 表达式，字段间用空格分隔。</li>
+        <li>
+          点击「解析表达式」：合法时展示中文描述与各字段展开值；非法时提示具体原因。
+        </li>
+        <li>结果可一键复制，用于文档或核对 crontab 配置。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">语法速查</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            五字段依次为：分钟（0-59）、小时（0-23）、日（1-31）、月（1-12）、星期（0-7，0/7
+            为周日）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            常用示例：*/15 * * * * 每 15 分钟；0 3 * * * 每天凌晨 3 点；0 9-18 *
+            * 1-5 工作日 9-18 点整点。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/timestamp/">时间戳换算计算器</a></li>
+        <li><a href="/dev/date-format/">日期格式转换工具</a></li>
+        <li><a href="/dev/hash-cn/">哈希生成器</a></li>
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考：不同调度系统（vixie-cron、systemd timer、Quartz
+      六字段）语义存在差异，请以目标平台文档为准。
+    </p>
+
+    <CalcJsonLd
+      name="Cron 表达式解析器"
+      description="免费在线 Cron 表达式解析工具：支持五字段 *、*/n、n、n-m、n,m,k、n-m/k 语法，实时校验合法性并展开各字段取值，自动生成中文人话描述，开发者排定时任务必备。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/cron-cn-page.js"></script>
+</BaseLayout>

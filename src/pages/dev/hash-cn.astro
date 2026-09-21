@@ -1,0 +1,132 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "开发工具" },
+  { label: "哈希生成器" },
+];
+
+const faqItems = [
+  {
+    q: "MD5 还能用于密码存储吗？",
+    a: "不能。MD5 早已可被碰撞攻击与彩虹表攻破，仅适合文件校验、缓存键等非安全场景。密码存储请使用 bcrypt、scrypt 或 Argon2 等专门的慢哈希，并加盐。",
+  },
+  {
+    q: "SHA-1 与 SHA-256 有什么区别？",
+    a: "SHA-1 输出 160 位（40 个十六进制字符），已被证明存在碰撞攻击（如 SHAttered），Git 等场景正在迁移；SHA-256 输出 256 位（64 个十六进制字符），目前仍被认为安全，建议优先使用。",
+  },
+  {
+    q: "中文文本的哈希值会和 Linux 命令一致吗？",
+    a: '会。本工具按 UTF-8 字节计算，与 md5sum、sha1sum、sha256sum 的默认口径一致：echo -n "你好世界" | md5sum 的结果与本页 MD5 结果相同。',
+  },
+  {
+    q: "内容会被上传吗？",
+    a: "不会。MD5 在浏览器本地用纯 JS 计算，SHA-1/SHA-256 使用浏览器原生 crypto.subtle API，整个过程无任何网络请求。",
+  },
+];
+---
+
+<BaseLayout
+  title="哈希生成器 — 在线计算 MD5 / SHA-1 / SHA-256（本地计算不上传）"
+  description="免费在线哈希计算器：支持 MD5、SHA-1、SHA-256 三种算法，UTF-8 口径与 md5sum/sha256sum 一致，浏览器本地计算不上传，适合文件校验、缓存键、数据一致性比对等场景。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>哈希生成器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入文本一键计算 MD5 / SHA-1 / SHA-256 · UTF-8 口径 · 本地计算绝不上传。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="哈希计算表单">
+      <div class="field">
+        <label for="hash-text">文本内容</label>
+        <textarea
+          id="hash-text"
+          class="field-input"
+          rows="4"
+          placeholder="输入任意文本，支持中文与符号"
+          aria-describedby="field-error-text"></textarea>
+        <p class="field-error" id="field-error-text" hidden></p>
+      </div>
+      <div class="field">
+        <label for="hash-algo">哈希算法</label>
+        <select id="hash-algo" class="field-select">
+          <option value="md5" selected>MD5（32 位，仅用于校验场景）</option>
+          <option value="sha1">SHA-1（40 位）</option>
+          <option value="sha256">SHA-256（64 位，推荐）</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算哈希
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>在文本框输入要计算哈希的内容（支持中文，按 UTF-8 字节处理）。</li>
+        <li>选择算法：校验文件下载用 MD5 即可，安全相关场景选 SHA-256。</li>
+        <li>点击「计算哈希」，得到十六进制结果后可一键复制比对。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">算法说明</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            MD5 / SHA-1 / SHA-256
+            均为确定性哈希：相同输入必得相同输出，微小差异（哪怕一个空格）都会导致结果完全不同（雪崩效应）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            本页 MD5 为纯 JS 手写的 RFC 1321 实现，SHA 系列调用浏览器原生
+            crypto.subtle，密码学实现由浏览器保证。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/dev/uuid/">UUID 在线生成器</a></li>
+        <li><a href="/dev/jwt-cn/">JWT 解码器</a></li>
+        <li><a href="/dev/url-encode/">URL 编码解码</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考：MD5 与 SHA-1 不应用于安全场景（签名、密码存储），请改用
+      SHA-256 及以上或专门的密码哈希算法。
+    </p>
+
+    <CalcJsonLd
+      name="哈希生成器"
+      description="免费在线哈希计算器：支持 MD5、SHA-1、SHA-256 三种算法，UTF-8 口径与 md5sum/sha256sum 一致，浏览器本地计算不上传，适合文件校验、缓存键、数据一致性比对等场景。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/hash-cn-page.js"></script>
+</BaseLayout>

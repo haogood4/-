@@ -1,0 +1,310 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "交通事故赔偿计算器" },
+];
+
+const faqItems = [
+  {
+    q: "交通事故人身损害赔偿的常见项目有哪些？",
+    a: "依据《最高法关于审理人身损害赔偿案件适用法律若干问题的解释》（法释〔2020〕17 号 / 2022 修正 · 法释〔2022〕14 号）第十七条等：医疗费、误工费、护理费、交通费、住院伙食补助、营养费、残疾赔偿金、残疾辅助器具费、被扶养人生活费，以及因康复护理、继续治疗实际发生或确定必然产生的后续治疗费；造成死亡的，还包括丧葬费、死亡赔偿金。",
+  },
+  {
+    q: "残疾赔偿金是怎么算的？",
+    a: "第十二条规定：按照受诉法院所在地上一年度城镇居民人均可支配收入标准，自定残之日起按二十年计算。六十周岁以上的，年龄每增加一岁减少一年；七十五周岁以上的，按五年计算。伤残等级系数：十级 1.0、九级 0.9……一级 0.1（即等级越低越严重、系数越小）。本工具按用户输入的伤残等级与年龄自动扣减。",
+  },
+  {
+    q: "死亡赔偿金与残疾赔偿金口径有什么区别？",
+    a: "第十五条规定：死亡赔偿金按受诉法院所在地上一年度城镇居民人均可支配收入标准，按二十年计算；六十周岁以上的，年龄每增加一岁减少一年；七十五周岁以上的，按五年计算。死亡赔偿金不计伤残系数，按全额计发；与残疾赔偿金不重复主张。",
+  },
+  {
+    q: "丧葬费是怎么算的？",
+    a: "第十三条规定：丧葬费按照受诉法院所在地上一年度职工月平均工资标准，以六个月总额计算。本工具按用户输入的「当地职工月平均工资」×6 估算；如未填写，按日收入 × 30 估算月均工资（实务以统计局口径为准）。",
+  },
+  {
+    q: "责任比例 60% 是什么意思？",
+    a: "机动车交通事故责任由交警认定或法院判定，按全部 / 主要 / 同等 / 次要 / 无责划分（如 100% / 70% / 50% / 30% / 0%）。本工具按用户输入的责任比例（0~1）将各项目小计乘以比例，得到最终估算赔付金额。如用户填 0 视为按全额（1）估算，避免误归零。",
+  },
+  {
+    q: "本工具结果与法院判决为何可能有差异？",
+    a: "可能存在差异的原因：① 各省城镇居民人均可支配收入、职工月平均工资标准每年更新；② 责任划分以交警认定或法院判定为准；③ 被扶养人生活费、后续治疗费等附加项目未纳入本工具估算；④ 农村户籍 vs 城镇户籍在 2022-05-01 后已统一按城镇居民标准计算（法释〔2022〕14 号）。本工具结果仅供参考，最终以受诉法院判决为准。",
+  },
+];
+---
+
+<BaseLayout
+  title="交通事故赔偿计算器 — 医疗/误工/护理/残疾/死亡 在线估算"
+  description="免费在线交通事故人身损害赔偿计算器：依据《最高人民法院关于审理人身损害赔偿案件适用法律若干问题的解释》（法释〔2020〕17 号 / 2022 修正），按项目化测算医疗、误工、护理、住院伙食补助、营养、交通、残疾 / 死亡赔偿金与丧葬费，并支持责任比例加权。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>交通事故赔偿计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      依据《最高人民法院关于审理人身损害赔偿案件适用法律若干问题的解释》（法释〔2020〕17
+      号 / 2022 修正 · 法释〔2022〕14 号），按项目化测算医疗、误工、护理、住院伙食补助、营养、交通、残疾 / 死亡赔偿金与丧葬费，并支持按责任比例加权。
+    </p>
+    <p class="result-hint">
+      <strong
+        >⚠️
+        计算结果仅供参考，最终以受诉法院判决与当地统计部门公告的城镇居民人均可支配收入、职工月平均工资为准。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="交通事故赔偿计算表单">
+      <div class="grid-2">
+        <div class="field">
+          <label for="input-medical">医疗费（元）</label>
+          <input
+            id="input-medical"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="按票据实报"
+            aria-describedby="field-error-medical"
+          />
+          <p class="field-error" id="field-error-medical" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-income">日收入（元）</label>
+          <input
+            id="input-income"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="用于误工费"
+            aria-describedby="field-error-income"
+          />
+          <p class="field-error" id="field-error-income" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-miss-days">误工天数</label>
+          <input
+            id="input-miss-days"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="可空"
+            aria-describedby="field-error-miss"
+          />
+          <p class="field-error" id="field-error-miss" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-care-days">护理天数</label>
+          <input
+            id="input-care-days"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="可空"
+            aria-describedby="field-error-care"
+          />
+          <p class="field-error" id="field-error-care" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-daily-care">日护工报酬（元）</label>
+          <input
+            id="input-daily-care"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="可空"
+            aria-describedby="field-error-daily-care"
+          />
+          <p class="field-error" id="field-error-daily-care" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-hospital-days">住院天数</label>
+          <input
+            id="input-hospital-days"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="可空"
+            aria-describedby="field-error-hospital"
+          />
+          <p class="field-error" id="field-error-hospital" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-nutrition">营养费（元）</label>
+          <input
+            id="input-nutrition"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="可空"
+            aria-describedby="field-error-nutrition"
+          />
+          <p class="field-error" id="field-error-nutrition" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-transport">交通费（元）</label>
+          <input
+            id="input-transport"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="可空"
+            aria-describedby="field-error-transport"
+          />
+          <p class="field-error" id="field-error-transport" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-disability">伤残等级（1~10）</label>
+          <input
+            id="input-disability"
+            class="field-input"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="无残疾填 0 或留空"
+            aria-describedby="field-error-disability"
+          />
+          <p class="field-error" id="field-error-disability" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-age">年龄</label>
+          <input
+            id="input-age"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="≥60 每多 1 岁减 1 年"
+            aria-describedby="field-error-age"
+          />
+          <p class="field-error" id="field-error-age" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-disposable">人均可支配收入（元/年）</label>
+          <input
+            id="input-disposable"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="受诉法院所在地上一年度"
+            aria-describedby="field-error-disposable"
+          />
+          <p class="field-error" id="field-error-disposable" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-liability">责任比例（0~1）</label>
+          <input
+            id="input-liability"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="0.6 = 60%，留空按 1（全额）"
+            aria-describedby="field-error-liability"
+          />
+          <p class="field-error" id="field-error-liability" hidden></p>
+        </div>
+        <div class="field">
+          <label for="input-death">是否死亡</label>
+          <select id="input-death" class="field-select">
+            <option value="false">否（伤残赔偿）</option>
+            <option value="true">是（触发死亡赔偿 + 丧葬费）</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="input-funeral-base">当地职工月平均工资（丧葬费）</label>
+          <input
+            id="input-funeral-base"
+            class="field-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="可空，留空按日收入 × 30"
+            aria-describedby="field-error-funeral"
+          />
+          <p class="field-error" id="field-error-funeral" hidden></p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算赔偿
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>按票据填写医疗费；按误工、护理、住院天数与日收入 / 日护工报酬自动折算。</li>
+        <li>输入受诉法院所在地上一年度城镇居民人均可支配收入、年龄与伤残等级（1~10）。</li>
+        <li>死亡情形按 1 级系数全额计发死亡赔偿金 + 丧葬费；责任比例按交警或法院认定填写。</li>
+        <li>点击「计算赔偿」查看各项目金额、项目小计与按责任比例加权后的估算赔付。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算明细</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>医疗费：按医疗机构收款凭证实报实销（解释第六条）；误工费：日收入 × 误工天数（第七条）；护理费：日护工报酬 × 护理天数（第八条）。</p>
+        </li>
+        <li class="formula-item">
+          <p>住院伙食补助：参考 100 元/天（各地差异）；营养费：参考医嘱实报；交通费：以正式票据为准（第九条）。</p>
+        </li>
+        <li class="formula-item">
+          <p>残疾赔偿金：人均可支配收入 × 系数 × 年限（第十二条）。系数：10 级 1.0、9 级 0.9、…、1 级 0.1；年限：默认 20 年，60+ 每多 1 岁减 1 年，75+ 按 5 年。</p>
+        </li>
+        <li class="formula-item">
+          <p>死亡赔偿金：人均可支配收入 × 20 年（同扣年龄，第十五条）；丧葬费：当地职工月平均工资 × 6（第十三条）。</p>
+        </li>
+        <li class="formula-item">
+          <p>估算赔付 = 各项目小计 × 责任比例；本工具按用户输入的 0~1 责任比例自动加权，0 视为全额（避免误归零）。</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/lawsuit-fee-cn/">诉讼费计算器</a></li>
+        <li><a href="/finance/injury-cn/">工伤赔偿计算器</a></li>
+        <li><a href="/finance/compensation-cn/">经济补偿金计算器</a></li>
+        <li><a href="/finance/overtime-pay-cn/">加班费计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，最终以受诉法院判决与当地统计部门公告的城镇居民人均可支配收入、职工月平均工资为准；本工具不含被扶养人生活费、后续治疗费等附加项目。
+    </p>
+
+    <CalcJsonLd
+      name="交通事故赔偿计算器"
+      description="免费在线交通事故人身损害赔偿计算器：依据《最高人民法院关于审理人身损害赔偿案件适用法律若干问题的解释》（法释〔2020〕17 号 / 2022 修正），按项目化测算医疗、误工、护理、住院伙食补助、营养、交通、残疾 / 死亡赔偿金与丧葬费，并支持责任比例加权。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/traffic-cn-page.js"></script>
+</BaseLayout>

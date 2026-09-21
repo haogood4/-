@@ -1,0 +1,141 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "游戏昵称生成器" },
+];
+
+const faqItems = [
+  {
+    q: "名字会重复吗？",
+    a: "同一次生成内不会重复：工具先把词库随机打乱再取前 N 个。点击「再生成一批」会重新打乱，可能再次抽到之前出现过的名字。",
+  },
+  {
+    q: "有哪些风格分类？",
+    a: "内置古风雅致、炫酷霸气、可爱软萌、沙雕搞笑四大类共 60+ 个昵称；选「随机」则在全部词库中混合抽取。",
+  },
+  {
+    q: "游戏对昵称长度/字符有限制吗？",
+    a: "多数网游限制 2~7 个汉字或特殊字符，本工具生成的中文昵称长度在 2~8 字之间；个别游戏（如部分 MMORPG）不支持空格或纯中文，建议改名前先查阅游戏规则。",
+  },
+  {
+    q: "名字会不会重名？",
+    a: "游戏内昵称全局唯一，热门名字可能已被注册。若提示重名，可在生成的名字前后加数字、符号或再做一次随机组合。",
+  },
+];
+---
+
+<BaseLayout
+  title="游戏昵称生成器 — 古风/霸气/可爱/沙雕游戏名字一键生成"
+  description="免费游戏昵称生成器：内置古风雅致、炫酷霸气、可爱软萌、沙雕搞笑四大风格 60+ 精选昵称，一键随机抽取不重复，支持批量生成与一键复制，起名困难户救星。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>游戏昵称生成器</h1>
+    <UsageGuide />
+    <p class="lead">
+      古风 / 霸气 / 软萌 / 沙雕四大风格 · 随机抽取不重复 · 一键复制。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="昵称生成表单">
+      <div class="field">
+        <label for="nick-category">风格分类</label>
+        <select id="nick-category" class="field-select">
+          <option value="随机" selected>随机（全部风格）</option>
+          <option value="古风雅致">古风雅致</option>
+          <option value="炫酷霸气">炫酷霸气</option>
+          <option value="可爱软萌">可爱软萌</option>
+          <option value="沙雕搞笑">沙雕搞笑</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="nick-count">生成数量</label>
+        <select id="nick-count" class="field-select">
+          <option value="5">5 个</option>
+          <option value="10" selected>10 个</option>
+          <option value="20">20 个</option>
+        </select>
+        <p class="field-error" id="field-error-count" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          生成昵称
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择风格分类与数量，默认从全部词库随机抽取。</li>
+        <li>点击「生成昵称」，结果区每行一个昵称，不满意可再生成一批。</li>
+        <li>选中心仪的名字后点击「复制全部」，去游戏里粘贴改名。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="style-heading">
+      <h2 id="style-heading">风格速览</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            古风雅致（月下听松、青衫烟雨）、炫酷霸气（夜刃无双、孤狼啸月）、
+            可爱软萌（团子打滚、桃桃乌龙）、沙雕搞笑（起名困难户、干饭第一名）。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/game-gacha-cn/">抽卡保底计算器</a></li>
+        <li><a href="/efficiency/password-generator-cn/">随机密码生成器</a></li>
+        <li><a href="/efficiency/ai-prompts-cn/">AI 提示词大全</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      生成的昵称仅供起名参考，<strong>请遵守各游戏用户协议与命名规范</strong
+      >；部分名字可能已被占用或受限，请自行调整。
+    </p>
+
+    <CalcJsonLd
+      name="游戏昵称生成器"
+      description="免费游戏昵称生成器：内置古风雅致、炫酷霸气、可爱软萌、沙雕搞笑四大风格 60+ 精选昵称，一键随机抽取不重复，支持批量生成与一键复制，起名困难户救星。"
+      faqItems={faqItems}
+      featureList={[
+        "四大风格 60+ 昵称词库",
+        "同批抽取不重复",
+        "批量生成 5~20 个",
+        "一键复制全部",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    /* 昵称列表每行一个，主结果区按原样展示 */
+    #result-main {
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/game-nickname-cn-page.js"
+  ></script>
+</BaseLayout>

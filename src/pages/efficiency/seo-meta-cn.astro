@@ -1,0 +1,162 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "TDK 标签生成器" },
+];
+
+const faqItems = [
+  {
+    q: "标题 30 字、描述 78 字的限制依据是什么？",
+    a: "按 Unicode 码点计数（1 个汉字、1 个字母、1 个 emoji 均计 1）。中文搜索结果页标题约展示 30 个汉字、摘要约 78 个汉字，超长部分会被截断并加省略号，影响点击率。",
+  },
+  {
+    q: "keywords 标签还有用吗？",
+    a: "Google 与 Bing 已明确忽略 keywords；百度等中文搜索引擎权重也极低。保留该字段是为了兼容个别仍读取的国内场景，建议只写 3~5 个核心词，堆砌反而有害。",
+  },
+  {
+    q: "超限会阻止生成吗？",
+    a: "不会。超限只在结果区给出 ⚠ 提示，标签照常生成——因为标题略长仍可正常工作，由你权衡是否精简。必填校验只有标题与描述不能为空。",
+  },
+  {
+    q: "canonical 标签是干什么的？",
+    a: "canonical（规范链接）告诉搜索引擎这组重复/相似页面中哪个是权威版本，用于聚合分页、带参数 URL 的权重，避免重复内容稀释排名。",
+  },
+];
+---
+
+<BaseLayout
+  title="TDK 标签生成器 — SEO Title/Description/Keywords 一键生成"
+  description="免费 SEO TDK 标签生成器：填写标题与描述自动生成 meta 标签片段，按 30 字 / 78 字中文展示口径做长度校验与超限提醒，支持 keywords、robots、canonical，属性值自动转义，可一键复制。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>TDK 标签生成器</h1>
+    <UsageGuide />
+    <p class="lead">
+      Title / Description / Keywords 一键生成 · 30 字 / 78 字长度校验 ·
+      自动转义。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="TDK 生成表单">
+      <div class="field">
+        <label for="meta-title">页面标题 title（建议 ≤30 字）</label>
+        <input
+          type="text"
+          id="meta-title"
+          class="field-input"
+          placeholder="例如：免费在线计算器大全"
+          aria-describedby="field-error-title"
+        />
+        <p class="field-error" id="field-error-title" hidden></p>
+      </div>
+      <div class="field">
+        <label for="meta-desc">页面描述 description（建议 ≤78 字）</label>
+        <textarea
+          id="meta-desc"
+          class="field-input"
+          rows="3"
+          placeholder="用一两句话说清页面内容与价值，包含核心关键词"
+          aria-describedby="field-error-desc"></textarea>
+        <p class="field-error" id="field-error-desc" hidden></p>
+      </div>
+      <div class="field">
+        <label for="meta-keywords">关键词 keywords（可选，逗号分隔）</label>
+        <input
+          type="text"
+          id="meta-keywords"
+          class="field-input"
+          placeholder="计算器,在线工具,免费"
+        />
+      </div>
+      <div class="field">
+        <label for="meta-canonical">规范链接 canonical（可选）</label>
+        <input
+          type="url"
+          id="meta-canonical"
+          class="field-input"
+          placeholder="https://example.com/page/"
+        />
+        <p class="field-error" id="field-error-canonical" hidden></p>
+      </div>
+      <div class="field">
+        <label for="meta-robots">robots 指令（可选）</label>
+        <select id="meta-robots" class="field-select">
+          <option value="" selected>不设置</option>
+          <option value="index,follow">index,follow（默认）</option>
+          <option value="noindex,follow">noindex,follow</option>
+          <option value="index,nofollow">index,nofollow</option>
+          <option value="noindex,nofollow">noindex,nofollow</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          生成 meta 标签
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          填写页面标题与描述（必填），按需补充 keywords、canonical、robots。
+        </li>
+        <li>点击「生成 meta 标签」，检查长度校验结果是否超限。</li>
+        <li>点击「复制全部」，粘贴到页面 &lt;head&gt; 区即可。</li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/seo-sitemap-cn/">Sitemap 生成器</a></li>
+        <li><a href="/efficiency/seo-robots-cn/">robots.txt 生成器</a></li>
+        <li><a href="/efficiency/seo-link-check-cn/">外链有效性检查</a></li>
+        <li><a href="/efficiency/seo-keywords-cn/">长尾关键词扩展</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      生成结果为标准 meta 标签片段，<strong>仅供参考</strong
+      >；搜索引擎的实际展示与排名受内容质量、外链等多因素影响。
+    </p>
+
+    <CalcJsonLd
+      name="TDK 标签生成器"
+      description="免费 SEO TDK 标签生成器：填写标题与描述自动生成 meta 标签片段，按 30 字 / 78 字中文展示口径做长度校验与超限提醒，支持 keywords、robots、canonical，属性值自动转义，可一键复制。"
+      faqItems={faqItems}
+      featureList={[
+        "标题 30 字 / 描述 78 字码点校验",
+        "keywords / robots / canonical 可选",
+        "HTML 属性值自动转义",
+        "生成片段一键复制",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    /* meta 片段为多行代码，主结果区按原样展示 */
+    #result-main {
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/seo-meta-cn-page.js"></script>
+</BaseLayout>

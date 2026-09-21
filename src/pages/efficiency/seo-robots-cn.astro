@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "robots.txt 生成器" },
+];
+
+const faqItems = [
+  {
+    q: "robots.txt 是什么？",
+    a: "robots.txt 是放在网站根目录的纯文本协议文件，用 User-agent / Disallow / Allow 指令告诉爬虫哪些路径可以抓取。它是「君子协定」——合规爬虫会遵守，但不能阻止恶意抓取，也不同于 noindex（不收录）。",
+  },
+  {
+    q: "Disallow: / 和空 Disallow 有什么区别？",
+    a: "Disallow: / 表示禁止抓取全站；单独一行空值的 Disallow:（后面没有路径）表示不禁止任何路径，即允许全部抓取。自定义模式下若不填任何路径，工具会输出空 Disallow 保证语法完整。",
+  },
+  {
+    q: "Crawl-delay 所有引擎都支持吗？",
+    a: "不是。Crawl-delay（抓取间隔秒数）被 Bing、Yandex 等支持，但 Google 明确忽略该指令。工具按协议输出 0~30 的整数秒，是否生效取决于爬虫方。",
+  },
+  {
+    q: "生成后放在哪里？",
+    a: "保存为 robots.txt 上传到网站根目录，必须能通过 https://你的域名/robots.txt 直接访问才生效；一个域名根目录只能有一个 robots.txt。",
+  },
+];
+---
+
+<BaseLayout
+  title="robots.txt 生成器 — 在线生成搜索引擎抓取规则文件"
+  description="免费 robots.txt 生成器：一键生成允许全部、禁止全部或自定义 User-agent 抓取规则，支持 Disallow 路径去重、Crawl-delay 0~30 秒校验与 Sitemap 声明，输出标准协议语法，一键复制。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>robots.txt 生成器</h1>
+    <UsageGuide />
+    <p class="lead">
+      三种策略一键生成 · 自定义 UA 与 Disallow · Crawl-delay 校验 · Sitemap
+      声明。
+    </p>
+
+    <form
+      id="calc-form"
+      class="card"
+      novalidate
+      aria-label="robots.txt 生成表单"
+    >
+      <div class="field">
+        <label for="robots-policy">抓取策略</label>
+        <select id="robots-policy" class="field-select">
+          <option value="allow-all" selected>允许全部抓取（推荐新站）</option>
+          <option value="disallow-all">禁止全部抓取（站点建设中）</option>
+          <option value="custom">自定义规则</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="robots-ua"
+          >User-agent 列表（自定义模式，每行一个，留空为 *）</label
+        >
+        <textarea
+          id="robots-ua"
+          class="field-input"
+          rows="2"
+          placeholder="Baiduspider
+Googlebot"
+          spellcheck="false"></textarea>
+      </div>
+      <div class="field">
+        <label for="robots-disallow"
+          >禁止抓取路径（自定义模式，每行一条，以 / 开头）</label
+        >
+        <textarea
+          id="robots-disallow"
+          class="field-input"
+          rows="3"
+          placeholder="/admin/
+/tmp/"
+          spellcheck="false"></textarea>
+      </div>
+      <div class="field">
+        <label for="robots-crawl-delay"
+          >Crawl-delay 抓取间隔秒数（可选，0~30）</label
+        >
+        <input
+          type="number"
+          id="robots-crawl-delay"
+          class="field-input"
+          min="0"
+          max="30"
+          step="1"
+          inputmode="numeric"
+          placeholder="10"
+        />
+      </div>
+      <div class="field">
+        <label for="robots-sitemap">Sitemap 地址（可选）</label>
+        <input
+          type="url"
+          id="robots-sitemap"
+          class="field-input"
+          placeholder="https://example.com/sitemap.xml"
+        />
+        <p class="field-error" id="field-error-sitemap" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          生成 robots.txt
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择抓取策略；选「自定义规则」时填写 UA 与禁止路径列表。</li>
+        <li>按需填 Crawl-delay 与 Sitemap 地址，点击「生成 robots.txt」。</li>
+        <li>复制结果保存为 robots.txt，上传到网站根目录即可生效。</li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/seo-sitemap-cn/">Sitemap 生成器</a></li>
+        <li><a href="/efficiency/seo-meta-cn/">TDK 标签生成器</a></li>
+        <li><a href="/efficiency/seo-link-check-cn/">外链有效性检查</a></li>
+        <li><a href="/efficiency/seo-keywords-cn/">长尾关键词扩展</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      生成结果为标准 robots 协议语法，<strong>仅供参考</strong>；robots.txt
+      不能阻止恶意抓取，敏感内容请用鉴权保护而非仅靠 robots。
+    </p>
+
+    <CalcJsonLd
+      name="robots.txt 生成器"
+      description="免费 robots.txt 生成器：一键生成允许全部、禁止全部或自定义 User-agent 抓取规则，支持 Disallow 路径去重、Crawl-delay 0~30 秒校验与 Sitemap 声明，输出标准协议语法，一键复制。"
+      faqItems={faqItems}
+      featureList={[
+        "允许全部 / 禁止全部 / 自定义三种策略",
+        "多 UA 分组与路径去重",
+        "Crawl-delay 0~30 秒校验",
+        "Sitemap 声明附加",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    /* robots.txt 为多行文本，主结果区按原样展示 */
+    #result-main {
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/seo-robots-cn-page.js"></script>
+</BaseLayout>

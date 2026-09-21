@@ -1,0 +1,284 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import BreadcrumbJsonLd from "../../components/BreadcrumbJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const description =
+  "免费在线证件照换底色工具：一键把证件照换成红底、白底或蓝底，色差阈值可调，浏览器本地处理不上传。采用简化色键算法（四角采样 + 色差阈值），非 AI 抠图，适合纯色背景证件照快速换底。";
+
+const faqItems = [
+  {
+    q: "换底色的算法是什么？效果好吗？",
+    a: "本工具采用简化色键算法：自动采样照片四角平均色作为背景色，把色差小于阈值的像素替换为目标底色。它不是 AI 抠图，对纯色背景的证件照效果较好；发丝、毛边等细节可能有少量残留或侵蚀，可用色差阈值微调。",
+  },
+  {
+    q: "什么样的照片换底效果最好？",
+    a: "纯色、均匀、与人物主体颜色差异明显的背景效果最好（如影棚蓝底/白底照）。背景有渐变、阴影、杂物，或衣服颜色与背景接近时，效果会打折扣。",
+  },
+  {
+    q: "色差阈值怎么调？",
+    a: "阈值 10~120，默认 40。背景残留杂色时调大阈值；人物边缘被误替换（发丝、衣角变底色）时调小阈值，逐步微调到边界干净。",
+  },
+  {
+    q: "照片会上传到服务器吗？",
+    a: "不会。换底全程在您的浏览器内用 Canvas 本地完成，照片不经过任何服务器，也不会被保存，身份证照等敏感照片也可放心处理。",
+  },
+  {
+    q: "输出尺寸会改变吗？",
+    a: "不会。工具只替换背景颜色，不裁剪、不缩放，输出尺寸与原图一致（PNG 格式）。需要改尺寸请配合图片改尺寸工具使用。",
+  },
+];
+---
+
+<BaseLayout
+  title="在线证件照换底色工具 — 一键换红/白/蓝底（本地处理）"
+  description={description}
+>
+  <main id="main">
+    <Breadcrumb
+      items={[
+        { label: "首页", href: "/" },
+        { label: "效率工具" },
+        { label: "证件照换底色" },
+      ]}
+    />
+    <h1>在线证件照换底色工具</h1>
+    <UsageGuide />
+    <p class="lead">
+      一键换红/白/蓝底 · 色差阈值可调 · 简化色键算法 · 本地处理不上传
+    </p>
+
+    <section class="section" aria-label="算法说明">
+      <div class="card">
+        <p>
+          <strong>诚实声明：本工具为简化色键算法，非 AI 抠图。</strong>
+          通过四角采样背景色并按色差阈值替换，对纯色背景证件照效果较好；发丝等复杂边缘可能残留少量底色，请预览确认后再使用。
+        </p>
+      </div>
+    </section>
+
+    <form id="calc-form" class="card" novalidate aria-label="证件照换底色表单">
+      <div class="field">
+        <label for="file-input">选择证件照</label>
+        <label class="dropzone" id="dropzone" for="file-input">
+          <span class="dropzone__title">把照片拖到这里，或点击选择文件</span>
+          <span class="dropzone__hint"
+            >支持 PNG / JPEG / WebP，单张不超过 10MB，建议纯色背景</span
+          >
+          <input
+            type="file"
+            id="file-input"
+            class="dropzone__input"
+            accept="image/png,image/jpeg,image/webp"
+          />
+        </label>
+        <p class="field-hint" id="file-info" hidden></p>
+        <p class="field-error" id="field-error-file" hidden></p>
+      </div>
+      <div class="field">
+        <label for="bg-color">目标底色</label>
+        <select id="bg-color" class="field-select">
+          <option value="blue" selected>蓝底（#438edb，常见签证/考试照）</option
+          >
+          <option value="red">红底（#ff0000，常见工作证/医保照）</option>
+          <option value="white">白底（#ffffff，常见简历/护照照）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tolerance">色差阈值（10 ~ 120，默认 40）</label>
+        <input
+          type="number"
+          id="tolerance"
+          class="field-input"
+          min="10"
+          max="120"
+          step="1"
+          value="40"
+        />
+        <p class="field-hint">背景残留杂色调大，人物边缘被误换调小。</p>
+        <p class="field-error" id="field-error-tolerance" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary"
+          >开始换底色</button
+        >
+        <button id="reset-btn" type="button" class="btn btn-secondary"
+          >重置</button
+        >
+      </div>
+    </form>
+
+    <div class="card" id="preview-card">
+      <div class="preview-grid">
+        <figure class="preview-item">
+          <img id="preview-original" alt="原图预览" width="320" height="240" />
+          <figcaption>原图预览</figcaption>
+        </figure>
+        <figure class="preview-item">
+          <img
+            id="preview-idphoto"
+            alt="换底色后预览"
+            width="320"
+            height="240"
+          />
+          <figcaption id="preview-idphoto-caption">换底色后预览</figcaption>
+        </figure>
+      </div>
+      <p class="field-hint">
+        换底在浏览器本地完成，照片不会上传；简化色键算法对复杂背景效果有限，结果仅供参考。
+      </p>
+    </div>
+
+    <div id="result" class="result" role="status" aria-live="polite">
+      <p id="result-empty" class="result-empty">
+        选择照片并点击「开始换底色」查看结果
+      </p>
+      <div id="result-content" hidden>
+        <p id="result-caption" class="result-caption">换底色结果</p>
+        <p id="result-main" class="result-main"></p>
+        <p id="result-process" class="result-process"></p>
+        <p id="result-stale-hint" class="result-hint" hidden>
+          参数或照片已变更，请重新处理
+        </p>
+        <div class="result-actions">
+          <button type="button" id="copy-btn" class="btn btn-secondary" disabled
+            >复制结果</button
+          >
+          <button
+            type="button"
+            id="share-btn"
+            class="btn btn-secondary"
+            disabled>分享工具</button
+          >
+          <button
+            type="button"
+            id="download-btn"
+            class="btn btn-primary"
+            disabled>下载图片</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>拖拽或点击选择一张纯色背景的证件照。</li>
+        <li>选择目标底色（红/白/蓝），必要时微调色差阈值。</li>
+        <li>点击「开始换底色」，预览确认后点击「下载图片」保存 PNG。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="algo-heading">
+      <h2 id="algo-heading">算法说明（简化色键）</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            第一步：对照片四个角各取 4×4
+            像素区域，求全部采样像素的通道平均值，作为背景参考色。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            第二步：遍历每个像素，与背景参考色计算 RGB
+            欧氏色差，小于等于阈值（10~120）的像素替换为目标底色，其余保持不变。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/image-resize-cn/">在线图片改尺寸工具</a></li>
+        <li><a href="/efficiency/image-compress-cn/">在线图片压缩工具</a></li>
+        <li>
+          <a href="/efficiency/image-watermark-cn/">在线图片加水印工具</a>
+        </li>
+        <li><a href="/efficiency/image-convert-cn/">图片格式转换工具</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="在线证件照换底色工具"
+      description={description}
+      faqItems={faqItems}
+    />
+    <BreadcrumbJsonLd
+      items={[
+        { name: "首页", href: "/" },
+        { name: "效率工具" },
+        { name: "证件照换底色" },
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/image-idphoto-cn-page.js"
+  ></script>
+</BaseLayout>
+
+<style>
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    padding: 28px 16px;
+    border: 2px dashed var(--border-color, #cbd5e1);
+    border-radius: 12px;
+    background: var(--surface-2, rgba(148, 163, 184, 0.08));
+    cursor: pointer;
+    text-align: center;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+  .dropzone:hover,
+  .dropzone--active {
+    border-color: var(--accent, #0f766e);
+    background: var(--accent-soft, rgba(15, 118, 110, 0.08));
+  }
+  .dropzone__title {
+    font-weight: 600;
+  }
+  .dropzone__hint {
+    font-size: 0.85em;
+    opacity: 0.75;
+  }
+  .dropzone__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .preview-item {
+    margin: 0;
+    text-align: center;
+  }
+  .preview-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background: var(--surface-2, rgba(148, 163, 184, 0.12));
+  }
+  .preview-item figcaption {
+    margin-top: 8px;
+    font-size: 0.85em;
+    overflow-wrap: anywhere;
+    opacity: 0.8;
+  }
+</style>

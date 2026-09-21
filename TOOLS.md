@@ -1,8 +1,8 @@
-# 计算器大全 — 全部工具清单（102 个）
+# 计算器大全 — 全部工具清单（134 个）
 
 按 6 大分类整理，每行复制即用（站点路径相对于部署根域名）。
 
-## 金融理财（28）
+## 金融理财（32）
 
 - 房贷计算器 — /finance/mortgage-cn/
 - 贷款计算器 — /finance/loan-cn/
@@ -32,6 +32,10 @@
 - 跨行转账手续费 — /finance/interbank-transfer-fee-cn/
 - 信用卡免息期 — /finance/credit-card-grace-cn/
 - 年终奖计税对比 — /finance/bonus-tax-compare-cn/
+- 诉讼费计算器 — /finance/lawsuit-fee-cn/
+- 经济补偿金计算器 — /finance/compensation-cn/
+- 工伤赔偿计算器 — /finance/injury-cn/
+- 交通事故赔偿计算器 — /finance/traffic-cn/
 
 ## 健康生活（5）
 
@@ -62,7 +66,7 @@
 - ROAS 计算器 — /investment/roas-cn/
 - 转化率 — /investment/conversion-rate-cn/
 
-## 效率工具（50）
+## 效率工具（78）
 
 - 四则运算计算器 — /daily/basic/
 - 百分比计算器 — /math/percentage/
@@ -114,6 +118,34 @@
 - Markdown 表格生成 — /efficiency/md-table-cn/
 - 文本相似度 — /efficiency/text-similarity-cn/
 - 日期格式转换 — /dev/date-format/
+- 哈希生成器 — /dev/hash-cn/
+- Cron 表达式解析 — /dev/cron-cn/
+- HTML 实体转义 — /dev/html-entity-cn/
+- HTTP 状态码表 — /dev/http-status-cn/
+- JS 压缩格式化 — /dev/js-minify-cn/
+- SQL 格式化 — /dev/sql-format-cn/
+- UA 解析 — /dev/ua-parser-cn/
+- JWT 解码 — /dev/jwt-cn/
+- 图片改尺寸 — /efficiency/image-resize-cn/
+- 图片加水印 — /efficiency/image-watermark-cn/
+- 证件照换底色 — /efficiency/image-idphoto-cn/
+- GIF 解析 — /efficiency/image-gif-cn/
+- PDF 合并 — /efficiency/pdf-merge-cn/
+- PDF 拆分 — /efficiency/pdf-split-cn/
+- PDF 压缩 — /efficiency/pdf-compress-cn/
+- PDF 转图片 — /efficiency/pdf-to-image-cn/
+- PDF 加水印 — /efficiency/pdf-watermark-cn/
+- PDF 提取文字 — /efficiency/pdf-extract-text-cn/
+- 文字转语音 — /efficiency/ai-tts-cn/
+- 语音转文字 — /efficiency/ai-stt-cn/
+- AI 提示词大全 — /efficiency/ai-prompts-cn/
+- 抽卡保底计算器 — /efficiency/game-gacha-cn/
+- 游戏昵称生成器 — /efficiency/game-nickname-cn/
+- TDK 标签生成器 — /efficiency/seo-meta-cn/
+- Sitemap 生成器 — /efficiency/seo-sitemap-cn/
+- robots.txt 生成器 — /efficiency/seo-robots-cn/
+- 外链有效性检查 — /efficiency/seo-link-check-cn/
+- 长尾关键词扩展 — /efficiency/seo-keywords-cn/
 
 ## 日常工具（4）
 
@@ -132,19 +164,19 @@
 - 用户协议 — /legal/terms/
 - 免责声明 — /legal/disclaimer/
 
-合计 102 个计算工具 + 7 个信息页。
+合计 134 个计算工具 + 7 个信息页。
 
 ## 打包复制格式（如需 JSON）
 
 ```json
 {
-  "total": 102,
+  "total": 134,
   "categories": [
-    {"key": "finance", "name": "金融理财", "count": 28, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
+    {"key": "finance", "name": "金融理财", "count": 32, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
     {"key": "health", "name": "健康生活", "count": 5, "tools": [...]},
     {"key": "renovation", "name": "装修家居", "count": 5, "tools": [...]},
     {"key": "investment", "name": "投资专业", "count": 10, "tools": [...]},
-    {"key": "efficiency", "name": "效率工具", "count": 50, "tools": [...]},
+    {"key": "efficiency", "name": "效率工具", "count": 78, "tools": [...]},
     {"key": "daily", "name": "日常工具", "count": 4, "tools": [...]}
   ]
 }

@@ -1,0 +1,149 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "抽卡保底计算器" },
+];
+
+const faqItems = [
+  {
+    q: "期望抽数是怎么算的？",
+    a: "把保底简化为硬保底模型：距保底还剩 r 抽时，前 r-1 抽每抽出金概率恒为 p（如原神 0.6%），第 r 抽必出金。期望 E = Σ n·p·q^(n-1) + r·q^(r-1)，等价闭式 E = (1-q^r)/p（q = 1-p）。原神满垫 50/50 综合期望约 105 抽。",
+  },
+  {
+    q: "什么是大保底？",
+    a: "歪卡机制：当期 UP 池抽到金角色时有 50% 概率是常驻角色（俗称「歪了」），歪了之后下一金必定是 UP 角色，即「大保底」。勾选大保底后期望就是出金期望本身；未勾选则按 50/50 综合计算，约为出金期望的 1.5 倍。",
+  },
+  {
+    q: "软保底为什么没有单独建模？",
+    a: "原神系游戏从第 74 抽起出金概率逐抽递增（软保底）。本工具把它简化为恒定概率的硬保底模型，期望会与真实值略有偏差（约 ±5% 以内），用于估算「大概要攒多少抽」足够准确。",
+  },
+  {
+    q: "各游戏的概率和保底是多少？",
+    a: "原神、崩坏：星穹铁道、绝区零均为基础概率 0.6%、90 抽硬保底；鸣潮为基础概率 0.8%、80 抽硬保底。以上为官方公示概率，实际以游戏内说明为准。",
+  },
+];
+---
+
+<BaseLayout
+  title="抽卡保底计算器 — 原神/星铁/绝区零/鸣潮 UP 期望抽数估算"
+  description="免费抽卡保底计算器：输入已垫抽数与大保底状态，按硬保底概率模型估算原神、崩坏：星穹铁道、绝区零、鸣潮拿到 UP 角色的期望抽数，附出金期望与剩余保底展示，攒抽规划参考工具。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>抽卡保底计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      输入垫抽数与大保底状态 · 估算拿到 UP 角色的期望抽数 · 攒抽规划参考。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="抽卡保底计算表单">
+      <div class="field">
+        <label for="gacha-game">游戏与卡池</label>
+        <select id="gacha-game" class="field-select">
+          <option value="genshin" selected>原神（角色活动池）</option>
+          <option value="hsr">崩坏：星穹铁道（角色活动池）</option>
+          <option value="zzz">绝区零（独家频道）</option>
+          <option value="wuwa">鸣潮（角色精准唤取）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="gacha-pity">已垫抽数（距离上次出金抽了多少）</label>
+        <input
+          type="number"
+          id="gacha-pity"
+          class="field-input"
+          min="0"
+          max="89"
+          step="1"
+          value="0"
+          inputmode="numeric"
+          aria-describedby="field-error-pity"
+        />
+        <p class="field-error" id="field-error-pity" hidden></p>
+      </div>
+      <div class="field checkline">
+        <label for="gacha-guaranteed">
+          <input type="checkbox" id="gacha-guaranteed" /> 当前处于大保底（上一金已歪）
+        </label>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算期望
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择游戏卡池，填入当前已垫抽数（0 到保底上限之间）。</li>
+        <li>若上一金歪了，勾选「当前处于大保底」。</li>
+        <li>点击「计算期望」，查看拿到 UP 角色的期望抽数与剩余保底。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算模型</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            硬保底概率模型：距保底 r 抽时，期望出金抽数 E = (1-q^r)/p（q =
+            1-p，p 为基础概率）；非大保底状态按 50/50 综合为 1.5 × E。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            软保底（如原神第 74 抽起概率递增）未单独建模，结果为近似估算，
+            用于规划攒抽数量，非精确预言。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/game-nickname-cn/">游戏昵称生成器</a></li>
+        <li><a href="/efficiency/password-generator-cn/">随机密码生成器</a></li>
+        <li><a href="/efficiency/base-converter-cn/">进制转换计算器</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      本工具基于公开概率的简化模型估算，<strong>结果仅供参考</strong
+      >；实际掉落以游戏内随机数为准，请理性消费、量力氪金。
+    </p>
+
+    <CalcJsonLd
+      name="抽卡保底计算器"
+      description="免费抽卡保底计算器：输入已垫抽数与大保底状态，按硬保底概率模型估算原神、崩坏：星穹铁道、绝区零、鸣潮拿到 UP 角色的期望抽数，附出金期望与剩余保底展示，攒抽规划参考工具。"
+      faqItems={faqItems}
+      featureList={[
+        "支持原神/星铁/绝区零/鸣潮",
+        "按垫抽数动态计算期望",
+        "大保底与 50/50 两种口径",
+        "闭式公式 (1-q^r)/p",
+      ]}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/game-gacha-cn-page.js"></script>
+</BaseLayout>

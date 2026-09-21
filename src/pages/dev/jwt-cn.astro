@@ -1,0 +1,132 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "开发工具" },
+  { label: "JWT 解码器" },
+];
+
+const faqItems = [
+  {
+    q: "解码会验证签名吗？",
+    a: "不会。本工具只做 base64url 解码与 JSON 解析，验签需要密钥，必须在服务端完成。任何只靠前端解码就放行请求的逻辑都是漏洞，请务必在服务端校验 signature、exp、iss、aud。",
+  },
+  {
+    q: "JWT 的三段分别是什么？",
+    a: "header 声明签名算法（如 alg HS256、typ JWT）；payload 携带业务 claims（sub、name、exp、iat 等）；signature 对前两段做签名以保证内容完整。前两段只是编码而非加密，任何人都能解开看，敏感信息绝不能放进 payload。",
+  },
+  {
+    q: "「已过期」是怎么判断的？",
+    a: "读取 payload 里的 exp 字段（Unix 秒级时间戳）与当前时间比对。没有 exp 字段的令牌视为不过期，但生产环境的令牌应始终设置 exp 并配合 refresh token 机制。",
+  },
+  {
+    q: "粘贴别人的令牌安全吗？",
+    a: "解码完全在浏览器本地完成，令牌不会发送到任何服务器。但令牌等同于身份凭证，调试完的令牌建议及时作废，不要截图外传。",
+  },
+];
+---
+
+<BaseLayout
+  title="JWT 解码器 — 在线解析 JWT header/payload 与过期时间（本地解码）"
+  description="免费在线 JWT 解码工具：粘贴令牌即可解析 header 与 payload 的 JSON 内容、查看签名串与 exp 过期状态（剩余/超时秒数），base64url 手工解码支持中文，纯浏览器本地处理，令牌不上传、不验签。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>JWT 解码器</h1>
+    <UsageGuide />
+    <p class="lead">
+      三段结构解码 · payload JSON 查看 · 过期状态提示 · 本地处理不验签。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="JWT 解码表单">
+      <div class="field">
+        <label for="jwt-token">JWT 令牌（header.payload.signature）</label>
+        <textarea
+          id="jwt-token"
+          class="field-input"
+          rows="5"
+          spellcheck="false"
+          placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIn0.signature"
+          aria-describedby="field-error-token"></textarea>
+        <p class="field-error" id="field-error-token" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          解码令牌
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>粘贴完整的 JWT 令牌（三段 base64url，用点号分隔）。</li>
+        <li>点击「解码令牌」查看 payload 的 JSON 内容与过期状态。</li>
+        <li>结果区展示的 payload JSON 可一键复制，便于排查 claims。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">JWT 结构</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            header 声明签名算法；payload 携带业务 claims（sub、name、exp、iat
+            等）；signature 对前两段的签名，验证完整性。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            base64url 与标准 base64 的差异：+ 换 -、/ 换
+            _、去掉填充等号，可安全用于 URL 与 Cookie。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/dev/base64/">Base64 编码解码</a></li>
+        <li><a href="/dev/hash-cn/">哈希生成器</a></li>
+        <li><a href="/dev/json-formatter/">JSON 格式化/校验</a></li>
+        <li><a href="/dev/uuid/">UUID 在线生成器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考：本工具仅解码不验签，令牌有效性与合法性必须在服务端校验。
+    </p>
+
+    <CalcJsonLd
+      name="JWT 解码器"
+      description="免费在线 JWT 解码工具：粘贴令牌即可解析 header 与 payload 的 JSON 内容、查看签名串与 exp 过期状态（剩余/超时秒数），base64url 手工解码支持中文，纯浏览器本地处理，令牌不上传、不验签。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/jwt-cn-page.js"></script>
+</BaseLayout>
+
+<style is:global>
+  /* 本页结果为多行 JSON 文本 */
+  #result-main {
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+</style>

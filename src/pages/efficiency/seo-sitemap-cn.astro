@@ -1,0 +1,129 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "Sitemap 生成器" },
+];
+
+const faqItems = [
+  {
+    q: "sitemap.xml 是什么？",
+    a: "站点地图是向搜索引擎提交的 URL 清单（sitemaps.org 0.9 协议），帮助爬虫更快、更全地发现页面。它不直接提升排名，但能改善收录覆盖率与速度。",
+  },
+  {
+    q: "每行「URL 频率 优先级」怎么写？",
+    a: "URL 必须是 http(s):// 开头的绝对地址；changefreq 可选 always/hourly/daily/weekly/monthly/yearly/never；priority 取值 0~1（首页常用 1.0，普通页 0.5~0.8）。只写 URL 也可以。",
+  },
+  {
+    q: "URL 数量有上限吗？",
+    a: "协议规定单个 sitemap 文件最多 5 万条、50MB，超出需按 sitemap index 拆分。本工具定位是中小站点快速生成，建议单次不超过几百条以保持浏览器流畅。",
+  },
+  {
+    q: "生成后放在哪里？",
+    a: "保存为 sitemap.xml 上传到网站根目录（可通过 https://你的域名/sitemap.xml 访问），并在 robots.txt 中加一行 Sitemap: 完整地址，或到百度站长、Google Search Console 主动提交。",
+  },
+];
+---
+
+<BaseLayout
+  title="Sitemap 生成器 — 在线生成 sitemap.xml 站点地图"
+  description="免费在线 sitemap.xml 生成器：粘贴 URL 列表自动生成符合 sitemaps.org 0.9 协议的站点地图，支持 changefreq、priority、lastmod 字段校验，URL 自动去重，XML 特殊字符自动转义，一键复制。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>Sitemap 生成器</h1>
+    <UsageGuide />
+    <p class="lead">
+      粘贴 URL 列表一键生成 sitemap.xml · 自动去重 · 协议字段校验 · XML 转义。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="Sitemap 生成表单">
+      <div class="field">
+        <label for="sitemap-urls"
+          >URL 列表（每行一条：网址 [频率] [优先级]）</label
+        >
+        <textarea
+          id="sitemap-urls"
+          class="field-input"
+          rows="8"
+          placeholder="https://example.com/ daily 1.0
+https://example.com/tools/ weekly 0.8
+https://example.com/about/ yearly 0.3"
+          aria-describedby="field-error-urls"
+          spellcheck="false"></textarea>
+        <p class="field-error" id="field-error-urls" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          生成 sitemap.xml
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          每行输入一条 URL，可跟空格分隔的 changefreq 与 priority（均可省略）。
+        </li>
+        <li>点击「生成 sitemap.xml」，检查结果区是否提示字段错误。</li>
+        <li>
+          复制结果保存为 sitemap.xml，上传到网站根目录并提交给搜索站长平台。
+        </li>
+      </ol>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/seo-robots-cn/">robots.txt 生成器</a></li>
+        <li><a href="/efficiency/seo-link-check-cn/">外链有效性检查</a></li>
+        <li><a href="/efficiency/seo-meta-cn/">TDK 标签生成器</a></li>
+        <li><a href="/efficiency/seo-keywords-cn/">长尾关键词扩展</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      生成结果遵循 sitemaps.org 0.9 协议，<strong>仅供参考</strong>；URL
+      是否收录由搜索引擎决定，请确保提交的页面可正常访问。
+    </p>
+
+    <CalcJsonLd
+      name="Sitemap 生成器"
+      description="免费在线 sitemap.xml 生成器：粘贴 URL 列表自动生成符合 sitemaps.org 0.9 协议的站点地图，支持 changefreq、priority、lastmod 字段校验，URL 自动去重，XML 特殊字符自动转义，一键复制。"
+      faqItems={faqItems}
+      featureList={[
+        "sitemaps.org 0.9 协议输出",
+        "每行「URL 频率 优先级」解析",
+        "URL 去重与协议字段校验",
+        "XML 特殊字符转义",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    /* XML 为多行代码，主结果区按原样展示 */
+    #result-main {
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/seo-sitemap-cn-page.js"
+  ></script>
+</BaseLayout>

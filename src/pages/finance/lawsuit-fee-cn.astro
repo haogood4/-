@@ -1,0 +1,157 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "金融理财" },
+  { label: "诉讼费计算器" },
+];
+
+const faqItems = [
+  {
+    q: "诉讼费是怎么算的？案件受理费与律师费是一个概念吗？",
+    a: "案件受理费是交给法院的立案费用，依据《诉讼费用交纳办法》（国务院令第 481 号）第十三条按「速算法」分段累计收取；它和律师费（市场调节价、双方协商）是两个完全独立的概念。本工具仅计算案件受理费，不含申请执行、保全、公告、鉴定等费用。",
+  },
+  {
+    q: "速算法是怎么把分段累计化简的？",
+    a: "分段累计每一档都要「先收满上一档、再按本档比例算超出部分」，计算繁琐。速算法以公式 收费 = 标的额 × 本档比例 + 速算附加 等价还原附表分档（速算附加 = 上一档累计 − 上一档上界 × 本档比例，仅「1~10 万档」为 −200，其余各档均为正值）。例如 5 万元落在「1~10 万档」，5 万 × 2.5% − 200 = 1050 元；100 万元落在「50~100 万档」，100 万 × 1% + 3800 = 13800 元。附表 10 档已分别按 0.5/0.025/0.02/.../0.005 比例及对应速算附加 −200/+300/+1300/.../+41800 整理，可直接套用。",
+  },
+  {
+    q: "离婚案件诉讼费含财产分割部分吗？",
+    a: "包含。第十三条第二项第一目规定：离婚案件每件 50~300 元；财产总额不超过 20 万元的不另行交纳；超过 20 万元的部分按 0.5% 加收。本工具按上限 300 元 + 超出 20 万部分 0.5% 估算（最高 300 元基础费可由省、自治区、直辖市人民政府在幅度内自定）。",
+  },
+  {
+    q: "劳动争议为什么只要 10 元？",
+    a: "第十三条第四项明确「劳动争议案件每件交纳 10 元」，是国家通过低门槛诉讼费鼓励劳动者依法维权的统一规定。需要注意的是：劳动争议案件受理费 10 元仅仅是案件受理费，律师费、公告费、鉴定费等仍按实际发生由败诉方或申请方负担。",
+  },
+  {
+    q: "工具结果与法院实际收取为何可能有差异？",
+    a: "可能存在差异的原因：① 财产案件具体适用档位与反诉/管辖权异议附加收费（第十三条第六项 50~100 元）；② 离婚/其他非财产案件在各省可在第十三条第二项幅度内自定；③ 简易程序减半（第十六条）、调解或撤诉减半（第十五条）；④ 上诉/再审按不服一审/原判部分重新计费。本工具结果仅供参考，最终以受诉法院出具的缴费通知为准。",
+  },
+];
+---
+
+<BaseLayout
+  title="诉讼费计算器 — 财产/离婚/劳动案件受理费在线测算"
+  description="免费在线诉讼费计算器：依据《诉讼费用交纳办法》（国务院令第 481 号）第十三条速算法，自动按财产案件 10 档分段累计、离婚/劳动/其他非财产案件定额收费，给出案件受理费与法条对照。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>诉讼费计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      依据《诉讼费用交纳办法》（国务院令第 481 号，2007-04-01 起施行）第十三条，按财产案件速算法、离婚/劳动/其他非财产案件定额收费自动测算案件受理费。
+    </p>
+    <p class="result-hint">
+      <strong
+        >⚠️
+        计算结果仅供参考，最终以受诉法院缴费通知为准；不包含申请执行、保全、公告、鉴定、律师费等费用。</strong
+      >
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="诉讼费计算表单">
+      <div class="field">
+        <label for="input-case">案件类型</label>
+        <select id="input-case" class="field-select">
+          <option value="property">财产案件</option>
+          <option value="divorce">离婚案件</option>
+          <option value="labor">劳动争议案件</option>
+          <option value="other">其他非财产案件</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-amount">标的金额（元）</label>
+        <input
+          id="input-amount"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="如选择劳动争议/其他非财产可填 0 或留空"
+          aria-describedby="field-error-amount"
+        />
+        <p class="field-error" id="field-error-amount" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          计算诉讼费
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择案件类型（财产/离婚/劳动争议/其他非财产），并填写标的金额。</li>
+        <li>劳动争议与其他非财产案件按定额收费，标的金额可填 0 或留空。</li>
+        <li>点击「计算诉讼费」查看案件受理费、附表档位与公式说明。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">计算明细</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            财产案件（第十三条第一项）：不超过 1 万元 → 50 元；1~10 万 → 2.5% − 200；10~20 万 → 2% − 300；20~50 万 → 1.5% − 1300；50~100 万 → 1% − 3800；100~200 万 → 0.9% − 4800；200~500 万 → 0.8% − 6800；500~1000 万 → 0.7% − 11800；1000~2000 万 → 0.6% − 21800；2000 万以上 → 0.5% − 41800。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            离婚案件（第十三条第二项第一目）：每件 50~300 元；财产总额 ≤20 万不另行收费；超过 20 万元部分按 0.5% 加收。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            劳动争议案件（第十三条第四项）：每件 10 元。其他非财产案件（第二项第三目）：每件 50~100 元，省级可在幅度内自定。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            例：财产案件标的 50 万元 → 50 万 × 1.5% + 1300 = 8800 元；标的 200 万元 → 200 万 × 0.9% + 4800 = 22800 元；标的 5000 万元 → 5000 万 × 0.5% + 41800 = 291800 元。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/finance/compensation-cn/">经济补偿金计算器</a></li>
+        <li><a href="/finance/injury-cn/">工伤赔偿计算器</a></li>
+        <li><a href="/finance/traffic-cn/">交通事故赔偿计算器</a></li>
+        <li><a href="/finance/overtime-pay-cn/">加班费计算器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      结果仅供参考，实际案件受理费以法院出具的缴费通知为准；不包含申请费、保全费、公告费、鉴定费、律师费等。
+    </p>
+
+    <CalcJsonLd
+      name="诉讼费计算器"
+      description="免费在线诉讼费计算器：依据《诉讼费用交纳办法》（国务院令第 481 号）第十三条速算法，自动按财产案件 10 档分段累计、离婚/劳动/其他非财产案件定额收费，给出案件受理费与法条对照。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script
+    is:inline
+    type="module"
+    src="/scripts/lawsuit-fee-cn-page.js"
+  ></script>
+</BaseLayout>

@@ -1,0 +1,132 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "语音转文字" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些浏览器？",
+    a: "语音识别基于 Web Speech API，目前 Chrome 与 Edge 支持最完整；Firefox 不支持，Safari 支持但权限策略更严格。建议使用最新版 Chrome 或 Edge。",
+  },
+  {
+    q: "语音数据会被上传吗？",
+    a: "需要如实说明：浏览器的语音识别通常由厂商的语音服务在云端完成，音频会经由浏览器厂商处理，本站本身不接收任何数据。请不要在识别过程中录入密码、身份证号等敏感信息。",
+  },
+  {
+    q: "识别不准确怎么办？",
+    a: "保持环境安静、麦克风距离 20~30 厘米、选择与实际语言一致的语言选项；方言与专业术语识别率较低，可在结束后手动修改再复制。",
+  },
+  {
+    q: "需要麦克风权限吗？",
+    a: "需要。首次点击「开始识别」时浏览器会请求麦克风权限，请在弹窗中允许；若此前误选拒绝，可在浏览器地址栏的权限设置中重新开启。",
+  },
+];
+---
+
+<BaseLayout
+  title="语音转文字 — 在线语音识别工具（实时转写一键复制）"
+  description="免费在线语音转文字工具：对着麦克风说话实时转写为文字，支持中英日多语言，识别结束可一键复制，基于浏览器 Web Speech API，无需安装任何软件。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>语音转文字</h1>
+    <UsageGuide />
+    <p class="lead">对麦克风说话实时转写 · 中英日多语言 · 识别结束一键复制。</p>
+
+    <form id="calc-form" class="card" novalidate aria-label="语音识别表单">
+      <div class="field">
+        <label for="stt-lang">识别语言</label>
+        <select id="stt-lang" class="field-select">
+          <option value="zh-CN" selected>中文（普通话）</option>
+          <option value="zh-TW">中文（台湾）</option>
+          <option value="en-US">英语（美国）</option>
+          <option value="ja-JP">日语</option>
+        </select>
+        <p class="field-error" id="field-error-lang" hidden></p>
+      </div>
+      <div class="form-actions">
+        <button id="start-btn" type="submit" class="btn btn-primary">
+          开始识别
+        </button>
+        <button id="stop-btn" type="button" class="btn btn-secondary" disabled>
+          停止识别
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>选择识别语言，点击「开始识别」并允许浏览器使用麦克风。</li>
+        <li>正常语速说话，识别结果会实时追加到结果区；中途停顿无需操作。</li>
+        <li>点击「停止识别」结束，核对文本后点击「复制全部」保存。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="tech-heading">
+      <h2 id="tech-heading">技术说明</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            本页基于浏览器 Web Speech API（webkitSpeechRecognition）连续识别：
+            最终结果逐段合并，中文片段直接拼接、英文边界自动补空格。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/ai-tts-cn/">文字转语音</a></li>
+        <li><a href="/efficiency/ai-prompts-cn/">AI 提示词大全</a></li>
+        <li><a href="/efficiency/word-count-cn/">字数统计计算器</a></li>
+        <li><a href="/efficiency/qr-code-cn/">二维码生成器</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      识别由浏览器语音服务完成（<strong>可能经浏览器厂商云端处理</strong
+      >），本站不存储任何数据；识别结果仅供参考，重要内容请人工校对。
+    </p>
+
+    <CalcJsonLd
+      name="语音转文字"
+      description="免费在线语音转文字工具：对着麦克风说话实时转写为文字，支持中英日多语言，识别结束可一键复制，基于浏览器 Web Speech API，无需安装任何软件。"
+      faqItems={faqItems}
+      featureList={[
+        "麦克风实时语音转写",
+        "中文/英语/日语多语言识别",
+        "连续识别并自动合并片段",
+        "识别结束一键复制",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    /* 语音识别结果含换行，主结果区按原样展示 */
+    #result-main {
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/ai-stt-cn-page.js"></script>
+</BaseLayout>
