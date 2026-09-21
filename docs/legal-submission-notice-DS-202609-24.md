@@ -85,7 +85,7 @@ related: DS-202609-24（双签 P1 / 2026-10-05 截止）
   | 工具被滥用 | qr-code | "不为扫码后落地行为承担责任" |
 
 六、联系人
-  项目负责人：**[[姓名-必填]]**    邮箱：**[[邮箱-必填]]**    飞书：**[[账号-必填]]**
+  项目负责人：**王彦锋**    邮箱：**wyfwyf077@163.com**    飞书：**650196**
   AI Agent 提交编号：TraeCode AI Agent / commit **`55d3d5c`**（最终值，本会话已 commit 并 push 到 origin/main）
 
 > 📌 **已替换为最终 hash `55d3d5c`**（feat(legal): 工具页面法律风险加固报告 v1.1 主 commit）。本 hash 已 commit 并 push 到 origin/main。法务可直接在 GitHub 上查看完整代码改动。
