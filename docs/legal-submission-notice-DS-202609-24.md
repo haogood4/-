@@ -86,9 +86,9 @@ related: DS-202609-24（双签 P1 / 2026-10-05 截止）
 
 六、联系人
   项目负责人：**[[姓名-必填]]**    邮箱：**[[邮箱-必填]]**    飞书：**[[账号-必填]]**
-  AI Agent 提交编号：TraeCode AI Agent / commit **`[[git-hash-转发前填]]`**（**项目负责人转发前请 `git log --oneline -1` 取最终 hash 替换**——含本次提交自身的 hash）
+  AI Agent 提交编号：TraeCode AI Agent / commit **`55d3d5c`**（最终值，本会话已 commit 并 push 到 origin/main）
 
-> 📌 **必读说明**：通知模板本身属于本次加固 commit 的一部分，而 git hash 在每次 commit/amend 时都会变（典型循环依赖）。因此本模板使用 `[[git-hash-转发前填]]` 占位符，**由项目负责人在转发前手动替换**（耗时 10 秒）。
+> 📌 **已替换为最终 hash `55d3d5c`**（feat(legal): 工具页面法律风险加固报告 v1.1 主 commit）。本 hash 已 commit 并 push 到 origin/main。法务可直接在 GitHub 上查看完整代码改动。
 
 七、附：残余风险待 PM 决策（不影响本次法务复核，可另起流程）
   - phone-region 号段库版本 2302（2023-02），距今已 3.5 年，提示已加固为最高级（红框），
@@ -129,7 +129,7 @@ related: DS-202609-24（双签 P1 / 2026-10-05 截止）
 | 提交时间 | 2026-09-21（AI Agent 自动产出 + 项目负责人确认转发） |
 | 提交方式 | 待定（邮件 / 飞书 / 微信） |
 | 回执收件 | 待法务反馈（建议 2026-10-05 前） |
-| 资料 git 提交 | **`[[git-hash-转发前填]]`**（feat(legal): 工具页面法律风险加固报告 v1.1 — 23 files / +681 / -9；**转发前请 `git log --oneline -1` 二次确认**） |
+| 资料 git 提交 | **`55d3d5c`**（feat(legal): 工具页面法律风险加固报告 v1.1 — 23 files / +681 / -9；本会话已 push 到 origin/main） |
 | 仓库路径 | 本仓库 `/docs/legal-review/legal-hardening-report-20260921.md` |
 | 关联 DS | DS-202609-24（已同步登记 dual-sign-todo.md 与 .csv） |
 
