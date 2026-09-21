@@ -1,0 +1,138 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "功率换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "千瓦和马力怎么换算？",
+    a: "1 千瓦 = 1000 ÷ 735.49875 ≈ 1.359622 公制马力（PS）；反过来 1 PS = 735.49875 W 是米制马力的精确定义（75 千克力·米/秒）。汽车铭牌上的千瓦数乘以约 1.36 就是马力。",
+  },
+  {
+    q: "公制马力和英制马力有什么区别？",
+    a: "公制马力 PS = 75 kgf·m/s = 735.49875 W；英制马力 hp = 550 英尺磅力/秒 ≈ 745.699872 W。1 hp ≈ 1.014 PS，两者相差约 1.4%，对比欧美车型的动力参数时要注意用的是哪种马力。",
+  },
+  {
+    q: "空调的「匹」对应多少千瓦？",
+    a: "家用空调的「匹」源自马力概念，1 匹约对应 735 W（0.735 kW）的输入电功率，制冷量另按能效比放大。本工具可把匹数折算的瓦数在 kW / W / BTU/h 之间直接对照。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，超出部分以「约」标注；输入数值须在 0 ~ 1e15 之间。查看汽车参数、电器功率、电机选型场景精度完全够用。",
+  },
+];
+---
+
+<BaseLayout
+  title="功率换算计算器 — 千瓦、马力、BTU/小时在线互转"
+  description="免费在线功率单位换算器：千瓦、公制/英制马力、瓦特、兆瓦、卡/秒、英尺磅力/秒、BTU/小时等 9 个功率单位一键互转，汽车动力参数、空调匹数、电机功率对照随手可查。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>功率换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      毫瓦 / 瓦特 / 千瓦 / 兆瓦 / 公制马力 / 英制马力 / 卡每秒 / 英尺磅力每秒 / 英热单位每小时，9 个功率单位互转。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="功率换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="kw">千瓦 (kW)</option>
+          <option value="mw">毫瓦 (mW)</option>
+          <option value="w">瓦特 (W)</option>
+          <option value="megawatt">兆瓦 (MW)</option>
+          <option value="ps">公制马力 (PS)</option>
+          <option value="hp">英制马力 (hp)</option>
+          <option value="cal_per_s">卡/秒 (cal/s)</option>
+          <option value="ft_lbf_per_s">英尺磅力/秒 (ft·lbf/s)</option>
+          <option value="btu_per_h">英热单位/小时 (BTU/h)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="ps">公制马力 (PS)</option>
+          <option value="kw">千瓦 (kW)</option>
+          <option value="mw">毫瓦 (mW)</option>
+          <option value="w">瓦特 (W)</option>
+          <option value="megawatt">兆瓦 (MW)</option>
+          <option value="hp">英制马力 (hp)</option>
+          <option value="cal_per_s">卡/秒 (cal/s)</option>
+          <option value="ft_lbf_per_s">英尺磅力/秒 (ft·lbf/s)</option>
+          <option value="btu_per_h">英热单位/小时 (BTU/h)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>换算结果仅供参考，车辆动力标定、设备铭牌功率请以官方参数为准。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>以「瓦特」为基准：1 毫瓦 = 0.001 W、1 千瓦 = 1000 W、1 兆瓦 = 1000000 W、1 公制马力（PS）= 735.49875 W、1 英制马力（hp）= 745.699872 W、1 卡/秒 = 4.1868 W、1 英尺磅力/秒 ≈ 1.355818 W、1 英热单位/小时 ≈ 0.293071 W。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子</p>
+          <p>例：<code>1 × 1000 ÷ 735.49875 = 约 1.359622</code>（1 千瓦 → 公制马力）</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/unit/energy/">能量换算计算器</a></li>
+  <li><a href="/unit/pressure/">压力换算计算器</a></li>
+  <li><a href="/unit/temperature/">温度换算计算器</a></li>
+  <li><a href="/unit/length/">长度单位换算器</a></li>
+      </ul></section>
+
+    <CalcJsonLd name="功率换算计算器" description="免费在线功率单位换算器：千瓦、公制/英制马力、瓦特、兆瓦、卡/秒、英尺磅力/秒、BTU/小时等 9 个功率单位一键互转，汽车动力参数、空调匹数、电机功率对照随手可查。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/power-page.js"></script>
+</BaseLayout>

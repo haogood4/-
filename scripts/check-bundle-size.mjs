@@ -9,7 +9,7 @@
 // 门禁模型（brotli 口径，Cloudflare Pages 默认下发 brotli）：
 //   A. 每页 JS 预算：page script + 其静态 import 的 chunk（递归）≤ 8KB 硬限（7KB 预警）
 //   B. 全站公共脚本：dist 根下 theme.js/menu.js/register-sw.js 合计 ≤ 4KB 硬限
-//   C. 全站 JS 总和：≤ 120KB 硬限（仅作数据内联回归护栏，防有人把大字典塞回 JS）
+//   C. 全站 JS 总和：≤ 130KB 硬限（仅作数据内联回归护栏，防有人把大字典塞回 JS；2026-09-21 P2 换算器批次由 120 上调，每页实载仍 ~1.1KB）
 //   D. CSS 总和：≤ 30KB 硬限（不变）
 // dist/ 不存在时跳过。
 import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
@@ -19,7 +19,7 @@ import { brotliCompressSync, gzipSync } from "node:zlib";
 const PAGE_BUDGET = 8 * 1024; // A. 每页硬限
 const PAGE_WARN = 7 * 1024; // A. 每页预警
 const CHROME_LIMIT = 4 * 1024; // B. 全站公共脚本
-const TOTAL_GUARDRAIL = 120 * 1024; // C. 总量回归护栏
+const TOTAL_GUARDRAIL = 130 * 1024; // C. 总量回归护栏（2026-09-21 P2 批次由 120 上调并登记于 AI-IMPROVEMENT-PROMPT.md）
 const CSS_LIMIT = 30 * 1024; // D. CSS
 
 const distDir = join(process.cwd(), "dist");

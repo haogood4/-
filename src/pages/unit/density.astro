@@ -1,0 +1,147 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "密度换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些密度单位？",
+    a: "千克/立方米（kg/m³）、克/立方厘米（g/cm³）、克/毫升（g/mL）、千克/升（kg/L）、磅/立方英尺（lb/ft³）、磅/立方英寸（lb/in³），共 6 个单位互转，适合材料、化学与加工场景。",
+  },
+  {
+    q: "1 g/cm³ 等于多少 kg/m³？",
+    a: "1 g/cm³ = 0.001 kg ÷ 0.000001 m³ = 1000 kg/m³。水的密度约 1 g/cm³，即 1000 kg/m³；水银约 13.6 g/cm³，即 13600 kg/m³。g/mL 与 kg/L 数值上和 g/cm³ 完全一致。",
+  },
+  {
+    q: "英制密度 lb/ft³ 怎么换算成公制？",
+    a: "1 lb/ft³ = 0.45359237 kg ÷ 0.3048³ m³ ≈ 16.018463 kg/m³；1 lb/in³ = 1 lb/ft³ × 1728 ≈ 27679.905 kg/m³。换算基于磅与英尺的精确定义，非近似系数。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，超出精度以「约」标注；输入数值须在 0 ~ 1e15 之间。材料选型与溶液配制场景足够使用。",
+  },
+];
+---
+
+<BaseLayout
+  title="密度换算计算器 — g/cm³、kg/m³、lb/ft³ 在线互转"
+  description="免费在线密度单位换算器：克/立方厘米、千克/立方米、克/毫升、千克/升、磅/立方英尺一键互转，材料密度、溶液浓度、金属牌号对照都能查，附精确换算公式。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>密度换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      6 个密度单位互转：千克/立方米 / 克/立方厘米 / 克/毫升 / 千克/升 /
+      磅/立方英尺 / 磅/立方英寸。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="密度换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="gcm3">克/立方厘米 (g/cm³)</option>
+          <option value="kgm3">千克/立方米 (kg/m³)</option>
+          <option value="gml">克/毫升 (g/mL)</option>
+          <option value="kgl">千克/升 (kg/L)</option>
+          <option value="lbft3">磅/立方英尺 (lb/ft³)</option>
+          <option value="lbin3">磅/立方英寸 (lb/in³)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="kgm3">千克/立方米 (kg/m³)</option>
+          <option value="gcm3">克/立方厘米 (g/cm³)</option>
+          <option value="gml">克/毫升 (g/mL)</option>
+          <option value="kgl">千克/升 (kg/L)</option>
+          <option value="lbft3">磅/立方英尺 (lb/ft³)</option>
+          <option value="lbin3">磅/立方英寸 (lb/in³)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>
+          换算结果仅供参考，材料验收与配方计量请以检测报告和标准物质数据为准。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            以「千克/立方米」为基准：1 g/cm³ = 1000 kg/m³、1 g/mL = 1000
+            kg/m³、1 kg/L = 1000 kg/m³、1 lb/ft³ ≈ 16.018463373960138 kg/m³、1
+            lb/in³ ≈ 27679.904710203125 kg/m³。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            <strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子
+          </p>
+          <p>例：<code>1 × 1000 ÷ 1 = 1000</code>（1 g/cm³ → kg/m³）</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/unit/volume/">体积换算计算器</a></li>
+        <li><a href="/unit/weight/">重量换算计算器</a></li>
+        <li><a href="/unit/length/">长度单位换算器</a></li>
+        <li><a href="/unit/area/">面积换算计算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="密度换算计算器"
+      description="免费在线密度单位换算器：克/立方厘米、千克/立方米、克/毫升、千克/升、磅/立方英尺一键互转，材料密度、溶液浓度、金属牌号对照都能查，附精确换算公式。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/density-page.js"></script>
+</BaseLayout>

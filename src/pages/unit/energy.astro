@@ -1,0 +1,136 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "能量换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "1 大卡等于多少千焦？",
+    a: "1 大卡（kcal）= 4.1868 千焦（kJ），这是国际蒸汽表卡的精确定义。食品标签上的千焦数除以 4.1868 就是大卡，例如 8373.6 kJ = 2000 大卡。",
+  },
+  {
+    q: "1 度电是多少焦耳？",
+    a: "1 千瓦时（kWh，即 1 度电）= 3600000 焦耳 = 3.6 兆焦，等于 1 千瓦功率持续工作 1 小时所消耗的能量。电费、电池容量都以此计。",
+  },
+  {
+    q: "卡路里和大卡是一回事吗？",
+    a: "营养学中的「卡路里」通常指大卡（千卡，kcal），1 大卡 = 1000 卡（cal，国际蒸汽表卡）。运动手环的消耗、食品热量表均以大卡计，不要与物理上的小卡混淆。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，超出部分以「约」标注；输入数值须在 0 ~ 1e15 之间。看食品热量、估算电费、对比空调制冷量场景精度完全够用。",
+  },
+];
+---
+
+<BaseLayout
+  title="能量换算计算器 — 大卡、千焦、千瓦时、BTU 在线互转"
+  description="免费在线能量单位换算器：焦耳、千焦、卡、大卡、瓦时、千瓦时（度）、英热单位、英尺磅力一键互转，看懂食品热量标签、估算电费与运动消耗都用得上。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>能量换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      千焦 / 焦耳 / 卡 / 大卡 / 瓦时 / 千瓦时 / 英热单位 / 英尺磅力，8 个能量单位互转。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="能量换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="kcal">大卡 (kcal)</option>
+          <option value="kj">千焦 (kJ)</option>
+          <option value="j">焦耳 (J)</option>
+          <option value="cal">卡 (cal)</option>
+          <option value="wh">瓦时 (Wh)</option>
+          <option value="kwh">千瓦时 (kWh)</option>
+          <option value="btu">英热单位 (BTU)</option>
+          <option value="ft_lbf">英尺磅力 (ft·lbf)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="kj">千焦 (kJ)</option>
+          <option value="kcal">大卡 (kcal)</option>
+          <option value="j">焦耳 (J)</option>
+          <option value="cal">卡 (cal)</option>
+          <option value="wh">瓦时 (Wh)</option>
+          <option value="kwh">千瓦时 (kWh)</option>
+          <option value="btu">英热单位 (BTU)</option>
+          <option value="ft_lbf">英尺磅力 (ft·lbf)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>换算结果仅供参考，膳食与运动计划请结合营养师或医生建议制定。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>以「焦耳」为基准：1 千焦 = 1000 J、1 卡 = 4.1868 J、1 大卡 = 4186.8 J、1 瓦时 = 3600 J、1 千瓦时 = 3600000 J、1 英热单位 = 1055.05585262 J、1 英尺磅力 ≈ 1.355818 J。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子</p>
+          <p>例：<code>1 × 4186.8 ÷ 1000 = 4.1868</code>（1 大卡 → 千焦）</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/unit/power/">功率换算计算器</a></li>
+  <li><a href="/unit/pressure/">压力换算计算器</a></li>
+  <li><a href="/unit/data-storage/">数据存储换算计算器</a></li>
+  <li><a href="/unit/speed/">速度换算计算器</a></li>
+      </ul></section>
+
+    <CalcJsonLd name="能量换算计算器" description="免费在线能量单位换算器：焦耳、千焦、卡、大卡、瓦时、千瓦时（度）、英热单位、英尺磅力一键互转，看懂食品热量标签、估算电费与运动消耗都用得上。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/energy-page.js"></script>
+</BaseLayout>

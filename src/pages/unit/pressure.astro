@@ -1,0 +1,136 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "压力换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "1 MPa 等于多少 bar？",
+    a: "1 兆帕（MPa）= 10 巴（bar），1 bar = 0.1 MPa = 100 kPa。胎压（常见 2.2 ~ 2.5 bar）与液压系统压力常用这组换算。",
+  },
+  {
+    q: "psi 和 bar 怎么换算？",
+    a: "1 psi ≈ 0.068948 bar，1 bar ≈ 14.503774 psi。欧美车型胎压标 psi、国内标 bar 或 kPa，本工具可直接双向对照。",
+  },
+  {
+    q: "mmHg 和 atm 是什么关系？",
+    a: "1 标准大气压（atm）= 101325 Pa（国际协议精确值）≈ 760 mmHg（0 ℃、标准重力下的汞柱高度）。血压计的 mmHg、气象上的百帕（hPa = mbar）都可在此互转。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，超出部分以「约」标注；输入数值须在 0 ~ 1e15 之间。胎压、液压、气动与真空度场景精度完全够用。",
+  },
+];
+---
+
+<BaseLayout
+  title="压力换算计算器 — 兆帕、巴、psi、毫米汞柱在线互转"
+  description="免费在线压力单位换算器：兆帕、巴、毫巴、psi、标准大气压、毫米汞柱、千克力/平方厘米一键互转，胎压、液压系统、气动工具与真空度参数换算即输即得。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>压力换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      千帕 / 兆帕 / 巴 / 毫巴 / 标准大气压 / psi / 毫米汞柱 / 千克力每平方厘米，8 个压力单位互转。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="压力换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="mpa">兆帕 (MPa)</option>
+          <option value="kpa">千帕 (kPa)</option>
+          <option value="bar">巴 (bar)</option>
+          <option value="mbar">毫巴 (mbar)</option>
+          <option value="atm">标准大气压 (atm)</option>
+          <option value="psi">磅/平方英寸 (psi)</option>
+          <option value="mmhg">毫米汞柱 (mmHg)</option>
+          <option value="kgf_cm2">千克力/平方厘米 (kgf/cm²)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="bar">巴 (bar)</option>
+          <option value="mpa">兆帕 (MPa)</option>
+          <option value="kpa">千帕 (kPa)</option>
+          <option value="mbar">毫巴 (mbar)</option>
+          <option value="atm">标准大气压 (atm)</option>
+          <option value="psi">磅/平方英寸 (psi)</option>
+          <option value="mmhg">毫米汞柱 (mmHg)</option>
+          <option value="kgf_cm2">千克力/平方厘米 (kgf/cm²)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>换算结果仅供参考，胎压、液压系统请以车辆手册与设备铭牌标定为准。</li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>以「帕斯卡」为基准：1 千帕 = 1000 Pa、1 兆帕 = 1000000 Pa、1 巴 = 100000 Pa、1 毫巴 = 100 Pa、1 标准大气压 = 101325 Pa、1 psi ≈ 6894.757293 Pa、1 毫米汞柱 ≈ 133.322387 Pa、1 千克力/平方厘米 = 98066.5 Pa。</p>
+        </li>
+        <li class="formula-item">
+          <p><strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子</p>
+          <p>例：<code>1 × 1000000 ÷ 100000 = 10</code>（1 兆帕 → 巴）</p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section"><h2>相关工具</h2><ul class="tool-list">
+  <li><a href="/unit/power/">功率换算计算器</a></li>
+  <li><a href="/unit/energy/">能量换算计算器</a></li>
+  <li><a href="/unit/weight/">重量换算计算器</a></li>
+  <li><a href="/unit/volume/">体积换算计算器</a></li>
+      </ul></section>
+
+    <CalcJsonLd name="压力换算计算器" description="免费在线压力单位换算器：兆帕、巴、毫巴、psi、标准大气压、毫米汞柱、千克力/平方厘米一键互转，胎压、液压系统、气动工具与真空度参数换算即输即得。" faqItems={faqItems} />
+  </main>
+
+  <script is:inline type="module" src="/scripts/pressure-page.js"></script>
+</BaseLayout>

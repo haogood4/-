@@ -1,0 +1,153 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "流量换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些流量单位？",
+    a: "毫升/秒（mL/s）、升/秒（L/s）、升/分（L/min）、立方米/小时（m³/h）、立方米/秒（m³/s）、美制加仑/分（gal/min）、立方英尺/分（CFM），共 7 个单位互转。",
+  },
+  {
+    q: "1 m³/h 等于多少 L/min？",
+    a: "1 m³/h = 1000 L ÷ 3600 s ≈ 0.277778 L/s，即约 16.666667 L/min。水泵铭牌流量常用 m³/h 或 L/min 标注，用本工具可快速对照两种标法。",
+  },
+  {
+    q: "CFM 是什么单位？怎么换算？",
+    a: "CFM（cubic feet per minute）即立方英尺/分，常用于风机、空压机与新风系统：1 CFM = 28.316846592 L ÷ 60 ≈ 0.471947 L/s ≈ 1.699 m³/h。",
+  },
+  {
+    q: "美制加仑/分（GPM）和升/分的关系？",
+    a: "1 美制加仑 = 3.785411784 L（精确定义），所以 1 gal/min ≈ 3.785412 L/min ≈ 0.227125 m³/h。注意美制加仑与英制加仑（4.54609 L）不同，本工具按美制换算。",
+  },
+];
+---
+
+<BaseLayout
+  title="流量换算计算器 — m³/h、L/min、CFM、GPM 在线互转"
+  description="免费在线流量单位换算器：立方米/小时、升/分、升/秒、美制加仑/分、立方英尺/分（CFM）一键互转，水泵选型、燃气计算、风机风量对照都用得上，附换算公式。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>流量换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      7 个体积流量单位互转：毫升/秒 / 升/秒 / 升/分 / 立方米/小时 / 立方米/秒 /
+      美制加仑/分 / 立方英尺/分（CFM）。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="流量换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="m3h">立方米/小时 (m³/h)</option>
+          <option value="mls">毫升/秒 (mL/s)</option>
+          <option value="ls">升/秒 (L/s)</option>
+          <option value="lmin">升/分 (L/min)</option>
+          <option value="m3s">立方米/秒 (m³/s)</option>
+          <option value="gpm">美制加仑/分 (gal/min)</option>
+          <option value="cfm">立方英尺/分 (CFM)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="lmin">升/分 (L/min)</option>
+          <option value="mls">毫升/秒 (mL/s)</option>
+          <option value="ls">升/秒 (L/s)</option>
+          <option value="m3h">立方米/小时 (m³/h)</option>
+          <option value="m3s">立方米/秒 (m³/s)</option>
+          <option value="gpm">美制加仑/分 (gal/min)</option>
+          <option value="cfm">立方英尺/分 (CFM)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>
+          换算结果仅供参考，泵阀选型与工程验收请以设备铭牌和设计文件为准。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            以「升/秒」为基准：1 mL/s = 0.001 L/s、1 L/min = 1/60 L/s、1 m³/h =
+            1000 L ÷ 3600 s = 1/3.6 L/s、1 m³/s = 1000 L/s；1 gal/min =
+            3.785411784/60 ≈ 0.0630901964 L/s、1 CFM = 28.316846592/60 ≈
+            0.4719474432 L/s。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            <strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子
+          </p>
+          <p>
+            例：<code>1 × 0.277777778 ÷ 0.016666667 = 约 16.666667</code>（1
+            m³/h → L/min）
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/unit/volume/">体积换算计算器</a></li>
+        <li><a href="/unit/speed/">速度单位换算计算器</a></li>
+        <li><a href="/unit/time/">时间单位换算计算器</a></li>
+        <li><a href="/unit/length/">长度单位换算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="流量换算计算器"
+      description="免费在线流量单位换算器：立方米/小时、升/分、升/秒、美制加仑/分、立方英尺/分（CFM）一键互转，水泵选型、燃气计算、风机风量对照都用得上，附换算公式。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/flow-page.js"></script>
+</BaseLayout>

@@ -1,0 +1,147 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "频率换算计算器" },
+];
+
+const faqItems = [
+  {
+    q: "支持哪些频率单位？",
+    a: "赫兹（Hz）、千赫兹（kHz）、兆赫兹（MHz）、吉赫兹（GHz）以及转/分（rpm），共 5 个单位互转，覆盖无线电频率、CPU 主频与电机转速等场景。",
+  },
+  {
+    q: "3000 转/分是多少赫兹？",
+    a: "1 转/分（rpm）= 1/60 Hz，所以两极异步电机接 50 Hz 电网时的同步转速 3000 rpm 正好对应 50 Hz。本工具按 1 rpm = 1/60 Hz 精确换算。",
+  },
+  {
+    q: "1 GHz 等于多少 MHz？",
+    a: "频率单位按千进位：1 kHz = 1000 Hz、1 MHz = 1000 kHz、1 GHz = 1000 MHz。例如 Wi-Fi 的 2.4 GHz = 2400 MHz = 2,400,000 kHz。",
+  },
+  {
+    q: "换算精度如何？",
+    a: "结果按四舍五入保留最多 6 位小数，无法精确表示的值（如 1/60）以「约」标注；输入数值须在 0 ~ 1e15 之间。",
+  },
+];
+---
+
+<BaseLayout
+  title="频率换算计算器 — Hz、MHz、GHz 与转/分（rpm）在线互转"
+  description="免费在线频率单位换算器：赫兹、千赫兹、兆赫兹、吉赫兹与转/分一键互转，查无线电频段、CPU 主频、电机转速都方便，附换算公式与代入过程。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>频率换算计算器</h1>
+    <UsageGuide />
+    <p class="lead">
+      5 个频率单位互转：赫兹（Hz）/ 千赫兹（kHz）/ 兆赫兹（MHz）/ 吉赫兹（GHz）/
+      转/分（rpm）。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="频率换算表单">
+      <div class="field">
+        <label for="input-value">数值</label>
+        <input
+          id="input-value"
+          class="field-input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="例如 1"
+          aria-describedby="field-error-value"
+        />
+        <p class="field-error" id="field-error-value" hidden></p>
+      </div>
+      <div class="field">
+        <label for="input-from">从</label>
+        <select id="input-from" class="field-select">
+          <option value="mhz">兆赫兹 (MHz)</option>
+          <option value="hz">赫兹 (Hz)</option>
+          <option value="khz">千赫兹 (kHz)</option>
+          <option value="ghz">吉赫兹 (GHz)</option>
+          <option value="rpm">转/分 (rpm)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="input-to">到</label>
+        <select id="input-to" class="field-select">
+          <option value="hz">赫兹 (Hz)</option>
+          <option value="mhz">兆赫兹 (MHz)</option>
+          <option value="khz">千赫兹 (kHz)</option>
+          <option value="ghz">吉赫兹 (GHz)</option>
+          <option value="rpm">转/分 (rpm)</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          换算
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>填入数值；「从」选择原始单位；「到」选择目标单位。</li>
+        <li>点击「换算」查看结果与公式代入过程。</li>
+        <li>
+          换算结果仅供参考，工程选型与计量认证请以仪器实测和官方标准为准。
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="formula-heading">
+      <h2 id="formula-heading">换算公式</h2>
+      <ul class="formula-list">
+        <li class="formula-item">
+          <p>
+            以「赫兹」为基准：1 kHz = 1000 Hz、1 MHz = 1000000 Hz、1 GHz =
+            1000000000 Hz；转/分按每分钟圈数计，1 rpm = 1/60 Hz（约
+            0.016666667）。
+          </p>
+        </li>
+        <li class="formula-item">
+          <p>
+            <strong>换算</strong>：目标值 = 数值 × 原单位因子 ÷ 目标单位因子
+          </p>
+          <p>
+            例：<code>3000 × 0.016666667 ÷ 1 = 50</code>（3000 转/分 → 赫兹）
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/unit/time/">时间单位换算计算器</a></li>
+        <li><a href="/unit/speed/">速度单位换算计算器</a></li>
+        <li><a href="/unit/length/">长度单位换算器</a></li>
+        <li><a href="/unit/weight/">重量换算计算器</a></li>
+      </ul>
+    </section>
+
+    <CalcJsonLd
+      name="频率换算计算器"
+      description="免费在线频率单位换算器：赫兹、千赫兹、兆赫兹、吉赫兹与转/分一键互转，查无线电频段、CPU 主频、电机转速都方便，附换算公式与代入过程。"
+      faqItems={faqItems}
+    />
+  </main>
+
+  <script is:inline type="module" src="/scripts/frequency-page.js"></script>
+</BaseLayout>
