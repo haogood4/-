@@ -43,11 +43,11 @@ function urlToPath(href) {
 
 console.log("冒烟断言（12 组）：");
 
-// ── 1. 页面总数 = 158（126 + 外部清单导入批次 32 工具） ──
+// ── 1. 页面总数 = 159（158 + 长尾关键词工具推荐文章） ──
 {
   const n = htmlFiles.length;
-  if (n === 158) pass(`1. 页面总数 = 158（实际 ${n}）`);
-  else fail("1. 页面总数应为 158", `实际 ${n}`);
+  if (n === 159) pass(`1. 页面总数 = 159（实际 ${n}）`);
+  else fail("1. 页面总数应为 159", `实际 ${n}`);
 }
 
 // ── 2. 关键路由存在 ──────────────────────────────────────────
@@ -319,11 +319,11 @@ console.log("冒烟断言（12 组）：");
   const robots =
     existsSync(join(DIST, "robots.txt")) &&
     /sitemap/i.test(read(join(DIST, "robots.txt")));
-  // P2-12：RSS 存在、条目数 = 文章总数、每页 head 含 alternate 声明
+  // P2-12：RSS 存在、条目数 = 文章总数（12）、每页 head 含 alternate 声明
   const rssPath = join(DIST, "rss.xml");
   const rssOk =
     existsSync(rssPath) &&
-    (read(rssPath).match(/<item>/g) ?? []).length === 11 &&
+    (read(rssPath).match(/<item>/g) ?? []).length === 12 &&
     /<rss/.test(read(rssPath));
   const rssLink = htmlFiles.every((f) => /application\/rss\+xml/.test(read(f)));
   // 通用守卫：noindex 页面不得出现在 sitemap 中
