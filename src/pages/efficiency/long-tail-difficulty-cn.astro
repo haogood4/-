@@ -1,0 +1,150 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ResultArea from "../../components/ResultArea.astro";
+import AdContainer from "../../components/AdContainer.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import CalcJsonLd from "../../components/CalcJsonLd.astro";
+import UsageGuide from "../../components/UsageGuide.astro";
+
+const breadcrumbItems = [
+  { label: "首页", href: "/" },
+  { label: "效率工具" },
+  { label: "长尾词排名难度" },
+];
+
+const faqItems = [
+  {
+    q: "这个难度分是真实搜索量吗？",
+    a: "不是。本工具评估的是「长尾词的结构性难度」——基于词长、相对核心词的修饰层数、是否命中疑问/商业/高竞争品类词等可观察特征。不接入第三方搜索量、关键词难度或外链数据，避免在缺少权威数据时给出误导性结论。配合 Google Search Console 的真实曝光数据校准效果更佳。",
+  },
+  {
+    q: "为什么「计算器」比「免费在线房贷计算器」分数高？",
+    a: "短词（≤3 字）长度惩罚 + 25，无修饰时深度惩罚 + 25，分数天然偏高；长尾词每多一层修饰会降低长度/深度惩罚，难度分相应下降。这是「长尾优势」的算法体现，但具体能不能排上去还要看搜索量、域名权重与 SERP 现状。",
+  },
+  {
+    q: "置信度提示有什么用？",
+    a: "低：未提供核心词或词过短，深度维度只能粗估，结果方向性参考；中：数据齐全但无显著意图词命中，分数较稳；高：提供了核心词且命中疑问/商业/高竞争词之一，五档定性置信度高。建议把高置信度结果作为优先级排序依据。",
+  },
+  {
+    q: "为什么「疑问」会减分？",
+    a: "疑问词（怎么/哪个好/区别等）通常搜索意图明确、对应结果页较少，新站更容易拿到精确流量；命中疑问词会在评分里减 10 分，反映「结构上更易攻入」。这是相对指标，不是真实 SERP 难度。",
+  },
+];
+---
+
+<BaseLayout
+  title="长尾词排名难度评估 — 免费 SEO 长尾词难度打分工具"
+  description="免费长尾词难度评估工具：批量输入长尾词与可选核心词，按词长、修饰层数、疑问/商业/高竞争意图命中输出 0–100 难度分与五档定性（极易/较易/中等/较难/极难），含置信度与排序，可一键复制导出到内容排期表。"
+>
+  <main id="main">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>长尾词排名难度</h1>
+    <UsageGuide />
+    <p class="lead">
+      批量打分 · 0–100 难度分 · 五档定性 · 含置信度提示 · 按难度升序排序。
+    </p>
+
+    <form id="calc-form" class="card" novalidate aria-label="长尾词难度评估表单">
+      <div class="field">
+        <label for="kw-words">长尾词列表（每行一个，必填）</label>
+        <textarea
+          id="kw-words"
+          class="field-input"
+          rows="6"
+          placeholder="免费在线房贷计算器
+怎么用计算器
+计算器推荐"
+          spellcheck="false"
+          aria-describedby="field-error-words"
+        ></textarea>
+        <p class="field-error" id="field-error-words" hidden></p>
+      </div>
+      <div class="field">
+        <label for="kw-core">核心词（可选；提供后修饰层数可精确计算）</label>
+        <input
+          type="text"
+          id="kw-core"
+          class="field-input"
+          placeholder="例如：计算器"
+        />
+      </div>
+      <div class="form-actions">
+        <button id="calc-btn" type="submit" class="btn btn-primary">
+          评估难度
+        </button>
+        <button id="reset-btn" type="button" class="btn btn-secondary">
+          重置
+        </button>
+      </div>
+    </form>
+
+    <ResultArea />
+
+    <AdContainer />
+
+    <section class="section" aria-labelledby="usage-heading">
+      <h2 id="usage-heading">使用说明</h2>
+      <ol class="note-list">
+        <li>
+          把候选长尾词每行一个贴到输入框（可由「长尾关键词扩展」工具先批量生成）。
+        </li>
+        <li>可选填入核心词，填了会让「修饰层数」维度更准。</li>
+        <li>点击「评估难度」，结果按难度升序排列，每行显示分数、分档、置信度、提示。</li>
+        <li>点击「复制全部」可把表格化的结果粘贴到内容排期表，按优先级分配页面。</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>评分维度（仅供参考）</h2>
+      <ul class="note-list">
+        <li>词长（≤3 字宽泛、≥10 字具体）</li>
+        <li>相对核心词的修饰层数（0–3 层）</li>
+        <li>疑问词命中（怎么/哪个/区别等，意图明确、减分）</li>
+        <li>商业意图词命中（推荐/排行/对比/价格/便宜等，加分）</li>
+        <li>高竞争品类词命中（官方/下载/教程/平台/入口等，加分）</li>
+      </ul>
+    </section>
+
+    <FaqSection items={faqItems} />
+
+    <section class="section">
+      <h2>相关工具</h2><ul class="tool-list">
+        <li><a href="/efficiency/seo-keywords-cn/">长尾关键词扩展</a>：先生成候选词再批量打分</li>
+        <li><a href="/efficiency/keyword-density-cn/">关键词密度分析</a>：校对成稿后关键词分布</li>
+        <li><a href="/efficiency/seo-meta-cn/">TDK 标签生成器</a>：按搜索意图生成标题与描述</li>
+        <li><a href="/efficiency/title-length-cn/">标题字数检测</a>：避免搜索结果被截断</li>
+        <li><a href="/articles/long-tail-keyword-tools-top10-2026/">长尾关键词工具 Top 10 推荐</a>：外部工具横向评测</li>
+      </ul>
+    </section>
+
+    <p class="disclaimer">
+      难度分基于词结构特征估算，<strong>仅供参考</strong
+      >；不替代真实搜索量与外链数据，请结合 Google Search Console 与第三方权威工具综合判断。
+    </p>
+
+    <CalcJsonLd
+      name="长尾词排名难度"
+      description="免费长尾词难度评估工具：批量输入长尾词与可选核心词，按词长、修饰层数、疑问/商业/高竞争意图命中输出 0–100 难度分与五档定性（极易/较易/中等/较难/极难），含置信度与排序，可一键复制导出到内容排期表。"
+      faqItems={faqItems}
+      featureList={[
+        "0–100 难度分 + 五档定性",
+        "按难度升序自动排序",
+        "疑问/商业/高竞争意图命中标签",
+        "置信度（低/中/高）提示",
+        "批量评估 + 复制导出",
+      ]}
+    />
+  </main>
+
+  <style is:global>
+    #result-main {
+      white-space: pre;
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-size: 0.875rem;
+    }
+  </style>
+
+  <script is:inline type="module" src="/scripts/long-tail-difficulty-page.js"
+  ></script>
+</BaseLayout>

@@ -501,10 +501,10 @@ export const ARTICLES: ArticleData[] = [
     type: "article",
     tools: [
       "/efficiency/seo-keywords-cn/",
+      "/efficiency/long-tail-difficulty-cn/",
       "/efficiency/keyword-density-cn/",
       "/efficiency/seo-meta-cn/",
       "/efficiency/title-length-cn/",
-      "/efficiency/seo-robots-cn/",
     ],
     publishedAt: new Date("2026-09-21"),
     updatedAt: new Date("2026-09-21"),

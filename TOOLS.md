@@ -1,4 +1,4 @@
-# 计算器大全 — 全部工具清单（134 个）
+# 计算器大全 — 全部工具清单（135 个）
 
 按 6 大分类整理，每行复制即用（站点路径相对于部署根域名）。
 
@@ -146,6 +146,7 @@
 - robots.txt 生成器 — /efficiency/seo-robots-cn/
 - 外链有效性检查 — /efficiency/seo-link-check-cn/
 - 长尾关键词扩展 — /efficiency/seo-keywords-cn/
+- 长尾词排名难度 — /efficiency/long-tail-difficulty-cn/
 
 ## 日常工具（4）
 
@@ -164,19 +165,19 @@
 - 用户协议 — /legal/terms/
 - 免责声明 — /legal/disclaimer/
 
-合计 134 个计算工具 + 7 个信息页。
+合计 135 个计算工具 + 7 个信息页。
 
 ## 打包复制格式（如需 JSON）
 
 ```json
 {
-  "total": 134,
+  "total": 135,
   "categories": [
     {"key": "finance", "name": "金融理财", "count": 32, "tools": [{"label": "房贷计算器", "href": "/finance/mortgage-cn/"}, ...]},
     {"key": "health", "name": "健康生活", "count": 5, "tools": [...]},
     {"key": "renovation", "name": "装修家居", "count": 5, "tools": [...]},
     {"key": "investment", "name": "投资专业", "count": 10, "tools": [...]},
-    {"key": "efficiency", "name": "效率工具", "count": 78, "tools": [...]},
+    {"key": "efficiency", "name": "效率工具", "count": 79, "tools": [...]},
     {"key": "daily", "name": "日常工具", "count": 4, "tools": [...]}
   ]
 }

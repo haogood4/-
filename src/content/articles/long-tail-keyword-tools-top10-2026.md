@@ -95,6 +95,7 @@ readingTime: 8
 本文讨论的「找词」之后的工作，可以用本站工具免费完成：
 
 - [长尾关键词扩展](/efficiency/seo-keywords-cn/)：输入核心词批量生成长尾组合，快速构造选题清单
+- [长尾词排名难度](/efficiency/long-tail-difficulty-cn/)：给候选长尾词批量打分，按 0–100 难度与五档定性排序，配合外部工具的搜索量数据做最后筛选
 - [关键词密度分析](/efficiency/keyword-density-cn/)：校对成稿后的关键词分布是否自然
 - [TDK 标签生成器](/efficiency/seo-meta-cn/)：按搜索意图生成 Title/Description 并控制长度
 - [标题字数检测](/efficiency/title-length-cn/)：确保标题在搜索结果中不被截断

@@ -43,11 +43,11 @@ function urlToPath(href) {
 
 console.log("冒烟断言（12 组）：");
 
-// ── 1. 页面总数 = 159（158 + 长尾关键词工具推荐文章） ──
+// ── 1. 页面总数 = 160（159 + 长尾词排名难度工具） ──
 {
   const n = htmlFiles.length;
-  if (n === 159) pass(`1. 页面总数 = 159（实际 ${n}）`);
-  else fail("1. 页面总数应为 159", `实际 ${n}`);
+  if (n === 160) pass(`1. 页面总数 = 160（实际 ${n}）`);
+  else fail("1. 页面总数应为 160", `实际 ${n}`);
 }
 
 // ── 2. 关键路由存在 ──────────────────────────────────────────
@@ -319,7 +319,7 @@ console.log("冒烟断言（12 组）：");
   const robots =
     existsSync(join(DIST, "robots.txt")) &&
     /sitemap/i.test(read(join(DIST, "robots.txt")));
-  // P2-12：RSS 存在、条目数 = 文章总数（12）、每页 head 含 alternate 声明
+  // P2-12：RSS 存在、条目数 = 文章总数（12，含 long-tail 推荐文章）、每页 head 含 alternate 声明
   const rssPath = join(DIST, "rss.xml");
   const rssOk =
     existsSync(rssPath) &&

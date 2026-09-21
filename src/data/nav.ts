@@ -172,6 +172,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { label: "robots.txt 生成器", href: "/efficiency/seo-robots-cn/" },
       { label: "外链有效性检查", href: "/efficiency/seo-link-check-cn/" },
       { label: "长尾关键词扩展", href: "/efficiency/seo-keywords-cn/" },
+      { label: "长尾词排名难度", href: "/efficiency/long-tail-difficulty-cn/" },
     ],
   },
   {
