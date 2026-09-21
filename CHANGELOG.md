@@ -16,6 +16,16 @@
 - 暗色模式第一期（P1-7①）：纯 CSS `@media (prefers-color-scheme: dark)` 覆盖 25 个 token；零 JS、零 CSP 影响、无 FOUC；BaseLayout `<meta theme-color>` 拆为 light/dark 双变体、`color-scheme: light dark`；smoke 断言 12 守 9 组暗色 token 对比度 ≥4.5:1，CSS gzip +0.21KB（6.19 → 6.40KB）。第二期（手动切换开关）仍待人工批复 FOUC + CSP 方案
 - P1-7② 手动切换开关技术方案（`docs/dark-mode-toggle-plan.md`，12 节 / 含三态模型 + 三层架构 + CSP/FOUC 分析 + 性能预算 + 风险登记 + DoD + 业内对比），待项目负责人确认 FOUC 与三态决策点后开工
 - P1-10 法务审核资料包（`docs/legal-review-package.md`，7 节 / 三页骨架 + 数据流图 + Go/No-Go 清单 + 风险登记 + 上线流程），登记为 DS-202609-08 双签项（P1，2026-09-26 截止）
+- 工具页面法律风险加固报告 v1.1（`docs/legal-review/legal-hardening-report-20260921.md`，374 行 / 16 章节）：18 个工具页面 YMYL/合规提示内容补丁归档
+  - P0 法律页 4（`lawsuit-fee-cn` / `compensation-cn` / `injury-cn` / `traffic-cn`）：结果区上方加红框强化免责声明，明示「不构成法律意见…以法院 / 仲裁委 / 人社局 / 受诉法院为准」，底部 disclaimer 首句加粗
+  - P1+P2 工具/隐私页 4（`game-gacha-cn` / `image-idphoto-cn` / `image-watermark-cn` / `ai-stt-cn`）：表单前加「使用须知/数据来源/录音合规」提示块，覆盖数据时效、商标描述性引用、敏感个人信息、录音隐私 4 类风险
+  - P2-批 PDF 工具 6（`pdf-{compress,merge,split,to-image,extract-text,watermark}-cn`）：统一模板「勿处理他人 PDF / 内部资料 / 隐私文件」，watermark 单独强调「勿添加虚假水印或冒用他人署名」
+  - P3 低风险工具 3（`pinyin-cn` / `qr-code-cn` / `sensitive-word-cn`）：补数据来源声明 / 使用须知
+  - P1 phone-region（`phone-region-cn`）：**唯一非法律页面用红框（danger 变体）**，明确号段库 2302 已严重过期、请用 10086/10010/10000 官方查询、请勿输入他人手机号
+  - 配套 CSS 新增 `.ymyl-notice--danger` 红色变体（`src/styles/global.css` +14 行）
+  - 双签登记：DS-202609-24（P1 / 2026-10-05 截止）；首签项目负责人、二签法务
+  - 配套提交通知模板：`docs/legal-submission-notice-DS-202609-24.md`（含邮件 + 飞书 + 跟进 SOP + 回滚预案）
+  - astro build 2.87s / 160 页面产物通过；产物 grep 命中验证全过；计算逻辑 / JSON-LD / FAQ / SEO meta / 交互脚本均未改动
 - P3-15 回归测试计划（`docs/content-collections-regression.md`，9 节 / 触发条件 + 11 步回归 + 性能与端到端验证矩阵 + 回滚预案 + DoD）；新增探针 `scripts/check-astro-fix.mjs` + `pnpm astro:probe` 命令，astro 7.3.3 未达阈值时 silent exit 0
 
 ### 变更
@@ -26,6 +36,8 @@
 
 - P1-7② FOUC 窗口与三态 vs 二态决策（项目负责人）
 - P1-10 legal 三页法务审核（资料包已就位待提交法务部，DS-202609-08，2026-09-26 截止）
+- DS-202609-24 工具页面法律风险加固报告 v1.1 措辞复核（加固报告与提交通知模板已就位，2026-10-05 截止；详见 `docs/legal-review/legal-hardening-report-20260921.md` v1.1 + `docs/legal-submission-notice-DS-202609-24.md`）
+- phone-region 号段库数据时效：当前版本 2302（2023-02），距今约 3.5 年，提示已加固为最高级（红框），但**真正解决需 PM 立项更新数据源**
 - 推送 GitHub 并跑通 CI 首次运行（本地仓库已初始化：main 分支 + 初始提交）
 
 ### 验证
